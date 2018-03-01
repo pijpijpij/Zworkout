@@ -1,60 +1,70 @@
-package com.pij.zworkout;
+package com.pij.zworkout.workout;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
+
+import com.pij.zworkout.R;
+import com.pij.zworkout.list.WorkoutsActivity;
+
+import activitystarter.ActivityStarter;
+import activitystarter.Arg;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static com.annimon.stream.Optional.ofNullable;
+
 
 /**
  * An activity representing a single Workout detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
- * in a {@link WorkoutListActivity}.
+ * in a {@link WorkoutsActivity}.
  */
 public class WorkoutDetailActivity extends AppCompatActivity {
+
+    @Arg
+    String itemId;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+
+    public static Intent createIntent(Context caller, String itemId) {
+        return WorkoutDetailActivityStarter.getIntent(caller, itemId);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityStarter.fill(this, savedInstanceState);
         setContentView(R.layout.activity_workout_detail);
-        Toolbar toolbar = findViewById(R.id.detail_toolbar);
+        ButterKnife.bind(this);
+
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
-
         // Show the Up button in the action bar.
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        ofNullable(getSupportActionBar()).ifPresent(actionBar -> actionBar.setDisplayHomeAsUpEnabled(true));
 
-        // savedInstanceState is non-null when there is fragment state
-        // saved from previous configurations of this activity
-        // (e.g. when rotating the screen from portrait to landscape).
-        // In this case, the fragment will automatically be re-added
-        // to its container so we don't need to manually add it.
-        // For more information, see the Fragments API guide at:
-        //
-        // http://developer.android.com/guide/components/fragments.html
-        //
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            Bundle arguments = new Bundle();
-            arguments.putString(WorkoutDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(WorkoutDetailFragment.ARG_ITEM_ID));
-            WorkoutDetailFragment fragment = new WorkoutDetailFragment();
-            fragment.setArguments(arguments);
+            WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(itemId);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.workout_detail_container, fragment)
                     .commit();
         }
+
+    }
+
+    @OnClick(R.id.fab)
+    void showASnackbar(View view) {
+        Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .show();
     }
 
     @Override
@@ -67,7 +77,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            navigateUpTo(new Intent(this, WorkoutListActivity.class));
+            navigateUpTo(WorkoutsActivity.createIntent(this));
             return true;
         }
         return super.onOptionsItemSelected(item);

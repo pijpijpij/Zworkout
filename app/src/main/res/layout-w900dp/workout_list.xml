@@ -9,7 +9,7 @@
     android:divider="?android:attr/dividerHorizontal"
     android:orientation="horizontal"
     android:showDividers="middle"
-    tools:context="com.pij.zworkout.WorkoutListActivity">
+    tools:context="com.pij.zworkout.list.WorkoutsActivity">
 
     <!--
     This layout is a two-pane layout for the Workouts
@@ -26,8 +26,8 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.pij.zworkout.WorkoutListActivity"
-        tools:listitem="@layout/workout_list_content" />
+        tools:context="com.pij.zworkout.list.WorkoutsActivity"
+        tools:listitem="@layout/workout_list_item" />
 
     <FrameLayout
         android:id="@+id/workout_detail_container"

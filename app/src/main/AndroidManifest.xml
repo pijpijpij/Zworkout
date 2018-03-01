@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.pij.zworkout">
 
     <application
@@ -8,9 +9,10 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".WorkoutListActivity"
+            android:name=".list.WorkoutsActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -20,13 +22,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".WorkoutDetailActivity"
+            android:name=".workout.WorkoutDetailActivity"
             android:label="@string/title_workout_detail"
-            android:parentActivityName=".WorkoutListActivity"
+            android:parentActivityName=".list.WorkoutsActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.pij.zworkout.WorkoutListActivity" />
+                android:value="com.pij.zworkout.list.WorkoutsActivity" />
         </activity>
     </application>
 

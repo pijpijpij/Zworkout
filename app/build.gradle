@@ -82,6 +82,7 @@ android {
  */
 dependencies {
     implementation "com.github.pijpijpij:Horrocks:0.1.1"
+    compile "com.annimon:stream:$streamVersion"
     // Autovalue
     compileOnly "com.google.auto.value:auto-value:$autoValueVersion"
     annotationProcessor "com.google.auto.value:auto-value:$autoValueVersion"

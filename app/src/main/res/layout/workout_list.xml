@@ -9,5 +9,5 @@
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
-    tools:context="com.pij.zworkout.WorkoutListActivity"
-    tools:listitem="@layout/workout_list_content" />
+    tools:context="com.pij.zworkout.list.WorkoutsActivity"
+    tools:listitem="@layout/workout_list_item" />
