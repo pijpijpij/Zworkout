@@ -34,6 +34,8 @@ public class WorkoutsActivity extends AppCompatActivity {
     @BindView(R.id.workout_list)
     RecyclerView recyclerView;
 
+//    @Inject
+
     public static Intent createIntent(Context caller) {
         return new Intent(caller, WorkoutsActivity.class);
     }
