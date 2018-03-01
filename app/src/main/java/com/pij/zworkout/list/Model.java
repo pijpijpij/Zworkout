@@ -26,6 +26,8 @@ public abstract class Model {
 
     public abstract List<WorkoutDescriptor> workouts();
 
+    public abstract Builder toBuilder();
+
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder inProgress(boolean inProgress);

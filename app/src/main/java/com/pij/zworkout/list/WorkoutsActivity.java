@@ -4,14 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.annimon.stream.function.Consumer;
+import com.pij.horrocks.Logger;
 import com.pij.zworkout.R;
-import com.pij.zworkout.dummy.DummyContent;
 import com.pij.zworkout.workout.WorkoutDetailActivity;
 import com.pij.zworkout.workout.WorkoutDetailFragment;
 
@@ -20,6 +19,8 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerAppCompatActivity;
+import io.reactivex.disposables.CompositeDisposable;
 
 /**
  * An activity representing a list of Workouts. This activity
@@ -29,8 +30,9 @@ import butterknife.OnClick;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class WorkoutsActivity extends AppCompatActivity {
+public class WorkoutsActivity extends DaggerAppCompatActivity {
 
+    private final CompositeDisposable subscriptions = new CompositeDisposable();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.workout_list)
@@ -38,6 +40,8 @@ public class WorkoutsActivity extends AppCompatActivity {
 
     @Inject
     ViewModel viewModel;
+    @Inject
+    Logger logger;
 
     public static Intent createIntent(Context caller) {
         return new Intent(caller, WorkoutsActivity.class);
@@ -74,7 +78,16 @@ public class WorkoutsActivity extends AppCompatActivity {
         Adapter adapter = new Adapter(clickAction);
         recyclerView.setAdapter(adapter);
 
-        adapter.setItems(DummyContent.ITEMS);
+        subscriptions.addAll(
+                viewModel.model().map(Model::workouts).subscribe(adapter::setItems),
+                viewModel.model().map(Model::inProgress).subscribe(value -> logger.print(getClass(), " not implemented yet"))
+        );
+    }
+
+    @Override
+    protected void onDestroy() {
+        subscriptions.clear();
+        super.onDestroy();
     }
 
     @Override

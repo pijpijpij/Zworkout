@@ -1,8 +1,11 @@
 package com.pij.zworkout.list;
 
 
+import com.pij.horrocks.DefaultEngine;
 import com.pij.horrocks.Logger;
 import com.pij.zworkout.ActivityScoped;
+import com.pij.zworkout.list.viewmodel.DummyLoadingFeature;
+import com.pij.zworkout.list.viewmodel.HorrocksViewModel;
 
 import dagger.Module;
 import dagger.Provides;
@@ -16,8 +19,7 @@ public class WorkoutsModule {
     @ActivityScoped
     @Provides
     ViewModel provideWorkoutsViewModel(Logger logger) {
-        throw new UnsupportedOperationException("provideWorkoutsViewModel([logger]) not implemented yet");
-//        return new FeaturedViewModel(logger, new DefaultEngine<>(logger));
+        return HorrocksViewModel.create(logger, new DefaultEngine<>(logger), new DummyLoadingFeature());
     }
 
 }

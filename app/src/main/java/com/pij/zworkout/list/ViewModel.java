@@ -10,7 +10,7 @@ import io.reactivex.Observable;
  * @author Pierrejean
  */
 
-interface ViewModel {
+public interface ViewModel {
 
     void load();
 
