@@ -1,6 +1,7 @@
 package com.pij.zworkout;
 
 import com.pij.zworkout.list.WorkoutsActivity;
+import com.pij.zworkout.list.WorkoutsModule;
 import com.pij.zworkout.workout.WorkoutDetailActivity;
 import com.pij.zworkout.workout.WorkoutDetailFragment;
 
@@ -10,7 +11,7 @@ import dagger.android.ContributesAndroidInjector;
 @Module
 abstract class ActivityBindingModule {
     @ActivityScoped
-    @ContributesAndroidInjector()
+    @ContributesAndroidInjector(modules = WorkoutsModule.class)
     abstract WorkoutsActivity workoutsActivity();
 
     @FragmentScoped

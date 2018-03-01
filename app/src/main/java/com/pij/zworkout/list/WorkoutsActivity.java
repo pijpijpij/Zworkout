@@ -15,6 +15,8 @@ import com.pij.zworkout.dummy.DummyContent;
 import com.pij.zworkout.workout.WorkoutDetailActivity;
 import com.pij.zworkout.workout.WorkoutDetailFragment;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -34,7 +36,8 @@ public class WorkoutsActivity extends AppCompatActivity {
     @BindView(R.id.workout_list)
     RecyclerView recyclerView;
 
-//    @Inject
+    @Inject
+    ViewModel viewModel;
 
     public static Intent createIntent(Context caller) {
         return new Intent(caller, WorkoutsActivity.class);
@@ -72,6 +75,12 @@ public class WorkoutsActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
         adapter.setItems(DummyContent.ITEMS);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        viewModel.load();
     }
 
     @OnClick(R.id.fab)
