@@ -1,22 +1,30 @@
 package com.pij.zworkout.list;
 
+import com.google.auto.value.AutoValue;
+
 /**
  * A dummy item representing a piece of content.
  */
-public class WorkoutDescriptor {
-    public final String id;
-    public final String content;
-    public final String details;
-
-    @SuppressWarnings("WeakerAccess")
-    public WorkoutDescriptor(String id, String content, String details) {
-        this.id = id;
-        this.content = content;
-        this.details = details;
+@AutoValue
+public abstract class WorkoutDescriptor {
+    public static Builder builder() {
+        return new AutoValue_WorkoutDescriptor.Builder();
     }
 
-    @Override
-    public String toString() {
-        return content;
+    public abstract String id();
+
+    public abstract String name();
+
+    public abstract String details();
+
+    @AutoValue.Builder
+    public abstract static class Builder {
+        public abstract Builder id(String id);
+
+        public abstract Builder name(String name);
+
+        public abstract Builder details(String details);
+
+        public abstract WorkoutDescriptor build();
     }
 }

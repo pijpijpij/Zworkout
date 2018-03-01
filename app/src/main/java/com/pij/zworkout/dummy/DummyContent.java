@@ -36,11 +36,15 @@ public class DummyContent {
 
     private static void addItem(WorkoutDescriptor item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+        ITEM_MAP.put(item.id(), item);
     }
 
     private static WorkoutDescriptor createDummyItem(int position) {
-        return new WorkoutDescriptor(String.valueOf(position), "Item " + position, makeDetails(position));
+        return WorkoutDescriptor.builder()
+                .id(Integer.toString(position))
+                .name("Item " + position)
+                .details(makeDetails(position))
+                .build();
     }
 
     private static String makeDetails(int position) {

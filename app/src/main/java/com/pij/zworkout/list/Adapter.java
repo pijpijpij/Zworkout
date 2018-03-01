@@ -1,5 +1,6 @@
 package com.pij.zworkout.list;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,8 @@ import com.pij.zworkout.R;
 
 import java.util.List;
 
+import static java.util.Collections.emptyList;
+
 /**
  * <p>Created on 01/03/2018.</p>
  *
@@ -17,12 +20,17 @@ import java.util.List;
  */
 class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private final List<WorkoutDescriptor> items;
     private final Consumer<WorkoutDescriptor> clickAction;
+    private List<WorkoutDescriptor> items;
 
-    Adapter(List<WorkoutDescriptor> items, Consumer<WorkoutDescriptor> clickAction) {
-        this.items = items;
+    Adapter(Consumer<WorkoutDescriptor> clickAction) {
+        this.items = emptyList();
         this.clickAction = clickAction;
+    }
+
+    void setItems(@NonNull List<WorkoutDescriptor> items) {
+        this.items = items;
+        notifyDataSetChanged();
     }
 
     @Override

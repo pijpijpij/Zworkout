@@ -54,8 +54,8 @@ public class WorkoutDetailFragment extends Fragment {
     }
 
     @NonNull
-    public static WorkoutDetailFragment newInstance(String itemId) {
-        return WorkoutDetailFragmentStarter.newInstance(itemId);
+    public static WorkoutDetailFragment newInstance(WorkoutDescriptor item) {
+        return WorkoutDetailFragmentStarter.newInstance(item.id());
     }
 
     @Override
@@ -77,11 +77,11 @@ public class WorkoutDetailFragment extends Fragment {
             ofNullable(getActivity())
                     .map(activity -> activity.findViewById(R.id.toolbar_layout))
                     .map(toolbar -> (CollapsingToolbarLayout) toolbar)
-                    .ifPresent(appBarLayout -> appBarLayout.setTitle(item.content));
+                    .ifPresent(appBarLayout -> appBarLayout.setTitle(item.name()));
         }
 
         // Show the dummy content as text in a TextView.
-        details.setText(item == null ? null : item.details);
+        details.setText(item == null ? null : item.details());
 
     }
 

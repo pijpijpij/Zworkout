@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.pij.zworkout.R;
+import com.pij.zworkout.list.WorkoutDescriptor;
 import com.pij.zworkout.list.WorkoutsActivity;
 
 import activitystarter.ActivityStarter;
@@ -34,8 +35,8 @@ public class WorkoutDetailActivity extends AppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    public static Intent createIntent(Context caller, String itemId) {
-        return WorkoutDetailActivityStarter.getIntent(caller, itemId);
+    public static Intent createIntent(Context caller, WorkoutDescriptor item) {
+        return WorkoutDetailActivityStarter.getIntent(caller, item.id());
     }
 
     @Override
@@ -52,7 +53,7 @@ public class WorkoutDetailActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
-            WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(itemId);
+            WorkoutDetailFragment fragment = WorkoutDetailFragmentStarter.newInstance(itemId);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.workout_detail_container, fragment)
                     .commit();

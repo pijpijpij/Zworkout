@@ -31,13 +31,15 @@ public class WorkoutsActivity extends AppCompatActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
+    @BindView(R.id.workout_list)
+    RecyclerView recyclerView;
 
     public static Intent createIntent(Context caller) {
         return new Intent(caller, WorkoutsActivity.class);
     }
 
     private void showInFragment(WorkoutDescriptor item) {
-        WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(item.id);
+        WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(item);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.workout_detail_container, fragment)
                 .commit();
@@ -45,7 +47,7 @@ public class WorkoutsActivity extends AppCompatActivity {
 
 
     private void showInActivity(WorkoutDescriptor item) {
-        Intent intent = WorkoutDetailActivity.createIntent(this, item.id);
+        Intent intent = WorkoutDetailActivity.createIntent(this, item);
         startActivity(intent);
     }
 
@@ -64,9 +66,10 @@ public class WorkoutsActivity extends AppCompatActivity {
         // activity should be in two-pane mode.
         boolean twoPane = findViewById(R.id.workout_detail_container) != null;
         Consumer<WorkoutDescriptor> clickAction = twoPane ? this::showInFragment : this::showInActivity;
-        Adapter adapter = new Adapter(DummyContent.ITEMS, clickAction);
-        RecyclerView recyclerView = findViewById(R.id.workout_list);
+        Adapter adapter = new Adapter(clickAction);
         recyclerView.setAdapter(adapter);
+
+        adapter.setItems(DummyContent.ITEMS);
     }
 
     @OnClick(R.id.fab)

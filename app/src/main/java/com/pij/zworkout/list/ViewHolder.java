@@ -27,8 +27,8 @@ class ViewHolder extends RecyclerView.ViewHolder {
     }
 
     void bind(WorkoutDescriptor item, Consumer<WorkoutDescriptor> clickAction) {
-        name.setText(item.id);
-        content.setText(item.content);
+        name.setText(item.id());
+        content.setText(item.name());
         itemView.setOnClickListener(view -> clickAction.accept(item));
     }
 }
