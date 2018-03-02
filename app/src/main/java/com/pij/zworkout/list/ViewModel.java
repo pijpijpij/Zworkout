@@ -1,5 +1,7 @@
 package com.pij.zworkout.list;
 
+import android.support.annotation.NonNull;
+
 import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observable;
@@ -13,6 +15,8 @@ import io.reactivex.Observable;
 public interface ViewModel {
 
     void load();
+
+    void select(@NonNull WorkoutDescriptor workout);
 
     @NotNull
     Observable<Model> model();

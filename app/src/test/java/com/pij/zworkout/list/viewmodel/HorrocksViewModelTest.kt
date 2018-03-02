@@ -1,23 +1,21 @@
 package com.pij.zworkout.list.viewmodel
 
+import com.annimon.stream.Optional
 import com.pij.horrocks.DefaultEngine
 import com.pij.horrocks.Result
 import com.pij.horrocks.SysoutLogger
 import com.pij.zworkout.list.Model
-import com.pij.zworkout.list.Model.create
 import com.pij.zworkout.list.WorkoutDescriptor
 import io.reactivex.Observable
 import junit.framework.TestCase.assertFalse
-import junit.framework.TestCase.assertTrue
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers
+import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
-import java.util.*
 
 /**
  *
@@ -31,15 +29,19 @@ class HorrocksViewModelTest {
 
     @Mock
     private lateinit var loadingFeatureMock: io.reactivex.functions.Function<Any, Observable<Result<Model>>>
+    @Mock
+    private lateinit var showDetailFeatureMock: io.reactivex.functions.Function<WorkoutDescriptor, Result<Model>>
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        sut = HorrocksViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()), loadingFeatureMock)
+        sut = HorrocksViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
+                loadingFeatureMock,
+                showDetailFeatureMock)
     }
 
     @Test
-    fun `initial model subscription does not fail`() {
+    fun `initial subscription to model() does not fail`() {
         // given
 
         // when
@@ -50,7 +52,7 @@ class HorrocksViewModelTest {
     }
 
     @Test
-    fun `initial model subscription receives 1 model`() {
+    fun `initial subscription to model() receives 1 model`() {
         // given
 
         // when
@@ -61,20 +63,21 @@ class HorrocksViewModelTest {
     }
 
     @Test
-    fun `initial model subscription receives empty model`() {
+    fun `initial subscription to model() receives empty model`() {
         // given
 
         // when
         val observer = sut.model().test()
 
         // then
-        val result = observer.values()[0]
-        assertFalse(result.inProgress())
-        assertThat(result.workouts(), hasSize(0))
+        val initial = observer.values()[0]
+        assertFalse(initial.inProgress())
+        assertFalse(initial.showWorkout().isPresent)
+        assertThat(initial.workouts(), hasSize(0))
     }
 
     @Test
-    fun `load() triggers LoadingFeature`() {
+    fun `loading triggers LoadingFeature`() {
         // given
         `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.never())
         sut.model().test()
@@ -89,21 +92,64 @@ class HorrocksViewModelTest {
     @Test
     fun `model() returns model provided by LoadingFeature on load()`() {
         // given
-        val workout = WorkoutDescriptor.builder()
-                .name("the name")
-                .id("the id")
-                .details("some details")
-                .build()
-        val loaded = create(true, Collections.singletonList(workout))
-        `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result<Model> { _ -> loaded }))
+        val workout = WorkoutDescriptor.create("1", "the one", "who cares")
+        val loaded = Model.create(true, Optional.empty(), listOf(workout))
+        `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { _ -> loaded }))
         val observer = sut.model().test()
 
         // when
         sut.load()
 
         // then
-        val result = observer.values()[1]
-        assertTrue(result.inProgress())
-        assertThat(result.workouts(), Matchers.contains(workout))
+        val next = observer.values()[1]
+        assertThat(next, equalTo(loaded))
+    }
+
+    @Test
+    fun `selecting a workout triggers ShowDetailFeature`() {
+        // given
+        val workout = WorkoutDescriptor.create("1", "the one", "who cares")
+        `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { it })
+        sut.model().test()
+
+        // when
+        sut.select(workout)
+
+        // then
+        verify(showDetailFeatureMock).apply(any())
+    }
+
+    @Test
+    fun `model() returns model provided by ShowDetailFeature on select()`() {
+        // given
+        val workout = WorkoutDescriptor.create("1", "the one", "who cares")
+        val doNotShowDetail = Model.create(true, Optional.empty(), listOf(workout))
+        `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { _ -> doNotShowDetail })
+        val observer = sut.model().test()
+
+        // when
+        sut.select(workout)
+
+        // then
+        val next = observer.values()[1]
+        assertThat(next, equalTo(doNotShowDetail))
+    }
+
+    @Test
+    fun `showDetail is reset when unrelated model is emitted`() {
+        // given
+        val workout = WorkoutDescriptor.create("1", "the one", "who cares")
+        val showDetail = Model.create(true, Optional.of(workout), listOf(workout))
+        `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { _ -> showDetail })
+        `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { it }))
+        val observer = sut.model().test()
+
+        // when
+        sut.select(workout)
+        sut.load()
+
+        // then
+        val next = observer.values()[2]
+        assertFalse(next.showWorkout().isPresent)
     }
 }

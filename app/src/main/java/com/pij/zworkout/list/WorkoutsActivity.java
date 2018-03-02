@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.annimon.stream.Optional;
 import com.annimon.stream.function.Consumer;
 import com.pij.horrocks.Logger;
 import com.pij.zworkout.R;
@@ -75,12 +76,13 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
         // activity should be in two-pane mode.
         boolean twoPane = findViewById(R.id.workout_detail_container) != null;
         Consumer<WorkoutDescriptor> clickAction = twoPane ? this::showInFragment : this::showInActivity;
-        Adapter adapter = new Adapter(clickAction);
+        Adapter adapter = new Adapter(viewModel::select);
         recyclerView.setAdapter(adapter);
 
         subscriptions.addAll(
                 viewModel.model().map(Model::workouts).subscribe(adapter::setItems),
-                viewModel.model().map(Model::inProgress).subscribe(value -> logger.print(getClass(), " not implemented yet"))
+                viewModel.model().map(Model::inProgress).subscribe(value -> logger.print(getClass(), " not implemented yet")),
+                viewModel.model().map(Model::showWorkout).filter(Optional::isPresent).map(Optional::get).subscribe(clickAction::accept)
         );
     }
 

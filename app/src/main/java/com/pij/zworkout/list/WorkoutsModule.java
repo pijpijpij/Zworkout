@@ -6,6 +6,7 @@ import com.pij.horrocks.Logger;
 import com.pij.zworkout.ActivityScoped;
 import com.pij.zworkout.list.viewmodel.DummyLoadingFeature;
 import com.pij.zworkout.list.viewmodel.HorrocksViewModel;
+import com.pij.zworkout.list.viewmodel.ShowDetailFeature;
 
 import dagger.Module;
 import dagger.Provides;
@@ -19,7 +20,7 @@ public class WorkoutsModule {
     @ActivityScoped
     @Provides
     ViewModel provideWorkoutsViewModel(Logger logger) {
-        return HorrocksViewModel.create(logger, new DefaultEngine<>(logger), new DummyLoadingFeature());
+        return HorrocksViewModel.create(logger, new DefaultEngine<>(logger), new DummyLoadingFeature(), new ShowDetailFeature());
     }
 
 }
