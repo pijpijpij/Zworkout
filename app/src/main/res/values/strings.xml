@@ -3,5 +3,7 @@
     <string name="title_workout_detail">Workout Detail</string>
 
     <string name="list_loading_error_message">Unable to list workouts</string>
+    <string name="list_loading">Loading workouts…</string>
+    <string name="list_empty">There are no workouts. Create one by pressing on the button below.</string>
 
 </resources>

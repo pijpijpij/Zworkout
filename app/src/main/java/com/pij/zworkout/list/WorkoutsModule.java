@@ -33,4 +33,12 @@ public class WorkoutsModule {
         String defaultErrorMessage = resources.getString(R.string.list_loading_error_message);
         return new StorageLoadingFeature(logger, storage, defaultErrorMessage);
     }
+
+
+    @ActivityScoped
+    @Provides
+    Adapter provideAdapter(ViewModel viewModel) {
+        return new Adapter(viewModel::select);
+    }
+
 }

@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.widget.TextView;
 
 import com.annimon.stream.Optional;
 import com.annimon.stream.function.Consumer;
@@ -14,6 +15,8 @@ import com.pij.horrocks.Logger;
 import com.pij.zworkout.R;
 import com.pij.zworkout.workout.WorkoutDetailActivity;
 import com.pij.zworkout.workout.WorkoutDetailFragment;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,13 +39,17 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
     private final CompositeDisposable subscriptions = new CompositeDisposable();
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.workout_list)
-    RecyclerView recyclerView;
+    @BindView(android.R.id.empty)
+    TextView empty;
+    @BindView(android.R.id.list)
+    RecyclerView list;
 
     @Inject
     ViewModel viewModel;
     @Inject
     Logger logger;
+    @Inject
+    Adapter adapter;
 
     public static Intent createIntent(Context caller) {
         return new Intent(caller, WorkoutsActivity.class);
@@ -69,21 +76,39 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
 
         toolbar.setTitle(getTitle());
         setSupportActionBar(toolbar);
+        list.setAdapter(adapter);
 
+        subscriptions.addAll(
+                viewModel.model().map(Model::workouts).subscribe(this::showItems),
+                viewModel.model().map(Model::inProgress).subscribe(this::showInProgress),
+                viewModel.model().map(Model::showError).filter(Optional::isPresent).map(Optional::get).subscribe(this::showError),
+                viewModel.model().map(Model::showWorkout).filter(Optional::isPresent).map(Optional::get).subscribe(this::showWorkout)
+        );
+    }
+
+    private void showWorkout(WorkoutDescriptor workout) {
         // The detail container view will be present only in the
         // large-screen layouts (res/values-w900dp).
         // If this view is present, then the
         // activity should be in two-pane mode.
         boolean twoPane = findViewById(R.id.workout_detail_container) != null;
         Consumer<WorkoutDescriptor> clickAction = twoPane ? this::showInFragment : this::showInActivity;
-        Adapter adapter = new Adapter(viewModel::select);
-        recyclerView.setAdapter(adapter);
 
-        subscriptions.addAll(
-                viewModel.model().map(Model::workouts).subscribe(adapter::setItems),
-                viewModel.model().map(Model::inProgress).subscribe(value -> logger.print(getClass(), " not implemented yet")),
-                viewModel.model().map(Model::showWorkout).filter(Optional::isPresent).map(Optional::get).subscribe(clickAction::accept)
-        );
+        clickAction.accept(workout);
+    }
+
+    private void showError(String message) {
+        Snackbar.make(list, message, Snackbar.LENGTH_LONG).show();
+    }
+
+    private void showItems(List<WorkoutDescriptor> items) {
+        adapter.setItems(items);
+        list.setVisibility(items.isEmpty() ? View.GONE : View.VISIBLE);
+        empty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
+    }
+
+    private void showInProgress(boolean inProgress) {
+        empty.setText(inProgress ? R.string.list_loading : R.string.list_empty);
     }
 
     @Override
@@ -99,8 +124,8 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
     }
 
     @OnClick(R.id.fab)
-    void showASnackbar(View view) {
-        Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+    void createWorkout() {
+        Snackbar.make(list, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null)
                 .show();
     }
