@@ -55,15 +55,15 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
         return new Intent(caller, WorkoutsActivity.class);
     }
 
-    private void showInFragment(WorkoutDescriptor item) {
-        WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(item);
+    private void showInFragment(Optional<WorkoutDescriptor> item) {
+        WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(item.map(WorkoutDescriptor::id));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.workout_detail_container, fragment)
                 .commit();
     }
 
 
-    private void showInActivity(WorkoutDescriptor item) {
+    private void showInActivity(Optional<WorkoutDescriptor> item) {
         Intent intent = WorkoutDetailActivity.createIntent(this, item);
         startActivity(intent);
     }
@@ -82,17 +82,18 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
                 viewModel.model().map(Model::workouts).subscribe(this::showItems),
                 viewModel.model().map(Model::inProgress).subscribe(this::showInProgress),
                 viewModel.model().map(Model::showError).filter(Optional::isPresent).map(Optional::get).subscribe(this::showError),
-                viewModel.model().map(Model::showWorkout).filter(Optional::isPresent).map(Optional::get).subscribe(this::showWorkout)
+                viewModel.model().map(Model::showWorkout).filter(Optional::isPresent).subscribe(this::showWorkout),
+                viewModel.model().map(Model::createWorkout).filter(create -> create).subscribe(trigger -> showWorkout(Optional.empty()))
         );
     }
 
-    private void showWorkout(WorkoutDescriptor workout) {
+    private void showWorkout(Optional<WorkoutDescriptor> workout) {
         // The detail container view will be present only in the
         // large-screen layouts (res/values-w900dp).
         // If this view is present, then the
         // activity should be in two-pane mode.
         boolean twoPane = findViewById(R.id.workout_detail_container) != null;
-        Consumer<WorkoutDescriptor> clickAction = twoPane ? this::showInFragment : this::showInActivity;
+        Consumer<Optional<WorkoutDescriptor>> clickAction = twoPane ? this::showInFragment : this::showInActivity;
 
         clickAction.accept(workout);
     }
@@ -125,9 +126,10 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
 
     @OnClick(R.id.fab)
     void createWorkout() {
-        Snackbar.make(list, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .show();
+        viewModel.createWorkout();
+//        Snackbar.make(list, "Replace with your own action", Snackbar.LENGTH_LONG)
+//                .setAction("Action", null)
+//                .show();
     }
 
 }

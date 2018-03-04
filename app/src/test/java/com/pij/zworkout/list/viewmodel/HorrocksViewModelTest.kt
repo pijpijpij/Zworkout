@@ -9,7 +9,6 @@ import com.pij.zworkout.list.WorkoutDescriptor
 import io.reactivex.Observable
 import junit.framework.TestCase.assertFalse
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.Before
 import org.junit.Test
@@ -31,13 +30,16 @@ class HorrocksViewModelTest {
     private lateinit var loadingFeatureMock: io.reactivex.functions.Function<Any, Observable<Result<Model>>>
     @Mock
     private lateinit var showDetailFeatureMock: io.reactivex.functions.Function<WorkoutDescriptor, Result<Model>>
+    @Mock
+    private lateinit var createWorkoutFeatureMock: io.reactivex.functions.Function<Any, Result<Model>>
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         sut = HorrocksViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
                 loadingFeatureMock,
-                showDetailFeatureMock)
+                showDetailFeatureMock,
+                createWorkoutFeatureMock)
     }
 
     @Test
@@ -93,16 +95,15 @@ class HorrocksViewModelTest {
     fun `model() returns model provided by LoadingFeature on load()`() {
         // given
         val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
-        val loaded = Model.create(true, Optional.empty(), Optional.empty(), listOf(workout))
+        val loaded = Model.create(true, Optional.empty(), false, Optional.empty(), listOf(workout))
         `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { _ -> loaded }))
-        val observer = sut.model().test()
+        val observer = sut.model().skip(1).test()
 
         // when
         sut.load()
 
         // then
-        val next = observer.values()[1]
-        assertThat(next, equalTo(loaded))
+        observer.assertValue(loaded)
     }
 
     @Test
@@ -111,6 +112,7 @@ class HorrocksViewModelTest {
         val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
         `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { it })
         sut.model().test()
+        reset(showDetailFeatureMock)
 
         // when
         sut.select(workout)
@@ -123,33 +125,62 @@ class HorrocksViewModelTest {
     fun `model() returns model provided by ShowDetailFeature on select()`() {
         // given
         val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
-        val doNotShowDetail = Model.create(true, Optional.empty(), Optional.empty(), listOf(workout))
-        `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { _ -> doNotShowDetail })
-        val observer = sut.model().test()
+        val dummyModel = Model.create(true, Optional.empty(), false, Optional.empty(), listOf(workout))
+        `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { _ -> dummyModel })
+        val observer = sut.model().skip(1).test()
 
         // when
         sut.select(workout)
 
         // then
-        val next = observer.values()[1]
-        assertThat(next, equalTo(doNotShowDetail))
+        observer.assertValue(dummyModel)
     }
 
     @Test
     fun `showDetail is reset when unrelated model is emitted`() {
         // given
         val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
-        val showDetail = Model.create(true, Optional.of(workout), Optional.empty(), listOf(workout))
+        val showDetail = Model.create(false, Optional.of(workout), false, Optional.empty(), listOf(workout))
         `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { _ -> showDetail })
         `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { it }))
-        val observer = sut.model().test()
+        val observer = sut.model().skip(1).map(Model::showWorkout).test()
 
         // when
         sut.select(workout)
         sut.load()
 
         // then
-        val next = observer.values()[2]
-        assertFalse(next.showWorkout().isPresent)
+        observer.assertValues(Optional.of(workout), Optional.empty())
     }
+
+    @Test
+    fun `model() returns model provided by CreateDetailFeature on createWorkout()`() {
+        // given
+        val dummyModel = Model.create(true, Optional.empty(), false, Optional.empty(), emptyList())
+        `when`(createWorkoutFeatureMock.apply(any())).thenReturn(Result { _ -> dummyModel })
+        val observer = sut.model().skip(1).test()
+
+        // when
+        sut.createWorkout()
+
+        // then
+        observer.assertValue(dummyModel)
+    }
+
+    @Test
+    fun `createWorkout is reset when unrelated model is emitted`() {
+        // given
+        val createWorkoutModel = Model.create(false, Optional.empty(), true, Optional.empty(), emptyList())
+        `when`(createWorkoutFeatureMock.apply(any())).thenReturn(Result { _ -> createWorkoutModel })
+        `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { it }))
+        val observer = sut.model().skip(1).map(Model::createWorkout).test()
+
+        // when
+        sut.createWorkout()
+        sut.load()
+
+        // then
+        observer.assertValues(true, false)
+    }
+
 }

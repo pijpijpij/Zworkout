@@ -18,6 +18,8 @@ public interface ViewModel {
 
     void select(@NonNull WorkoutDescriptor workout);
 
+    void createWorkout();
+
     @NotNull
     Observable<Model> model();
 }

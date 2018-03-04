@@ -4,11 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.annimon.stream.Optional;
 import com.pij.zworkout.R;
 import com.pij.zworkout.list.WorkoutDescriptor;
 import com.pij.zworkout.list.WorkoutsActivity;
@@ -18,6 +18,7 @@ import activitystarter.Arg;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import dagger.android.support.DaggerAppCompatActivity;
 
 import static com.annimon.stream.Optional.ofNullable;
 
@@ -28,15 +29,16 @@ import static com.annimon.stream.Optional.ofNullable;
  * item details are presented side-by-side with a list of items
  * in a {@link WorkoutsActivity}.
  */
-public class WorkoutDetailActivity extends AppCompatActivity {
+public class WorkoutDetailActivity extends DaggerAppCompatActivity {
 
-    @Arg
+    @Arg(optional = true)
     String itemId;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    public static Intent createIntent(Context caller, WorkoutDescriptor item) {
-        return WorkoutDetailActivityStarter.getIntent(caller, item.id());
+    public static Intent createIntent(Context caller, Optional<WorkoutDescriptor> item) {
+        return item.map(workout -> WorkoutDetailActivityStarter.getIntent(caller, workout.id()))
+                .orElse(WorkoutDetailActivityStarter.getIntent(caller));
     }
 
     @Override

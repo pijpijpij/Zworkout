@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.annimon.stream.Optional;
 import com.pij.zworkout.R;
 import com.pij.zworkout.dummy.DummyContent;
 import com.pij.zworkout.list.WorkoutDescriptor;
@@ -54,8 +55,9 @@ public class WorkoutDetailFragment extends Fragment {
     }
 
     @NonNull
-    public static WorkoutDetailFragment newInstance(WorkoutDescriptor item) {
-        return WorkoutDetailFragmentStarter.newInstance(item.id());
+    public static WorkoutDetailFragment newInstance(Optional<String> itemId) {
+        return itemId.map(WorkoutDetailFragmentStarter::newInstance)
+                .orElse(WorkoutDetailFragmentStarter.newInstance());
     }
 
     @Override

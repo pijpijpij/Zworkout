@@ -7,6 +7,7 @@ import com.pij.horrocks.DefaultEngine;
 import com.pij.horrocks.Logger;
 import com.pij.zworkout.ActivityScoped;
 import com.pij.zworkout.R;
+import com.pij.zworkout.list.viewmodel.CreateWorkoutFeature;
 import com.pij.zworkout.list.viewmodel.HorrocksViewModel;
 import com.pij.zworkout.list.viewmodel.ShowDetailFeature;
 import com.pij.zworkout.list.viewmodel.StorageLoadingFeature;
@@ -24,7 +25,11 @@ public class WorkoutsModule {
     @ActivityScoped
     @Provides
     ViewModel provideWorkoutsViewModel(Logger logger, StorageLoadingFeature loadingFeature) {
-        return HorrocksViewModel.create(logger, new DefaultEngine<>(logger), loadingFeature, new ShowDetailFeature());
+        return HorrocksViewModel.create(logger,
+                new DefaultEngine<>(logger),
+                loadingFeature,
+                new ShowDetailFeature(),
+                new CreateWorkoutFeature());
     }
 
     @ActivityScoped

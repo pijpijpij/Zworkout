@@ -35,19 +35,22 @@ public class HorrocksViewModel implements ViewModel {
     private final Observable<Model> modelStream;
     private final Feature<Object, Model> loader;
     private final Feature<WorkoutDescriptor, Model> showDetail;
+    private final Feature<Object, Model> createWorkout;
 
     private HorrocksViewModel(Logger logger, Engine<Model, Model> engine,
                               Feature<Object, Model> loadingFeature,
-                              Feature<WorkoutDescriptor, Model> showDetailFeature) {
+                              Feature<WorkoutDescriptor, Model> showDetailFeature,
+                              Feature<Object, Model> createWorkoutFeature) {
         this.logger = logger;
 
         loader = loadingFeature;
         showDetail = showDetailFeature;
+        createWorkout = createWorkoutFeature;
         Configuration<Model, Model> engineConfiguration = Configuration.<Model, Model>builder()
                 .store(new MemoryStore<>(initialState()))
                 .transientResetter(this::resetTransient)
                 .stateToModel(it -> it)
-                .features(asList(loader, showDetail))
+                .features(asList(loader, showDetail, createWorkout))
                 .build();
         modelStream = engine.runWith(engineConfiguration).share();
     }
@@ -58,22 +61,25 @@ public class HorrocksViewModel implements ViewModel {
     public static HorrocksViewModel create(Logger logger,
                                            Engine<Model, Model> engine,
                                            Function<Object, Observable<Result<Model>>> loadingFeature,
-                                           Function<WorkoutDescriptor, Result<Model>> showDetailFeature
+                                           Function<WorkoutDescriptor, Result<Model>> showDetailFeature,
+                                           Function<Object, Result<Model>> createWorkoutFeature
     ) {
         return new HorrocksViewModel(logger, engine,
                 new MultipleResultFeature<>(loadingFeature, logger),
-                new SingleResultFeature<>(showDetailFeature, logger)
+                new SingleResultFeature<>(showDetailFeature, logger),
+                new SingleResultFeature<>(createWorkoutFeature, logger)
         );
     }
 
     private Model resetTransient(Model input) {
         return input.toBuilder()
                 .showWorkout(Optional.empty())
+                .createWorkout(false)
                 .build();
     }
 
     private Model initialState() {
-        return Model.create(false, Optional.empty(), Optional.empty(), emptyList());
+        return Model.create(false, Optional.empty(), false, Optional.empty(), emptyList());
     }
 
     @Override
@@ -84,6 +90,11 @@ public class HorrocksViewModel implements ViewModel {
     @Override
     public void select(@NonNull WorkoutDescriptor workout) {
         showDetail.trigger(workout);
+    }
+
+    @Override
+    public void createWorkout() {
+        createWorkout.trigger(new Object());
     }
 
     @NotNull
