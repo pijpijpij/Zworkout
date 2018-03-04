@@ -1,7 +1,6 @@
 package com.pij.zworkout.list;
 
-import android.support.annotation.NonNull;
-
+import com.annimon.stream.Optional;
 import com.google.auto.value.AutoValue;
 
 /**
@@ -14,7 +13,7 @@ public abstract class WorkoutDescriptor {
         return new AutoValue_WorkoutDescriptor.Builder();
     }
 
-    public static WorkoutDescriptor create(@NonNull String id, @NonNull String name, @NonNull String details) {
+    public static WorkoutDescriptor create(String id, String name, Optional<String> details) {
         return builder()
                 .id(id)
                 .name(name)
@@ -26,16 +25,15 @@ public abstract class WorkoutDescriptor {
 
     public abstract String name();
 
-    public abstract String details();
+    public abstract Optional<String> details();
 
-    @SuppressWarnings("NullableProblems")
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract Builder id(@NonNull String id);
+        public abstract Builder id(String id);
 
-        public abstract Builder name(@NonNull String name);
+        public abstract Builder name(String name);
 
-        public abstract Builder details(@NonNull String details);
+        public abstract Builder details(Optional<String> details);
 
         public abstract WorkoutDescriptor build();
     }

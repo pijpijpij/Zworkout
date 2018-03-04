@@ -81,7 +81,7 @@ public class WorkoutDetailFragment extends Fragment {
         }
 
         // Show the dummy content as text in a TextView.
-        details.setText(item == null ? null : item.details());
+        details.setText(item == null ? null : item.details().orElse("-"));
 
     }
 

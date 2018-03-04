@@ -1,5 +1,8 @@
 package com.pij.zworkout.dummy;
 
+import android.support.annotation.NonNull;
+
+import com.annimon.stream.Optional;
 import com.pij.zworkout.list.WorkoutDescriptor;
 
 import java.util.ArrayList;
@@ -16,15 +19,13 @@ import java.util.Map;
 public class DummyContent {
 
     /**
-     * An array of sample (dummy) items.
-     */
-    public static final List<WorkoutDescriptor> ITEMS = new ArrayList<>();
-
-    /**
      * A map of sample (dummy) items, by ID.
      */
     public static final Map<String, WorkoutDescriptor> ITEM_MAP = new HashMap<>();
-
+    /**
+     * An array of sample (dummy) items.
+     */
+    private static final List<WorkoutDescriptor> ITEMS = new ArrayList<>();
     private static final int COUNT = 25;
 
     static {
@@ -43,10 +44,11 @@ public class DummyContent {
         return WorkoutDescriptor.builder()
                 .id(Integer.toString(position))
                 .name("Item " + position)
-                .details(makeDetails(position))
+                .details(Optional.of(makeDetails(position)))
                 .build();
     }
 
+    @NonNull
     private static String makeDetails(int position) {
         StringBuilder builder = new StringBuilder();
         builder.append("Details about Item: ").append(position);

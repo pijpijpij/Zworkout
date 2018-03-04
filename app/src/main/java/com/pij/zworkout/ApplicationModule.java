@@ -16,6 +16,7 @@ package com.pij.zworkout;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -30,6 +31,7 @@ import dagger.Provides;
  */
 @Module
 abstract class ApplicationModule {
+
     @Provides
     static Logger provideLogger() {
         return new Logger() {
@@ -44,6 +46,11 @@ abstract class ApplicationModule {
 
             }
         };
+    }
+
+    @Provides
+    static Resources providesResources(Context context) {
+        return context.getResources();
     }
 
     @Binds

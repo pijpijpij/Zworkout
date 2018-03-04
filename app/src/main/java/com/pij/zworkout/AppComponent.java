@@ -2,6 +2,8 @@ package com.pij.zworkout;
 
 import android.app.Application;
 
+import com.pij.zworkout.service.android.ServiceModule;
+
 import javax.inject.Singleton;
 
 import dagger.BindsInstance;
@@ -13,15 +15,15 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Component(modules = {
         ApplicationModule.class,
         ActivityBindingModule.class,
-        AndroidSupportInjectionModule.class})
+        ServiceModule.class,
+        AndroidSupportInjectionModule.class
+})
 
 public interface AppComponent extends AndroidInjector<ZworkoutApplication> {
 
     @Override
     void inject(ZworkoutApplication application);
 
-    //    void inject(DaggerApplication instance);
-//
     @Component.Builder
     interface Builder {
 

@@ -1,12 +1,16 @@
 package com.pij.zworkout.list;
 
 
+import android.content.res.Resources;
+
 import com.pij.horrocks.DefaultEngine;
 import com.pij.horrocks.Logger;
 import com.pij.zworkout.ActivityScoped;
-import com.pij.zworkout.list.viewmodel.DummyLoadingFeature;
+import com.pij.zworkout.R;
 import com.pij.zworkout.list.viewmodel.HorrocksViewModel;
 import com.pij.zworkout.list.viewmodel.ShowDetailFeature;
+import com.pij.zworkout.list.viewmodel.StorageLoadingFeature;
+import com.pij.zworkout.service.api.StorageService;
 
 import dagger.Module;
 import dagger.Provides;
@@ -19,8 +23,14 @@ public class WorkoutsModule {
 
     @ActivityScoped
     @Provides
-    ViewModel provideWorkoutsViewModel(Logger logger) {
-        return HorrocksViewModel.create(logger, new DefaultEngine<>(logger), new DummyLoadingFeature(), new ShowDetailFeature());
+    ViewModel provideWorkoutsViewModel(Logger logger, StorageLoadingFeature loadingFeature) {
+        return HorrocksViewModel.create(logger, new DefaultEngine<>(logger), loadingFeature, new ShowDetailFeature());
     }
 
+    @ActivityScoped
+    @Provides
+    StorageLoadingFeature provideStorageLoadingFeature(Logger logger, StorageService storage, Resources resources) {
+        String defaultErrorMessage = resources.getString(R.string.list_loading_error_message);
+        return new StorageLoadingFeature(logger, storage, defaultErrorMessage);
+    }
 }

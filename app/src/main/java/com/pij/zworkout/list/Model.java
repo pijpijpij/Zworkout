@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 import com.annimon.stream.Optional;
 import com.google.auto.value.AutoValue;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.List;
 
 /**
@@ -16,24 +18,26 @@ import java.util.List;
 @AutoValue
 public abstract class Model {
 
-    public static Model create(boolean inProgress,
-                               @NonNull Optional<WorkoutDescriptor> showWorkout,
-                               @NonNull List<WorkoutDescriptor> workouts) {
+    public static Builder builder() {
+        return new AutoValue_Model.Builder();
+    }
+
+    public static Model create(boolean inProgress, Optional<WorkoutDescriptor> showWorkout, Optional<String> showError, List<WorkoutDescriptor> workouts) {
         return builder()
                 .inProgress(inProgress)
                 .showWorkout(showWorkout)
+                .showError(showError)
                 .workouts(workouts)
                 .build();
-    }
-
-    public static Builder builder() {
-        return new AutoValue_Model.Builder();
     }
 
     public abstract boolean inProgress();
 
     @NonNull
     public abstract Optional<WorkoutDescriptor> showWorkout();
+
+    @NotNull
+    public abstract Optional<String> showError();
 
     @NonNull
     public abstract List<WorkoutDescriptor> workouts();
@@ -48,6 +52,8 @@ public abstract class Model {
         public abstract Builder workouts(@NonNull List<WorkoutDescriptor> workouts);
 
         public abstract Builder showWorkout(@NonNull Optional<WorkoutDescriptor> showWorkout);
+
+        public abstract Builder showError(Optional<String> showError);
 
         public abstract Model build();
     }
