@@ -25,6 +25,7 @@ import com.pij.horrocks.Logger;
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
+import dagger.Reusable;
 
 /**
  * Provides system-level objects.
@@ -32,6 +33,7 @@ import dagger.Provides;
 @Module
 abstract class ApplicationModule {
 
+    @Reusable
     @Provides
     static Logger provideLogger() {
         return new Logger() {
