@@ -36,7 +36,7 @@ public class WorkoutDetailModule {
     @Provides
     CreateWorkoutFeature provideCreateWorkoutFeature() {
         // TODO use a real name calculator
-        return new CreateWorkoutFeature(() -> "unnamed");
+        return new CreateWorkoutFeature(() -> "Unnamed workout");
     }
 
     @Provides

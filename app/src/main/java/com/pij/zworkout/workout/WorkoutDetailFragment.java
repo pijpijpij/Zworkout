@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.annimon.stream.Optional;
 import com.pij.zworkout.R;
-import com.pij.zworkout.list.WorkoutInfo;
 import com.pij.zworkout.list.WorkoutsActivity;
 
 import javax.inject.Inject;
@@ -47,16 +46,8 @@ public class WorkoutDetailFragment extends DaggerFragment {
     TextView name;
     @Inject
     ViewModel viewModel;
-    /**
-     * The dummy content this fragment is presenting.
-     */
-    private WorkoutInfo item;
     private Unbinder unbinder;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
     public WorkoutDetailFragment() {
     }
 
