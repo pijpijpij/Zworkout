@@ -66,7 +66,7 @@ class HorrocksViewModelTest {
         val observer = sut.model().test()
 
         // then
-        observer.assertValue(Model.create(false, Optional.empty()))
+        observer.assertValue(Model.create(false, Optional.empty(), ""))
     }
 
     @Ignore("not implemented yet")
@@ -87,7 +87,7 @@ class HorrocksViewModelTest {
     @Test
     fun `model() returns model provided by LoadingFeature on load()`() {
         // given
-        val loaded = Model.create(true, Optional.empty())
+        val loaded = Model.create(true, Optional.empty(), "")
         `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { _ -> loaded }))
         val observer = sut.model().skip(1).test()
 
@@ -101,7 +101,7 @@ class HorrocksViewModelTest {
     @Test
     fun `model() returns model provided by CreateDetailFeature on createWorkout()`() {
         // given
-        val dummyModel = Model.create(true, Optional.empty())
+        val dummyModel = Model.create(true, Optional.empty(), "")
         `when`(createWorkoutFeatureMock.apply(any())).thenReturn(Result { _ -> dummyModel })
         val observer = sut.model().skip(1).test()
 

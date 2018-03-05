@@ -23,14 +23,23 @@ class WorkoutDetailModule {
 
     @ActivityScoped
     @Provides
-    ViewModel provideHorrocksViewModel(Logger logger, StorageLoadingFeature loadingFeature) {
+    ViewModel provideHorrocksViewModel(Logger logger,
+                                       StorageLoadingFeature loadingFeature,
+                                       CreateWorkoutFeature createWorkoutFeature) {
         return HorrocksViewModel.create(logger,
                 new DefaultEngine<>(logger),
                 loadingFeature,
-                new CreateWorkoutFeature());
+                // TODO use a real name calculator
+                createWorkoutFeature
+        );
     }
 
-    @ActivityScoped
+    @Provides
+    CreateWorkoutFeature provideCreateWorkoutFeature() {
+        // TODO use a real name calculator
+        return new CreateWorkoutFeature(() -> "unnamed");
+    }
+
     @Provides
     StorageLoadingFeature provideStorageLoadingFeature(Logger logger, StorageService storage, Resources resources) {
         String defaultErrorMessage = resources.getString(R.string.list_loading_error_message);

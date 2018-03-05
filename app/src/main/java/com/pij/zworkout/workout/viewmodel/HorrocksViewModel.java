@@ -71,7 +71,11 @@ public class HorrocksViewModel implements ViewModel {
     }
 
     private Model initialState() {
-        return Model.create(false, Optional.empty());
+        return Model.builder()
+                .inProgress(false)
+                .showError(Optional.empty())
+                .name("")
+                .build();
     }
 
     @Override

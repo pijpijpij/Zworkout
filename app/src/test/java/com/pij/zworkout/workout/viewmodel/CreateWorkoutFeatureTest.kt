@@ -17,14 +17,14 @@ class CreateWorkoutFeatureTest {
     @Test
     fun `Adds an initial - empty - model`() {
         // given
-        val current = Model.create(true, Optional.empty())
-        val sut = CreateWorkoutFeature()
+        val current = Model.create(true, Optional.empty(), "")
+        val sut = CreateWorkoutFeature { "name" }
 
         // when
         val next = sut.apply(Any()).applyTo(current)
 
         // then
-        assertEquals(next, Model.create(true, Optional.empty()))
+        assertEquals(next, Model.create(true, Optional.empty(), "name"))
 
     }
 

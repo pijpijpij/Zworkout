@@ -6,4 +6,7 @@
     <string name="list_loading">Loading workouts…</string>
     <string name="list_empty">There are no workouts. Create one by pressing on the button below.</string>
 
+    <!--Detail screen-->
+    <string name="detail_name_hint">Workout name</string>
+
 </resources>

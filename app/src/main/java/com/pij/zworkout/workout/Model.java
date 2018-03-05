@@ -17,10 +17,11 @@ public abstract class Model {
         return new AutoValue_Model.Builder();
     }
 
-    public static Model create(boolean inProgress, Optional<String> showError) {
+    public static Model create(boolean inProgress, Optional<String> showError, String name) {
         return builder()
                 .inProgress(inProgress)
                 .showError(showError)
+                .name(name)
                 .build();
     }
 
@@ -29,14 +30,18 @@ public abstract class Model {
     @NotNull
     public abstract Optional<String> showError();
 
+    @NotNull
+    public abstract String name();
+
     public abstract Builder toBuilder();
 
-    @SuppressWarnings("NullableProblems")
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder inProgress(boolean inProgress);
 
         public abstract Builder showError(Optional<String> showError);
+
+        public abstract Builder name(String name);
 
         public abstract Model build();
     }

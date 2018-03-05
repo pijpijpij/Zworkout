@@ -38,7 +38,7 @@ public class WorkoutDetailFragment extends DaggerFragment {
     @Arg(optional = true)
     String itemId;
 
-    @BindView(R.id.workout_detail)
+    @BindView(R.id.name)
     TextView details;
 
     /**

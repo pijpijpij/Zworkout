@@ -3,10 +3,10 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
 
-        <!-- specify enter and exit transitions -->
-        <item name="android:windowActivityTransitions">true</item>
-        <item name="android:windowEnterTransition">@android:transition/fade</item>
-        <item name="android:windowExitTransition">@android:transition/fade</item>
+        <!--&lt;!&ndash; specify enter and exit transitions &ndash;&gt;-->
+        <!--<item name="android:windowActivityTransitions">true</item>-->
+        <!--<item name="android:windowEnterTransition">@android:transition/fade</item>-->
+        <!--<item name="android:windowExitTransition">@android:transition/fade</item>-->
 
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>

@@ -3,6 +3,8 @@ package com.pij.zworkout.workout.viewmodel;
 import com.pij.horrocks.Result;
 import com.pij.zworkout.workout.Model;
 
+import javax.inject.Provider;
+
 import io.reactivex.functions.Function;
 
 /**
@@ -12,9 +14,16 @@ import io.reactivex.functions.Function;
  */
 
 public class CreateWorkoutFeature implements Function<Object, Result<Model>> {
+    private final Provider<String> name;
+
+    public CreateWorkoutFeature(Provider<String> name) {
+        this.name = name;
+    }
+
     @Override
     public Result<Model> apply(Object event) {
         return current -> current.toBuilder()
+                .name(name.get())
                 // TODO write this
                 .build();
     }
