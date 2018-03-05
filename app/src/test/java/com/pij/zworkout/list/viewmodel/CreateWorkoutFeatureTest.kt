@@ -19,7 +19,7 @@ class CreateWorkoutFeatureTest {
     fun `Adds the createWorkout flag`() {
         // given
         val workout = WorkoutInfo.create("id", "name", Optional.of("detail"))
-        val current = Model.create(true, Optional.empty(), false, Optional.empty(), emptyList())
+        val current = Model.create(true, Optional.empty(), Optional.empty(), false, emptyList())
         val sut = CreateWorkoutFeature()
 
         // when

@@ -29,7 +29,7 @@ class StorageLoadingFeatureTest {
     @Mock
     private lateinit var storageServiceMock: StorageService
 
-    private val defaultState = Model.create(false, Optional.empty(), false, Optional.empty(), emptyList())
+    private val defaultState = Model.create(false, Optional.empty(), Optional.empty(), false, emptyList())
 
     private lateinit var sut: StorageLoadingFeature
     private lateinit var workoutFile: WorkoutFile

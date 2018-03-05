@@ -74,12 +74,13 @@ public class HorrocksViewModel implements ViewModel {
     private Model resetTransient(Model input) {
         return input.toBuilder()
                 .showWorkout(Optional.empty())
+                .showError(Optional.empty())
                 .createWorkout(false)
                 .build();
     }
 
     private Model initialState() {
-        return Model.create(false, Optional.empty(), false, Optional.empty(), emptyList());
+        return Model.create(false, Optional.empty(), Optional.empty(), false, emptyList());
     }
 
     @Override

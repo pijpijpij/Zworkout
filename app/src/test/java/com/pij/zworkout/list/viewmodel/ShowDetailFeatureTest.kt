@@ -21,7 +21,7 @@ class ShowDetailFeatureTest {
     fun `Adds the showDetail flag`() {
         // given
         val workout = WorkoutInfo.create("id", "name", Optional.of("detail"))
-        val current = Model.create(true, Optional.empty(), false, Optional.empty(), emptyList())
+        val current = Model.create(true, Optional.empty(), Optional.empty(), false, emptyList())
         val sut = ShowDetailFeature()
 
         // when
@@ -36,7 +36,7 @@ class ShowDetailFeatureTest {
     fun `Adds the input workout as the showDetail flag`() {
         // given
         val workout = WorkoutInfo.create("id", "name", Optional.of("detail"))
-        val current = Model.create(true, Optional.empty(), false, Optional.empty(), emptyList())
+        val current = Model.create(true, Optional.empty(), Optional.empty(), false, emptyList())
         val sut = ShowDetailFeature()
 
         // when
