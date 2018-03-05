@@ -79,9 +79,9 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
         list.setAdapter(adapter);
 
         subscriptions.addAll(
-                viewModel.model().map(Model::workouts).subscribe(this::showItems),
                 viewModel.model().map(Model::inProgress).subscribe(this::showInProgress),
                 viewModel.model().map(Model::showError).filter(Optional::isPresent).map(Optional::get).subscribe(this::showError),
+                viewModel.model().map(Model::workouts).subscribe(this::showItems),
                 viewModel.model().map(Model::showWorkout).filter(Optional::isPresent).subscribe(this::showWorkout),
                 viewModel.model().map(Model::createWorkout).filter(create -> create).subscribe(trigger -> showWorkout(Optional.empty()))
         );

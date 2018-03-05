@@ -5,7 +5,7 @@ import android.content.res.Resources;
 
 import com.pij.horrocks.DefaultEngine;
 import com.pij.horrocks.Logger;
-import com.pij.zworkout.ActivityScoped;
+import com.pij.zworkout.FragmentScoped;
 import com.pij.zworkout.R;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.workout.viewmodel.CreateWorkoutFeature;
@@ -19,9 +19,9 @@ import dagger.Provides;
  * This is a Dagger module. We use this to pass in the View dependency to the {@link ViewModel}.
  */
 @Module
-class WorkoutDetailModule {
+public class WorkoutDetailModule {
 
-    @ActivityScoped
+    @FragmentScoped
     @Provides
     ViewModel provideHorrocksViewModel(Logger logger,
                                        StorageLoadingFeature loadingFeature,
@@ -29,7 +29,6 @@ class WorkoutDetailModule {
         return HorrocksViewModel.create(logger,
                 new DefaultEngine<>(logger),
                 loadingFeature,
-                // TODO use a real name calculator
                 createWorkoutFeature
         );
     }
