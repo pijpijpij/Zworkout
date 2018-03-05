@@ -26,7 +26,7 @@ class ViewHolder extends RecyclerView.ViewHolder {
         ButterKnife.bind(this, itemView);
     }
 
-    void bind(WorkoutDescriptor item, Consumer<WorkoutDescriptor> clickAction) {
+    void bind(WorkoutInfo item, Consumer<WorkoutInfo> clickAction) {
         name.setText(item.id());
         content.setText(item.name());
         itemView.setOnClickListener(view -> clickAction.accept(item));

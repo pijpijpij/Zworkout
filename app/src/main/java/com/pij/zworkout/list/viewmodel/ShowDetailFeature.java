@@ -3,7 +3,7 @@ package com.pij.zworkout.list.viewmodel;
 import com.annimon.stream.Optional;
 import com.pij.horrocks.Result;
 import com.pij.zworkout.list.Model;
-import com.pij.zworkout.list.WorkoutDescriptor;
+import com.pij.zworkout.list.WorkoutInfo;
 
 import io.reactivex.functions.Function;
 
@@ -13,11 +13,11 @@ import io.reactivex.functions.Function;
  * @author Pierrejean
  */
 
-public class ShowDetailFeature implements Function<WorkoutDescriptor, Result<Model>> {
+public class ShowDetailFeature implements Function<WorkoutInfo, Result<Model>> {
     @Override
-    public Result<Model> apply(WorkoutDescriptor workoutDescriptor) {
+    public Result<Model> apply(WorkoutInfo workoutInfo) {
         return current -> current.toBuilder()
-                .showWorkout(Optional.of(workoutDescriptor))
+                .showWorkout(Optional.of(workoutInfo))
                 .build();
     }
 }

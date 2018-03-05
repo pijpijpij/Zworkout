@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.annimon.stream.Optional;
 import com.pij.zworkout.R;
-import com.pij.zworkout.list.WorkoutDescriptor;
+import com.pij.zworkout.list.WorkoutInfo;
 import com.pij.zworkout.list.WorkoutsActivity;
 
 import activitystarter.ActivityStarter;
@@ -36,7 +36,7 @@ public class WorkoutDetailActivity extends DaggerAppCompatActivity {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    public static Intent createIntent(Context caller, Optional<WorkoutDescriptor> item) {
+    public static Intent createIntent(Context caller, Optional<WorkoutInfo> item) {
         return item.map(workout -> WorkoutDetailActivityStarter.getIntent(caller, workout.id()))
                 .orElse(WorkoutDetailActivityStarter.getIntent(caller));
     }

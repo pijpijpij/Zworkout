@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +12,7 @@ import android.widget.TextView;
 import com.annimon.stream.Optional;
 import com.pij.zworkout.R;
 import com.pij.zworkout.dummy.DummyContent;
-import com.pij.zworkout.list.WorkoutDescriptor;
+import com.pij.zworkout.list.WorkoutInfo;
 import com.pij.zworkout.list.WorkoutsActivity;
 
 import activitystarter.ActivityStarter;
@@ -21,6 +20,7 @@ import activitystarter.Arg;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
+import dagger.android.support.DaggerFragment;
 
 import static com.annimon.stream.Optional.ofNullable;
 
@@ -30,7 +30,7 @@ import static com.annimon.stream.Optional.ofNullable;
  * in two-pane mode (on tablets) or a {@link WorkoutDetailActivity}
  * on handsets.
  */
-public class WorkoutDetailFragment extends Fragment {
+public class WorkoutDetailFragment extends DaggerFragment {
     /**
      * The fragment argument representing the item ID that this fragment
      * represents.
@@ -44,7 +44,7 @@ public class WorkoutDetailFragment extends Fragment {
     /**
      * The dummy content this fragment is presenting.
      */
-    private WorkoutDescriptor item;
+    private WorkoutInfo item;
     private Unbinder unbinder;
 
     /**

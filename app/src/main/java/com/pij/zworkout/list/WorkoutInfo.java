@@ -7,13 +7,13 @@ import com.google.auto.value.AutoValue;
  * A dummy item representing a piece of content.
  */
 @AutoValue
-public abstract class WorkoutDescriptor {
+public abstract class WorkoutInfo {
 
     public static Builder builder() {
-        return new AutoValue_WorkoutDescriptor.Builder();
+        return new AutoValue_WorkoutInfo.Builder();
     }
 
-    public static WorkoutDescriptor create(String id, String name, Optional<String> details) {
+    public static WorkoutInfo create(String id, String name, Optional<String> details) {
         return builder()
                 .id(id)
                 .name(name)
@@ -35,6 +35,6 @@ public abstract class WorkoutDescriptor {
 
         public abstract Builder details(Optional<String> details);
 
-        public abstract WorkoutDescriptor build();
+        public abstract WorkoutInfo build();
     }
 }

@@ -3,7 +3,7 @@ package com.pij.zworkout.list.viewmodel
 import com.annimon.stream.Optional
 import com.pij.horrocks.SysoutLogger
 import com.pij.zworkout.list.Model
-import com.pij.zworkout.list.WorkoutDescriptor
+import com.pij.zworkout.list.WorkoutInfo
 import com.pij.zworkout.service.api.StorageService
 import com.pij.zworkout.service.api.WorkoutFile
 import io.reactivex.Observable
@@ -33,14 +33,14 @@ class StorageLoadingFeatureTest {
 
     private lateinit var sut: StorageLoadingFeature
     private lateinit var workoutFile: WorkoutFile
-    private lateinit var workoutDescriptor: WorkoutDescriptor
+    private lateinit var workoutInfo: WorkoutInfo
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         `when`(storageServiceMock.workouts()).thenReturn(Observable.never())
         workoutFile = WorkoutFile.create(URI.create("some/file"), "zip", Optional.of("zap"))
-        workoutDescriptor = WorkoutDescriptor.create("some/file", "zip", Optional.of("zap"))
+        workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.of("zap"))
         sut = StorageLoadingFeature(SysoutLogger(), storageServiceMock, "the default error message")
     }
 
@@ -66,7 +66,7 @@ class StorageLoadingFeatureTest {
         // then
         val actual = observer.values()[1]
         assertFalse(actual.inProgress())
-        assertThat(actual.workouts(), containsInAnyOrder(workoutDescriptor))
+        assertThat(actual.workouts(), containsInAnyOrder(workoutInfo))
     }
 
     @Test

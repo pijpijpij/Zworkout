@@ -20,15 +20,15 @@ import static java.util.Collections.emptyList;
  */
 class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private final Consumer<WorkoutDescriptor> clickAction;
-    private List<WorkoutDescriptor> items;
+    private final Consumer<WorkoutInfo> clickAction;
+    private List<WorkoutInfo> items;
 
-    Adapter(Consumer<WorkoutDescriptor> clickAction) {
+    Adapter(Consumer<WorkoutInfo> clickAction) {
         this.items = emptyList();
         this.clickAction = clickAction;
     }
 
-    void setItems(@NonNull List<WorkoutDescriptor> items) {
+    void setItems(@NonNull List<WorkoutInfo> items) {
         this.items = items;
         notifyDataSetChanged();
     }
@@ -42,7 +42,7 @@ class Adapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        WorkoutDescriptor item = items.get(position);
+        WorkoutInfo item = items.get(position);
         holder.bind(item, clickAction);
     }
 

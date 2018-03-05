@@ -3,7 +3,7 @@ package com.pij.zworkout.dummy;
 import android.support.annotation.NonNull;
 
 import com.annimon.stream.Optional;
-import com.pij.zworkout.list.WorkoutDescriptor;
+import com.pij.zworkout.list.WorkoutInfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,11 +21,11 @@ public class DummyContent {
     /**
      * A map of sample (dummy) items, by ID.
      */
-    public static final Map<String, WorkoutDescriptor> ITEM_MAP = new HashMap<>();
+    public static final Map<String, WorkoutInfo> ITEM_MAP = new HashMap<>();
     /**
      * An array of sample (dummy) items.
      */
-    private static final List<WorkoutDescriptor> ITEMS = new ArrayList<>();
+    private static final List<WorkoutInfo> ITEMS = new ArrayList<>();
     private static final int COUNT = 25;
 
     static {
@@ -35,13 +35,13 @@ public class DummyContent {
         }
     }
 
-    private static void addItem(WorkoutDescriptor item) {
+    private static void addItem(WorkoutInfo item) {
         ITEMS.add(item);
         ITEM_MAP.put(item.id(), item);
     }
 
-    private static WorkoutDescriptor createDummyItem(int position) {
-        return WorkoutDescriptor.builder()
+    private static WorkoutInfo createDummyItem(int position) {
+        return WorkoutInfo.builder()
                 .id(Integer.toString(position))
                 .name("Item " + position)
                 .details(Optional.of(makeDetails(position)))

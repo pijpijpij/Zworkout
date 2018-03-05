@@ -16,7 +16,7 @@ public interface ViewModel {
 
     void load();
 
-    void select(@NonNull WorkoutDescriptor workout);
+    void select(@NonNull WorkoutInfo workout);
 
     void createWorkout();
 

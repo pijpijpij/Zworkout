@@ -22,8 +22,8 @@ public abstract class Model {
         return new AutoValue_Model.Builder();
     }
 
-    public static Model create(boolean inProgress, Optional<WorkoutDescriptor> showWorkout, boolean createWorkout, Optional<String>
-            showError, List<WorkoutDescriptor> workouts) {
+    public static Model create(boolean inProgress, Optional<WorkoutInfo> showWorkout, boolean createWorkout, Optional<String>
+            showError, List<WorkoutInfo> workouts) {
         return builder()
                 .inProgress(inProgress)
                 .showWorkout(showWorkout)
@@ -36,7 +36,7 @@ public abstract class Model {
     public abstract boolean inProgress();
 
     @NonNull
-    public abstract Optional<WorkoutDescriptor> showWorkout();
+    public abstract Optional<WorkoutInfo> showWorkout();
 
     public abstract boolean createWorkout();
 
@@ -44,7 +44,7 @@ public abstract class Model {
     public abstract Optional<String> showError();
 
     @NonNull
-    public abstract List<WorkoutDescriptor> workouts();
+    public abstract List<WorkoutInfo> workouts();
 
     public abstract Builder toBuilder();
 
@@ -53,9 +53,9 @@ public abstract class Model {
     public abstract static class Builder {
         public abstract Builder inProgress(boolean inProgress);
 
-        public abstract Builder workouts(@NonNull List<WorkoutDescriptor> workouts);
+        public abstract Builder workouts(@NonNull List<WorkoutInfo> workouts);
 
-        public abstract Builder showWorkout(@NonNull Optional<WorkoutDescriptor> showWorkout);
+        public abstract Builder showWorkout(@NonNull Optional<WorkoutInfo> showWorkout);
 
         public abstract Builder showError(Optional<String> showError);
 

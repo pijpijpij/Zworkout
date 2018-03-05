@@ -5,7 +5,7 @@ import com.pij.horrocks.DefaultEngine
 import com.pij.horrocks.Result
 import com.pij.horrocks.SysoutLogger
 import com.pij.zworkout.list.Model
-import com.pij.zworkout.list.WorkoutDescriptor
+import com.pij.zworkout.list.WorkoutInfo
 import io.reactivex.Observable
 import junit.framework.TestCase.assertFalse
 import org.hamcrest.MatcherAssert.assertThat
@@ -29,7 +29,7 @@ class HorrocksViewModelTest {
     @Mock
     private lateinit var loadingFeatureMock: io.reactivex.functions.Function<Any, Observable<Result<Model>>>
     @Mock
-    private lateinit var showDetailFeatureMock: io.reactivex.functions.Function<WorkoutDescriptor, Result<Model>>
+    private lateinit var showDetailFeatureMock: io.reactivex.functions.Function<WorkoutInfo, Result<Model>>
     @Mock
     private lateinit var createWorkoutFeatureMock: io.reactivex.functions.Function<Any, Result<Model>>
 
@@ -94,7 +94,7 @@ class HorrocksViewModelTest {
     @Test
     fun `model() returns model provided by LoadingFeature on load()`() {
         // given
-        val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
+        val workout = WorkoutInfo.create("1", "the one", Optional.of("who cares"))
         val loaded = Model.create(true, Optional.empty(), false, Optional.empty(), listOf(workout))
         `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { _ -> loaded }))
         val observer = sut.model().skip(1).test()
@@ -109,7 +109,7 @@ class HorrocksViewModelTest {
     @Test
     fun `selecting a workout triggers ShowDetailFeature`() {
         // given
-        val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
+        val workout = WorkoutInfo.create("1", "the one", Optional.of("who cares"))
         `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { it })
         sut.model().test()
         reset(showDetailFeatureMock)
@@ -124,7 +124,7 @@ class HorrocksViewModelTest {
     @Test
     fun `model() returns model provided by ShowDetailFeature on select()`() {
         // given
-        val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
+        val workout = WorkoutInfo.create("1", "the one", Optional.of("who cares"))
         val dummyModel = Model.create(true, Optional.empty(), false, Optional.empty(), listOf(workout))
         `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { _ -> dummyModel })
         val observer = sut.model().skip(1).test()
@@ -139,7 +139,7 @@ class HorrocksViewModelTest {
     @Test
     fun `showDetail is reset when unrelated model is emitted`() {
         // given
-        val workout = WorkoutDescriptor.create("1", "the one", Optional.of("who cares"))
+        val workout = WorkoutInfo.create("1", "the one", Optional.of("who cares"))
         val showDetail = Model.create(false, Optional.of(workout), false, Optional.empty(), listOf(workout))
         `when`(showDetailFeatureMock.apply(any())).thenReturn(Result { _ -> showDetail })
         `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { it }))

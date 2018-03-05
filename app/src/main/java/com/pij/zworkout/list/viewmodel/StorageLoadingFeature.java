@@ -19,7 +19,7 @@ import android.support.annotation.NonNull;
 import com.pij.horrocks.Logger;
 import com.pij.horrocks.Result;
 import com.pij.zworkout.list.Model;
-import com.pij.zworkout.list.WorkoutDescriptor;
+import com.pij.zworkout.list.WorkoutInfo;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.service.api.WorkoutFile;
 
@@ -48,7 +48,7 @@ public class StorageLoadingFeature implements Function<Object, Observable<Result
     }
 
     @NonNull
-    private static Model updateSuccessState(Model current, List<WorkoutDescriptor> list) {
+    private static Model updateSuccessState(Model current, List<WorkoutInfo> list) {
         return current.toBuilder()
                 .workouts(list)
                 .inProgress(false)
@@ -82,8 +82,8 @@ public class StorageLoadingFeature implements Function<Object, Observable<Result
                 .startWith(this::updateStartState);
     }
 
-    private WorkoutDescriptor convert(WorkoutFile file) {
-        return WorkoutDescriptor.builder()
+    private WorkoutInfo convert(WorkoutFile file) {
+        return WorkoutInfo.builder()
                 .id(file.uri().toString())
                 .name(file.name())
                 .details(file.detail())

@@ -13,7 +13,7 @@ import com.pij.horrocks.Result;
 import com.pij.horrocks.SingleResultFeature;
 import com.pij.zworkout.list.Model;
 import com.pij.zworkout.list.ViewModel;
-import com.pij.zworkout.list.WorkoutDescriptor;
+import com.pij.zworkout.list.WorkoutInfo;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -34,12 +34,12 @@ public class HorrocksViewModel implements ViewModel {
     private final Logger logger;
     private final Observable<Model> modelStream;
     private final Feature<Object, Model> loader;
-    private final Feature<WorkoutDescriptor, Model> showDetail;
+    private final Feature<WorkoutInfo, Model> showDetail;
     private final Feature<Object, Model> createWorkout;
 
     private HorrocksViewModel(Logger logger, Engine<Model, Model> engine,
                               Feature<Object, Model> loadingFeature,
-                              Feature<WorkoutDescriptor, Model> showDetailFeature,
+                              Feature<WorkoutInfo, Model> showDetailFeature,
                               Feature<Object, Model> createWorkoutFeature) {
         this.logger = logger;
 
@@ -61,7 +61,7 @@ public class HorrocksViewModel implements ViewModel {
     public static HorrocksViewModel create(Logger logger,
                                            Engine<Model, Model> engine,
                                            Function<Object, Observable<Result<Model>>> loadingFeature,
-                                           Function<WorkoutDescriptor, Result<Model>> showDetailFeature,
+                                           Function<WorkoutInfo, Result<Model>> showDetailFeature,
                                            Function<Object, Result<Model>> createWorkoutFeature
     ) {
         return new HorrocksViewModel(logger, engine,
@@ -88,7 +88,7 @@ public class HorrocksViewModel implements ViewModel {
     }
 
     @Override
-    public void select(@NonNull WorkoutDescriptor workout) {
+    public void select(@NonNull WorkoutInfo workout) {
         showDetail.trigger(workout);
     }
 

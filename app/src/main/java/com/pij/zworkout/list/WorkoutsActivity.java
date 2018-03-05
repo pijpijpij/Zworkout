@@ -55,15 +55,15 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
         return new Intent(caller, WorkoutsActivity.class);
     }
 
-    private void showInFragment(Optional<WorkoutDescriptor> item) {
-        WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(item.map(WorkoutDescriptor::id));
+    private void showInFragment(Optional<WorkoutInfo> item) {
+        WorkoutDetailFragment fragment = WorkoutDetailFragment.newInstance(item.map(WorkoutInfo::id));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.workout_detail_container, fragment)
                 .commit();
     }
 
 
-    private void showInActivity(Optional<WorkoutDescriptor> item) {
+    private void showInActivity(Optional<WorkoutInfo> item) {
         Intent intent = WorkoutDetailActivity.createIntent(this, item);
         startActivity(intent);
     }
@@ -87,13 +87,13 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
         );
     }
 
-    private void showWorkout(Optional<WorkoutDescriptor> workout) {
+    private void showWorkout(Optional<WorkoutInfo> workout) {
         // The detail container view will be present only in the
         // large-screen layouts (res/values-w900dp).
         // If this view is present, then the
         // activity should be in two-pane mode.
         boolean twoPane = findViewById(R.id.workout_detail_container) != null;
-        Consumer<Optional<WorkoutDescriptor>> clickAction = twoPane ? this::showInFragment : this::showInActivity;
+        Consumer<Optional<WorkoutInfo>> clickAction = twoPane ? this::showInFragment : this::showInActivity;
 
         clickAction.accept(workout);
     }
@@ -102,7 +102,7 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
         Snackbar.make(list, message, Snackbar.LENGTH_LONG).show();
     }
 
-    private void showItems(List<WorkoutDescriptor> items) {
+    private void showItems(List<WorkoutInfo> items) {
         adapter.setItems(items);
         list.setVisibility(items.isEmpty() ? View.GONE : View.VISIBLE);
         empty.setVisibility(items.isEmpty() ? View.VISIBLE : View.GONE);
