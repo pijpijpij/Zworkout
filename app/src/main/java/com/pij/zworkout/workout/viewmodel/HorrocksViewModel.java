@@ -33,19 +33,22 @@ public class HorrocksViewModel implements ViewModel {
     private final Observable<Model> modelStream;
     private final Feature<String, Model> loader;
     private final Feature<Object, Model> createWorkout;
+    private final Feature<String, Model> name;
 
     private HorrocksViewModel(Logger logger, Engine<Model, Model> engine,
+                              Feature<String, Model> nameFeature,
                               Feature<String, Model> loadingFeature,
                               Feature<Object, Model> createWorkoutFeature) {
         this.logger = logger;
 
+        name = nameFeature;
         loader = loadingFeature;
         createWorkout = createWorkoutFeature;
         Configuration<Model, Model> engineConfiguration = Configuration.<Model, Model>builder()
                 .store(new MemoryStore<>(initialState()))
                 .transientResetter(this::resetTransient)
                 .stateToModel(it -> it)
-                .features(asList(loader, createWorkout))
+                .features(asList(name, loader, createWorkout))
                 .build();
         modelStream = engine.runWith(engineConfiguration).share();
     }
@@ -55,10 +58,12 @@ public class HorrocksViewModel implements ViewModel {
      */
     public static HorrocksViewModel create(Logger logger,
                                            Engine<Model, Model> engine,
+                                           Function<String, Result<Model>> nameFeature,
                                            Function<String, Observable<Result<Model>>> loadingFeature,
                                            Function<Object, Result<Model>> createWorkoutFeature
     ) {
         return new HorrocksViewModel(logger, engine,
+                new SingleResultFeature<>(nameFeature, logger),
                 new MultipleResultFeature<>(loadingFeature, logger),
                 new SingleResultFeature<>(createWorkoutFeature, logger)
         );
@@ -95,5 +100,10 @@ public class HorrocksViewModel implements ViewModel {
                 .doOnError(e -> logger.print(getClass(), "Terminal Damage!!!", e))
                 .doOnComplete(() -> logger.print(getClass(), "model() completed!!!"))
                 ;
+    }
+
+    @Override
+    public void name(@NotNull String newValue) {
+        name.trigger(newValue);
     }
 }

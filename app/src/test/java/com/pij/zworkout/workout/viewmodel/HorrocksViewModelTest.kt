@@ -21,17 +21,27 @@ import org.mockito.MockitoAnnotations
  */
 class HorrocksViewModelTest {
 
+    private val simpleModel = Model.create(true, Optional.empty(), "")
+
+    /** Provides {@link #simpleModel} when called.
+     */
+    private val simpleResult = Result<Model> { _ -> simpleModel }
+
+
     private lateinit var sut: HorrocksViewModel
 
     @Mock
     private lateinit var loadingFeatureMock: io.reactivex.functions.Function<String, Observable<Result<Model>>>
     @Mock
     private lateinit var createWorkoutFeatureMock: io.reactivex.functions.Function<Any, Result<Model>>
+    @Mock
+    private lateinit var nameFeatureMock: io.reactivex.functions.Function<String, Result<Model>>
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         sut = HorrocksViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
+                nameFeatureMock,
                 loadingFeatureMock,
                 createWorkoutFeatureMock)
     }
@@ -69,6 +79,32 @@ class HorrocksViewModelTest {
         observer.assertValue(Model.create(false, Optional.empty(), ""))
     }
 
+    @Test
+    fun `Changing name triggers NameFeature`() {
+        // given
+        `when`(nameFeatureMock.apply("a name")).thenReturn(simpleResult)
+        sut.model().test()
+
+        // when
+        sut.name("a name")
+
+        // then
+        verify(nameFeatureMock).apply("a name")
+    }
+
+    @Test
+    fun `model() returns model provided by ChangeNameFeature on setName()`() {
+        // given
+        `when`(nameFeatureMock.apply(anyString())).thenReturn(Result { _ -> simpleModel })
+        val observer = sut.model().skip(1).test()
+
+        // when
+        sut.name("whatever")
+
+        // then
+        observer.assertValue(simpleModel)
+    }
+
     @Ignore("not implemented yet")
     @Test
     fun `Loading triggers LoadingFeature`() {
@@ -87,29 +123,40 @@ class HorrocksViewModelTest {
     @Test
     fun `model() returns model provided by LoadingFeature on load()`() {
         // given
-        val loaded = Model.create(true, Optional.empty(), "")
-        `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(Result { _ -> loaded }))
+        `when`(loadingFeatureMock.apply(any())).thenReturn(Observable.just(simpleResult))
         val observer = sut.model().skip(1).test()
 
         // when
         sut.load("an id")
 
         // then
-        observer.assertValue(loaded)
+        observer.assertValue(simpleModel)
+    }
+
+    @Test
+    fun `Creating Workout triggers CreateWorkoutFeature`() {
+        // given
+        `when`(createWorkoutFeatureMock.apply(any())).thenReturn(simpleResult)
+        sut.model().test()
+
+        // when
+        sut.createWorkout()
+
+        // then
+        verify(createWorkoutFeatureMock).apply(any())
     }
 
     @Test
     fun `model() returns model provided by CreateDetailFeature on createWorkout()`() {
         // given
-        val dummyModel = Model.create(true, Optional.empty(), "")
-        `when`(createWorkoutFeatureMock.apply(any())).thenReturn(Result { _ -> dummyModel })
+        `when`(createWorkoutFeatureMock.apply(any())).thenReturn(Result { _ -> simpleModel })
         val observer = sut.model().skip(1).test()
 
         // when
         sut.createWorkout()
 
         // then
-        observer.assertValue(dummyModel)
+        observer.assertValue(simpleModel)
     }
 
 }

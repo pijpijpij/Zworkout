@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.util.ObjectsCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import activitystarter.ActivityStarter;
 import activitystarter.Arg;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnTextChanged;
 import butterknife.Unbinder;
 import dagger.android.support.DaggerFragment;
 import io.reactivex.disposables.CompositeDisposable;
@@ -70,7 +72,7 @@ public class WorkoutDetailFragment extends DaggerFragment {
         subscriptions.addAll(
                 viewModel.model().map(Model::inProgress).subscribe(this::showInProgress),
                 viewModel.model().map(Model::showError).filter(Optional::isPresent).map(Optional::get).subscribe(this::showError),
-                viewModel.model().map(Model::name).subscribe(this::setName)
+                viewModel.model().map(Model::name).subscribe(this::displayName)
         );
 
         if (savedInstanceState == null) {
@@ -82,21 +84,28 @@ public class WorkoutDetailFragment extends DaggerFragment {
         }
     }
 
-    private void setName(String newValue) {
-        name.setText(newValue);
-        // TODO put that in a different place in the lifecycle
-        ofNullable(getActivity())
-                .map(activity -> activity.findViewById(R.id.toolbar_layout))
-                .map(toolbar -> (CollapsingToolbarLayout) toolbar)
-                .ifPresent(appBarLayout -> appBarLayout.setTitle(newValue));
-    }
-
     @Override
     public void onDestroyView() {
         subscriptions.clear();
         unbinder.unbind();
         unbinder = null;
         super.onDestroyView();
+    }
+
+    @OnTextChanged(R.id.name)
+    void setName(CharSequence newValue) {
+        viewModel.name(newValue.toString());
+    }
+
+    private void displayName(String newValue) {
+        if (!ObjectsCompat.equals(name.getText().toString(), newValue)) {
+            name.setText(newValue);
+        }
+        // TODO put that in a different place in the lifecycle
+        ofNullable(getActivity())
+                .map(activity -> activity.findViewById(R.id.toolbar_layout))
+                .map(toolbar -> (CollapsingToolbarLayout) toolbar)
+                .ifPresent(appBarLayout -> appBarLayout.setTitle(newValue));
     }
 
     private void showInProgress(boolean inProgress) {

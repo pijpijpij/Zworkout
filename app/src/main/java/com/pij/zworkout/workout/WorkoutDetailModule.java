@@ -10,6 +10,7 @@ import com.pij.zworkout.R;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.workout.viewmodel.CreateWorkoutFeature;
 import com.pij.zworkout.workout.viewmodel.HorrocksViewModel;
+import com.pij.zworkout.workout.viewmodel.NameFeature;
 import com.pij.zworkout.workout.viewmodel.StorageLoadingFeature;
 
 import dagger.Module;
@@ -28,6 +29,7 @@ public class WorkoutDetailModule {
                                        CreateWorkoutFeature createWorkoutFeature) {
         return HorrocksViewModel.create(logger,
                 new DefaultEngine<>(logger),
+                new NameFeature(),
                 loadingFeature,
                 createWorkoutFeature
         );

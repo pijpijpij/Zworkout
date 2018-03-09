@@ -20,4 +20,6 @@ public interface ViewModel {
 
     @NotNull
     Observable<Model> model();
+
+    void name(@NotNull String newValue);
 }
