@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':service-api')
+    api project(path: ':service-api')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
     implementation "com.android.support:support-annotations:$supportLibraryVersion"
