@@ -3,14 +3,15 @@ package com.pij.zworkout.list.viewmodel;
 import android.support.annotation.NonNull;
 
 import com.annimon.stream.Optional;
+import com.pij.horrocks.AsyncInteraction;
 import com.pij.horrocks.Configuration;
 import com.pij.horrocks.Engine;
-import com.pij.horrocks.Feature;
+import com.pij.horrocks.Interaction;
 import com.pij.horrocks.Logger;
-import com.pij.horrocks.MemoryStore;
-import com.pij.horrocks.MultipleResultFeature;
-import com.pij.horrocks.Result;
-import com.pij.horrocks.SingleResultFeature;
+import com.pij.horrocks.MemoryStorage;
+import com.pij.horrocks.MultipleReducerCreator;
+import com.pij.horrocks.ReducerCreator;
+import com.pij.horrocks.SingleReducerCreator;
 import com.pij.zworkout.list.Model;
 import com.pij.zworkout.list.WorkoutInfo;
 import com.pij.zworkout.list.WorkoutsViewModel;
@@ -18,7 +19,6 @@ import com.pij.zworkout.list.WorkoutsViewModel;
 import org.jetbrains.annotations.NotNull;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -33,24 +33,24 @@ public class HorrocksWorkoutsViewModel implements WorkoutsViewModel {
 
     private final Logger logger;
     private final Observable<Model> modelStream;
-    private final Feature<Object, Model> loader;
-    private final Feature<WorkoutInfo, Model> showDetail;
-    private final Feature<Object, Model> createWorkout;
+    private final ReducerCreator<Object, Model> loader;
+    private final ReducerCreator<WorkoutInfo, Model> showDetail;
+    private final ReducerCreator<Object, Model> createWorkout;
 
     private HorrocksWorkoutsViewModel(Logger logger, Engine<Model, Model> engine,
-                                      Feature<Object, Model> loadingFeature,
-                                      Feature<WorkoutInfo, Model> showDetailFeature,
-                                      Feature<Object, Model> createWorkoutFeature) {
+                                      ReducerCreator<Object, Model> loadingFeature,
+                                      ReducerCreator<WorkoutInfo, Model> showDetailFeature,
+                                      ReducerCreator<Object, Model> createWorkoutFeature) {
         this.logger = logger;
 
         loader = loadingFeature;
         showDetail = showDetailFeature;
         createWorkout = createWorkoutFeature;
         Configuration<Model, Model> engineConfiguration = Configuration.<Model, Model>builder()
-                .store(new MemoryStore<>(initialState()))
+                .store(new MemoryStorage<>(initialState()))
                 .transientResetter(this::resetTransient)
                 .stateToModel(it -> it)
-                .features(asList(loader, showDetail, createWorkout))
+                .creators(asList(loader, showDetail, createWorkout))
                 .build();
         modelStream = engine.runWith(engineConfiguration).share();
     }
@@ -60,17 +60,18 @@ public class HorrocksWorkoutsViewModel implements WorkoutsViewModel {
      */
     public static HorrocksWorkoutsViewModel create(Logger logger,
                                                    Engine<Model, Model> engine,
-                                                   Function<Object, Observable<Result<Model>>> loadingFeature,
-                                                   Function<WorkoutInfo, Result<Model>> showDetailFeature,
-                                                   Function<Object, Result<Model>> createWorkoutFeature
+                                                   AsyncInteraction<Object, Model> loadingFeature,
+                                                   Interaction<WorkoutInfo, Model> showDetailFeature,
+                                                   Interaction<Object, Model> createWorkoutFeature
     ) {
         return new HorrocksWorkoutsViewModel(logger, engine,
-                new MultipleResultFeature<>(loadingFeature, logger),
-                new SingleResultFeature<>(showDetailFeature, logger),
-                new SingleResultFeature<>(createWorkoutFeature, logger)
+                new MultipleReducerCreator<>(loadingFeature, logger),
+                new SingleReducerCreator<>(showDetailFeature, logger),
+                new SingleReducerCreator<>(createWorkoutFeature, logger)
         );
     }
 
+    @NonNull
     private Model resetTransient(Model input) {
         return input.toBuilder()
                 .showWorkout(Optional.empty())
@@ -79,6 +80,7 @@ public class HorrocksWorkoutsViewModel implements WorkoutsViewModel {
                 .build();
     }
 
+    @NonNull
     private Model initialState() {
         return Model.create(false, Optional.empty(), Optional.empty(), false, emptyList());
     }

@@ -23,7 +23,7 @@ class CreateWorkoutFeatureTest {
         val sut = CreateWorkoutFeature()
 
         // when
-        val next = sut.apply(workout).applyTo(current)
+        val next = sut.process(workout).reduce(current)
 
         // then
         assertTrue(next.createWorkout())

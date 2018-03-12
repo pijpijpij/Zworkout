@@ -15,13 +15,13 @@ import org.junit.Test
 class NameFeatureTest {
 
     @Test
-    fun `Result puts new name in the model`() {
+    fun `Reducer puts new name in the model`() {
         // given
         val current = Model.create(true, Optional.empty(), "the original")
         val sut = NameFeature()
 
         // when
-        val next = sut.apply("the new one").applyTo(current)
+        val next = sut.process("the new one").reduce(current)
 
         // then
         assertEquals(next, Model.create(true, Optional.empty(), "the new one"))

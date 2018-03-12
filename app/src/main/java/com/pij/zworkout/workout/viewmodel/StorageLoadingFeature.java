@@ -16,13 +16,13 @@ package com.pij.zworkout.workout.viewmodel;
 
 import android.support.annotation.NonNull;
 
+import com.pij.horrocks.AsyncInteraction;
 import com.pij.horrocks.Logger;
-import com.pij.horrocks.Result;
+import com.pij.horrocks.Reducer;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.workout.Model;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 
 import static com.annimon.stream.Optional.of;
 
@@ -31,7 +31,7 @@ import static com.annimon.stream.Optional.of;
  *
  * @author PierreJean
  */
-public class StorageLoadingFeature implements Function<String, Observable<Result<Model>>> {
+public class StorageLoadingFeature implements AsyncInteraction<String, Model> {
 
     private final String defaultErrorMessage;
     private final Logger logger;
@@ -68,13 +68,14 @@ public class StorageLoadingFeature implements Function<String, Observable<Result
                 .build();
     }
 
+    @NonNull
     @Override
-    public Observable<Result<Model>> apply(String workoutId) {
+    public Observable<Reducer<Model>> process(@NonNull String workoutId) {
         return Observable.error(new UnsupportedOperationException("apply([workoutId]) not implemented."));
 //        return storage.workout(workoutId)
 //                .doOnError(e -> logger.print(getClass(), "Could not load data", e))
 //                .flatMapSingle(files -> Observable.fromIterable(files).map(this::convert).toList())
-//                .map(descriptions -> (Result<Model>) current -> updateSuccessState(current, descriptions))
+//                .map(descriptions -> (Reducer<Model>) current -> updateSuccessState(current, descriptions))
 //                .onErrorReturn(e -> current -> updateFailureState(current, e))
 //                .startWith(this::updateStartState);
     }

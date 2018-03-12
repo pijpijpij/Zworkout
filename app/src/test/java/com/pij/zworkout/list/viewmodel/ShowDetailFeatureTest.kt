@@ -25,7 +25,7 @@ class ShowDetailFeatureTest {
         val sut = ShowDetailFeature()
 
         // when
-        val next = sut.apply(workout).applyTo(current)
+        val next = sut.process(workout).reduce(current)
 
         // then
         assertTrue(next.showWorkout().isPresent)
@@ -40,7 +40,7 @@ class ShowDetailFeatureTest {
         val sut = ShowDetailFeature()
 
         // when
-        val next = sut.apply(workout).applyTo(current)
+        val next = sut.process(workout).reduce(current)
 
         // then
         assertThat(next.showWorkout().get(), equalTo(workout))

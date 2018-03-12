@@ -21,7 +21,7 @@ class CreateWorkoutFeatureTest {
         val sut = CreateWorkoutFeature { "name" }
 
         // when
-        val next = sut.apply(Any()).applyTo(current)
+        val next = sut.process(Any()).reduce(current)
 
         // then
         assertEquals(next, Model.create(true, Optional.empty(), "name"))

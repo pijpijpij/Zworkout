@@ -16,13 +16,13 @@ package com.pij.zworkout.workout.viewmodel;
 
 import android.support.annotation.NonNull;
 
+import com.pij.horrocks.AsyncInteraction;
 import com.pij.horrocks.Logger;
-import com.pij.horrocks.Result;
+import com.pij.horrocks.Reducer;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.workout.Model;
 
 import io.reactivex.Observable;
-import io.reactivex.functions.Function;
 
 import static com.annimon.stream.Optional.of;
 
@@ -31,7 +31,7 @@ import static com.annimon.stream.Optional.of;
  *
  * @author PierreJean
  */
-public class SaveFeature implements Function<Object, Observable<Result<Model>>> {
+public class SaveFeature implements AsyncInteraction<Object, Model> {
 
     private final String defaultErrorMessage;
     private final Logger logger;
@@ -68,13 +68,14 @@ public class SaveFeature implements Function<Object, Observable<Result<Model>>> 
                 .build();
     }
 
+    @NonNull
     @Override
-    public Observable<Result<Model>> apply(Object event) {
+    public Observable<Reducer<Model>> process(@NonNull Object event) {
         return Observable.error(new UnsupportedOperationException("apply([event]) not implemented."));
 //        return storage.workout(workoutId)
 //                .doOnError(e -> logger.print(getClass(), "Could not load data", e))
 //                .flatMapSingle(files -> Observable.fromIterable(files).map(this::convert).toList())
-//                .map(descriptions -> (Result<Model>) current -> updateSuccessState(current, descriptions))
+//                .map(descriptions -> (Reducer<Model>) current -> updateSuccessState(current, descriptions))
 //                .onErrorReturn(e -> current -> updateFailureState(current, e))
 //                .startWith(this::updateStartState);
     }

@@ -49,7 +49,7 @@ class StorageLoadingFeatureTest {
         // given
 
         // when
-        val states = sut.apply(Any()).map({ result -> result.applyTo(defaultState) }).test()
+        val states = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
 
         // then
         states.assertValue({ state -> state.inProgress() })
@@ -61,7 +61,7 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
-        val observer = sut.apply(Any()).map({ result -> result.applyTo(defaultState) }).test()
+        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
 
         // then
         val actual = observer.values()[1]
@@ -75,7 +75,7 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
-        val observer = sut.apply(Any()).map({ result -> result.applyTo(defaultState) }).test()
+        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
 
         // then
         observer.assertComplete()
@@ -87,7 +87,7 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
-        val observer = sut.apply(Any()).map({ result -> result.applyTo(defaultState) }).test()
+        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
 
         // then
         val actual = observer.values()[1]
@@ -101,7 +101,7 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException()))
 
         // when
-        val observer = sut.apply(Any()).map({ result -> result.applyTo(defaultState) }).test()
+        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
 
         // then
         val actual = observer.values()[1]
@@ -115,7 +115,7 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
-        val observer = sut.apply(Any()).map({ result -> result.applyTo(defaultState) }).test()
+        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
 
         // then
         observer.assertComplete()

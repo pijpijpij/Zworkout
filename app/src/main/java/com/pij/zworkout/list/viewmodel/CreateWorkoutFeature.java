@@ -1,9 +1,10 @@
 package com.pij.zworkout.list.viewmodel;
 
-import com.pij.horrocks.Result;
-import com.pij.zworkout.list.Model;
+import android.support.annotation.NonNull;
 
-import io.reactivex.functions.Function;
+import com.pij.horrocks.Interaction;
+import com.pij.horrocks.Reducer;
+import com.pij.zworkout.list.Model;
 
 /**
  * <p>Created on 01/03/2018.</p>
@@ -11,9 +12,10 @@ import io.reactivex.functions.Function;
  * @author Pierrejean
  */
 
-public class CreateWorkoutFeature implements Function<Object, Result<Model>> {
+public class CreateWorkoutFeature implements Interaction<Object, Model> {
+    @NonNull
     @Override
-    public Result<Model> apply(Object event) {
+    public Reducer<Model> process(@NonNull Object event) {
         return current -> current.toBuilder()
                 .createWorkout(true)
                 .build();
