@@ -19,7 +19,7 @@ import org.mockito.MockitoAnnotations
  *
  * @author Pierrejean
  */
-class HorrocksViewModelTest {
+class HorrocksWorkoutViewModelTest {
 
     private val simpleModel = Model.create(true, Optional.empty(), "")
 
@@ -28,7 +28,7 @@ class HorrocksViewModelTest {
     private val simpleResult = Result<Model> { _ -> simpleModel }
 
 
-    private lateinit var sut: HorrocksViewModel
+    private lateinit var sut: HorrocksWorkoutViewModel
 
     @Mock
     private lateinit var loadingFeatureMock: io.reactivex.functions.Function<String, Observable<Result<Model>>>
@@ -36,13 +36,17 @@ class HorrocksViewModelTest {
     private lateinit var createWorkoutFeatureMock: io.reactivex.functions.Function<Any, Result<Model>>
     @Mock
     private lateinit var nameFeatureMock: io.reactivex.functions.Function<String, Result<Model>>
+    @Mock
+    private lateinit var saveFeatureMock: io.reactivex.functions.Function<Any, Observable<Result<Model>>>
+
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        sut = HorrocksViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
+        sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
                 nameFeatureMock,
                 loadingFeatureMock,
+                saveFeatureMock,
                 createWorkoutFeatureMock)
     }
 
@@ -154,6 +158,31 @@ class HorrocksViewModelTest {
 
         // when
         sut.createWorkout()
+
+        // then
+        observer.assertValue(simpleModel)
+    }
+
+    @Test
+    fun `save() triggers save of the model`() {
+        // given
+        sut.model().test()
+
+        // when
+        sut.save()
+
+        // then
+        verify(saveFeatureMock).apply(any())
+    }
+
+    @Test
+    fun `model() returns model provided by SaveFeature on save()`() {
+        // given
+        `when`(saveFeatureMock.apply(any())).thenReturn(Observable.just(Result { _ -> simpleModel }))
+        val observer = sut.model().skip(1).test()
+
+        // when
+        sut.save()
 
         // then
         observer.assertValue(simpleModel)

@@ -9,28 +9,31 @@ import com.pij.zworkout.FragmentScoped;
 import com.pij.zworkout.R;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.workout.viewmodel.CreateWorkoutFeature;
-import com.pij.zworkout.workout.viewmodel.HorrocksViewModel;
+import com.pij.zworkout.workout.viewmodel.HorrocksWorkoutViewModel;
 import com.pij.zworkout.workout.viewmodel.NameFeature;
+import com.pij.zworkout.workout.viewmodel.SaveFeature;
 import com.pij.zworkout.workout.viewmodel.StorageLoadingFeature;
 
 import dagger.Module;
 import dagger.Provides;
 
 /**
- * This is a Dagger module. We use this to pass in the View dependency to the {@link ViewModel}.
+ * This is a Dagger module. We use this to pass in the View dependency to the {@link WorkoutViewModel}.
  */
 @Module
 public class WorkoutDetailModule {
 
     @FragmentScoped
     @Provides
-    ViewModel provideHorrocksViewModel(Logger logger,
-                                       StorageLoadingFeature loadingFeature,
-                                       CreateWorkoutFeature createWorkoutFeature) {
-        return HorrocksViewModel.create(logger,
+    WorkoutViewModel provideHorrocksViewModel(Logger logger,
+                                              StorageLoadingFeature loadingFeature,
+                                              SaveFeature saveFeature,
+                                              CreateWorkoutFeature createWorkoutFeature) {
+        return HorrocksWorkoutViewModel.create(logger,
                 new DefaultEngine<>(logger),
                 new NameFeature(),
                 loadingFeature,
+                saveFeature,
                 createWorkoutFeature
         );
     }
@@ -47,5 +50,10 @@ public class WorkoutDetailModule {
         return new StorageLoadingFeature(logger, storage, defaultErrorMessage);
     }
 
+    @Provides
+    SaveFeature provideSaveFeature(Logger logger, StorageService storage, Resources resources) {
+        String defaultErrorMessage = resources.getString(R.string.workout_save_error_message);
+        return new SaveFeature(logger, storage, defaultErrorMessage);
+    }
 
 }

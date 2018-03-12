@@ -47,7 +47,7 @@ public class WorkoutDetailFragment extends DaggerFragment {
     @BindView(R.id.name)
     TextView name;
     @Inject
-    ViewModel viewModel;
+    WorkoutViewModel viewModel;
     private Unbinder unbinder;
 
     public WorkoutDetailFragment() {

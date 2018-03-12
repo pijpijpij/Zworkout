@@ -85,7 +85,7 @@ android {
 dependencies {
     implementation project(path: ':service-api')
     implementation project(path: ':services')
-    implementation "com.github.pijpijpij:Horrocks:0.1.1"
+    implementation "com.github.pijpijpij:Horrocks:$horrockVersion"
     implementation "com.annimon:stream:$streamVersion"
     // Autovalue
     compileOnly "com.google.auto.value:auto-value:$autoValueVersion"

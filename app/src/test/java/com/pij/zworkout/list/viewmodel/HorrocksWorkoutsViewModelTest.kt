@@ -22,9 +22,9 @@ import org.mockito.MockitoAnnotations
  *
  * @author Pierrejean
  */
-class HorrocksViewModelTest {
+class HorrocksWorkoutsViewModelTest {
 
-    private lateinit var sut: HorrocksViewModel
+    private lateinit var sut: HorrocksWorkoutsViewModel
 
     @Mock
     private lateinit var loadingFeatureMock: io.reactivex.functions.Function<Any, Observable<Result<Model>>>
@@ -36,7 +36,7 @@ class HorrocksViewModelTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        sut = HorrocksViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
+        sut = HorrocksWorkoutsViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
                 loadingFeatureMock,
                 showDetailFeatureMock,
                 createWorkoutFeatureMock)

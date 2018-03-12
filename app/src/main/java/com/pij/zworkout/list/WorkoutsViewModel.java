@@ -12,7 +12,7 @@ import io.reactivex.Observable;
  * @author Pierrejean
  */
 
-public interface ViewModel {
+public interface WorkoutsViewModel {
 
     void load();
 

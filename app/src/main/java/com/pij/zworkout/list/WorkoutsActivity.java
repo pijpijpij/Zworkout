@@ -45,7 +45,7 @@ public class WorkoutsActivity extends DaggerAppCompatActivity {
     RecyclerView list;
 
     @Inject
-    ViewModel viewModel;
+    WorkoutsViewModel viewModel;
     @Inject
     Logger logger;
     @Inject

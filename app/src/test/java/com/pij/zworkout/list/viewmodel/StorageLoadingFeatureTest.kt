@@ -45,7 +45,7 @@ class StorageLoadingFeatureTest {
     }
 
     @Test
-    fun `Emits Start result before storage succeeds`() {
+    fun `Before store provides workouts, sut emits Start`() {
         // given
 
         // when
@@ -56,7 +56,7 @@ class StorageLoadingFeatureTest {
     }
 
     @Test
-    fun `Emits Success result when storage succeeds`() {
+    fun `When store succeeds, sut emits Success`() {
         // given
         `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
@@ -70,7 +70,7 @@ class StorageLoadingFeatureTest {
     }
 
     @Test
-    fun `Completes when storage succeeds`() {
+    fun `When store succeeds, sut completes`() {
         // given
         `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
@@ -82,7 +82,7 @@ class StorageLoadingFeatureTest {
     }
 
     @Test
-    fun `Emits Failure result when storage fails with a message`() {
+    fun `When store fails with a message, sut emits Failure with the exception message`() {
         // given
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
@@ -96,7 +96,7 @@ class StorageLoadingFeatureTest {
     }
 
     @Test
-    fun `Emits Failure result when storage fails with empty message`() {
+    fun `When store fails with an empty message, sut emits Failure with the default message`() {
         // given
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException()))
 
@@ -110,7 +110,7 @@ class StorageLoadingFeatureTest {
     }
 
     @Test
-    fun `Completes when storage fails`() {
+    fun `When store fails, sut completes`() {
         // given
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 

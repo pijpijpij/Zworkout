@@ -8,5 +8,6 @@
 
     <!--Detail screen-->
     <string name="detail_name_hint">Workout name</string>
+    <string name="workout_save_error_message">Unable to save this workout</string>
 
 </resources>

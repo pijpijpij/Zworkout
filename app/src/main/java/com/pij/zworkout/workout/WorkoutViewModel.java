@@ -12,14 +12,16 @@ import io.reactivex.Observable;
  * @author Pierrejean
  */
 
-public interface ViewModel {
+public interface WorkoutViewModel {
+
+    @NotNull
+    Observable<Model> model();
 
     void load(@NonNull String itemId);
 
     void createWorkout();
 
-    @NotNull
-    Observable<Model> model();
-
     void name(@NotNull String newValue);
+
+    void save();
 }
