@@ -1,6 +1,7 @@
 package com.pij.zworkout.service.android;
 
 import com.pij.zworkout.service.api.StorageService;
+import com.pij.zworkout.service.api.WorkoutSerializerService;
 
 import dagger.Module;
 import dagger.Provides;
@@ -15,6 +16,11 @@ public class ServiceModule {
 
     @Provides
     StorageService provideStorageService(FolderStorageService functional) {
+        return functional;
+    }
+
+    @Provides
+    WorkoutSerializerService provideWorkoutSerializerService(DummyWorkoutSerializerService functional) {
         return functional;
     }
 }

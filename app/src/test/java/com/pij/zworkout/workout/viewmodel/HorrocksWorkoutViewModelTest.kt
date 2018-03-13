@@ -2,14 +2,17 @@ package com.pij.zworkout.workout.viewmodel
 
 import com.annimon.stream.Optional
 import com.pij.horrocks.*
+import com.pij.zworkout.service.api.Workout
+import com.pij.zworkout.service.api.WorkoutFileTestUtil
 import com.pij.zworkout.workout.Model
+import com.pij.zworkout.workout.State
 import io.reactivex.Observable
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
+import kotlin.test.BeforeTest
+import kotlin.test.Ignore
+import kotlin.test.Test
 
 /**
  *
@@ -19,29 +22,31 @@ import org.mockito.MockitoAnnotations
  */
 class HorrocksWorkoutViewModelTest {
 
-    private val simpleModel = Model.create(true, Optional.empty(), "")
+    private val simpleModel = Model.create(true, Optional.empty(), false, "")
+    private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, WorkoutFileTestUtil.empty())
 
-    /** Provides {@link #simpleModel} when called.
+    /** Provides {@link #simpleState} when called.
      */
-    private val simpleResult = Reducer<Model> { _ -> simpleModel }
+    private val simpleResult = Reducer<State> { _ -> simpleState }
 
 
     private lateinit var sut: HorrocksWorkoutViewModel
 
     @Mock
-    private lateinit var loadingFeatureMock: AsyncInteraction<String, Model>
+    private lateinit var loadingFeatureMock: AsyncInteraction<String, State>
     @Mock
-    private lateinit var createWorkoutFeatureMock: Interaction<Any, Model>
+    private lateinit var createWorkoutFeatureMock: Interaction<Any, State>
     @Mock
-    private lateinit var nameFeatureMock: Interaction<String, Model>
+    private lateinit var nameFeatureMock: Interaction<String, State>
     @Mock
-    private lateinit var saveFeatureMock: AsyncInteraction<Any, Model>
+    private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
 
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
+        sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
+                MemoryStorage<State>(HorrocksWorkoutViewModel.initialState()),
                 nameFeatureMock,
                 loadingFeatureMock,
                 saveFeatureMock,
@@ -78,7 +83,7 @@ class HorrocksWorkoutViewModelTest {
         val observer = sut.model().test()
 
         // then
-        observer.assertValue(Model.create(false, Optional.empty(), ""))
+        observer.assertValue(Model.create(false, Optional.empty(), false, ""))
     }
 
     @Test
@@ -97,7 +102,7 @@ class HorrocksWorkoutViewModelTest {
     @Test
     fun `model() returns model provided by ChangeNameFeature on setName()`() {
         // given
-        `when`(nameFeatureMock.process(anyString())).thenReturn(Reducer { _ -> simpleModel })
+        `when`(nameFeatureMock.process(anyString())).thenReturn(Reducer { _ -> simpleState })
         val observer = sut.model().skip(1).test()
 
         // when
@@ -151,7 +156,7 @@ class HorrocksWorkoutViewModelTest {
     @Test
     fun `model() returns model provided by CreateDetailFeature on createWorkout()`() {
         // given
-        `when`(createWorkoutFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleModel })
+        `when`(createWorkoutFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
         val observer = sut.model().skip(1).test()
 
         // when
@@ -176,7 +181,7 @@ class HorrocksWorkoutViewModelTest {
     @Test
     fun `model() returns model provided by SaveFeature on save()`() {
         // given
-        `when`(saveFeatureMock.process(any())).thenReturn(Observable.just(Reducer { _ -> simpleModel }))
+        `when`(saveFeatureMock.process(any())).thenReturn(Observable.just(Reducer { _ -> simpleState }))
         val observer = sut.model().skip(1).test()
 
         // when

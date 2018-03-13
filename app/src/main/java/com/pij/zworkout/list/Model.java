@@ -22,13 +22,12 @@ public abstract class Model {
         return new AutoValue_Model.Builder();
     }
 
-    public static Model create(boolean inProgress, Optional<String>
-            showError, Optional<WorkoutInfo> showWorkout, boolean createWorkout, List<WorkoutInfo> workouts) {
+    public static Model create(boolean inProgress, Optional<String> showError, Optional<WorkoutInfo> showWorkout, boolean createWorkout, List<WorkoutInfo> workouts) {
         return builder()
                 .inProgress(inProgress)
+                .showError(showError)
                 .showWorkout(showWorkout)
                 .createWorkout(createWorkout)
-                .showError(showError)
                 .workouts(workouts)
                 .build();
     }

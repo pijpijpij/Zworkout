@@ -20,7 +20,7 @@ import com.pij.horrocks.AsyncInteraction;
 import com.pij.horrocks.Logger;
 import com.pij.horrocks.Reducer;
 import com.pij.zworkout.service.api.StorageService;
-import com.pij.zworkout.workout.Model;
+import com.pij.zworkout.workout.State;
 
 import io.reactivex.Observable;
 
@@ -31,7 +31,7 @@ import static com.annimon.stream.Optional.of;
  *
  * @author PierreJean
  */
-public class StorageLoadingFeature implements AsyncInteraction<String, Model> {
+public class StorageLoadingFeature implements AsyncInteraction<String, State> {
 
     private final String defaultErrorMessage;
     private final Logger logger;
@@ -44,7 +44,7 @@ public class StorageLoadingFeature implements AsyncInteraction<String, Model> {
     }
 
     @NonNull
-    private static Model updateSuccessState(Model current/*, List<WorkoutDescriptor> list*/) {
+    private static State updateSuccessState(State current/*, List<WorkoutDescriptor> list*/) {
         return current.toBuilder()
                 // TODO write this
                 .inProgress(false)
@@ -52,7 +52,7 @@ public class StorageLoadingFeature implements AsyncInteraction<String, Model> {
     }
 
     @NonNull
-    private Model updateFailureState(Model current, Throwable error) {
+    private State updateFailureState(State current, Throwable error) {
         String errorMessage = error.getMessage();
         String actualMessage = errorMessage == null ? defaultErrorMessage : errorMessage;
         return current.toBuilder()
@@ -62,7 +62,7 @@ public class StorageLoadingFeature implements AsyncInteraction<String, Model> {
     }
 
     @NonNull
-    private Model updateStartState(Model current) {
+    private State updateStartState(State current) {
         return current.toBuilder()
                 .inProgress(true)
                 .build();
@@ -70,7 +70,7 @@ public class StorageLoadingFeature implements AsyncInteraction<String, Model> {
 
     @NonNull
     @Override
-    public Observable<Reducer<Model>> process(@NonNull String workoutId) {
+    public Observable<Reducer<State>> process(@NonNull String workoutId) {
         return Observable.error(new UnsupportedOperationException("apply([workoutId]) not implemented."));
 //        return storage.workout(workoutId)
 //                .doOnError(e -> logger.print(getClass(), "Could not load data", e))

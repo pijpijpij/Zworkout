@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.pij.horrocks.Interaction;
 import com.pij.horrocks.Reducer;
-import com.pij.zworkout.workout.Model;
+import com.pij.zworkout.workout.State;
 
 import javax.inject.Provider;
 
@@ -14,7 +14,7 @@ import javax.inject.Provider;
  * @author Pierrejean
  */
 
-public class CreateWorkoutFeature implements Interaction<Object, Model> {
+public class CreateWorkoutFeature implements Interaction<Object, State> {
     private final Provider<String> name;
 
     public CreateWorkoutFeature(Provider<String> name) {
@@ -23,10 +23,9 @@ public class CreateWorkoutFeature implements Interaction<Object, Model> {
 
     @NonNull
     @Override
-    public Reducer<Model> process(@NonNull Object event) {
-        return current -> current.toBuilder()
-                .name(name.get())
-                // TODO write this
-                .build();
+    public Reducer<State> process(@NonNull Object event) {
+        // TODO write this
+        return current -> current.withWorkout(current.workout().name(name.get()));
     }
+
 }

@@ -19,10 +19,12 @@ import android.support.annotation.NonNull;
 import com.pij.horrocks.AsyncInteraction;
 import com.pij.horrocks.Logger;
 import com.pij.horrocks.Reducer;
+import com.pij.horrocks.StateProvider;
 import com.pij.zworkout.service.api.StorageService;
-import com.pij.zworkout.workout.Model;
+import com.pij.zworkout.workout.State;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 import static com.annimon.stream.Optional.of;
 
@@ -31,28 +33,30 @@ import static com.annimon.stream.Optional.of;
  *
  * @author PierreJean
  */
-public class SaveFeature implements AsyncInteraction<Object, Model> {
+public class SaveFeature implements AsyncInteraction<Object, State> {
 
+    private final StateProvider<State> stateSource;
     private final String defaultErrorMessage;
     private final Logger logger;
     private final StorageService storage;
 
-    public SaveFeature(Logger logger, StorageService storage, String defaultErrorMessage) {
+    public SaveFeature(Logger logger, StorageService storage, StateProvider<State> stateSource, String defaultErrorMessage) {
         this.logger = logger;
         this.storage = storage;
+        this.stateSource = stateSource;
         this.defaultErrorMessage = defaultErrorMessage;
     }
 
     @NonNull
-    private static Model updateSuccessState(Model current/*, List<WorkoutDescriptor> list*/) {
+    private static State updateSuccessState(State current) {
         return current.toBuilder()
-                // TODO write this
+                .showSaved(true)
                 .inProgress(false)
                 .build();
     }
 
     @NonNull
-    private Model updateFailureState(Model current, Throwable error) {
+    private State updateFailureState(State current, Throwable error) {
         String errorMessage = error.getMessage();
         String actualMessage = errorMessage == null ? defaultErrorMessage : errorMessage;
         return current.toBuilder()
@@ -62,7 +66,7 @@ public class SaveFeature implements AsyncInteraction<Object, Model> {
     }
 
     @NonNull
-    private Model updateStartState(Model current) {
+    private State updateStartState(State current) {
         return current.toBuilder()
                 .inProgress(true)
                 .build();
@@ -70,14 +74,14 @@ public class SaveFeature implements AsyncInteraction<Object, Model> {
 
     @NonNull
     @Override
-    public Observable<Reducer<Model>> process(@NonNull Object event) {
-        return Observable.error(new UnsupportedOperationException("apply([event]) not implemented."));
-//        return storage.workout(workoutId)
-//                .doOnError(e -> logger.print(getClass(), "Could not load data", e))
-//                .flatMapSingle(files -> Observable.fromIterable(files).map(this::convert).toList())
-//                .map(descriptions -> (Reducer<Model>) current -> updateSuccessState(current, descriptions))
-//                .onErrorReturn(e -> current -> updateFailureState(current, e))
-//                .startWith(this::updateStartState);
+    public Observable<Reducer<State>> process(@NonNull Object event) {
+        return Observable.just(stateSource.get())
+                .flatMapSingle(state -> storage.save(state.workout(), state.file())
+                        .andThen(Single.just((Reducer<State>) SaveFeature::updateSuccessState))
+                        .onErrorReturn(e -> current -> updateFailureState(current, e))
+                )
+                .startWith(this::updateStartState)
+                ;
     }
 
 }

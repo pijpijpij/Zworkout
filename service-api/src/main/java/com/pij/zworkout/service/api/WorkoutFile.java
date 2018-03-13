@@ -15,6 +15,8 @@ import java.net.URI;
 @AutoValue
 public abstract class WorkoutFile {
 
+    public static WorkoutFile UNDEFINED = WorkoutFile.create(URI.create("empty"), "", Optional.empty());
+
     public static WorkoutFile create(URI uri, String name, Optional<String> detail) {
         return builder()
                 .uri(uri)
@@ -35,6 +37,8 @@ public abstract class WorkoutFile {
 
     @NonNull
     public abstract Optional<String> detail();
+
+    public abstract Builder toBuilder();
 
     @AutoValue.Builder
     public abstract static class Builder {

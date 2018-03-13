@@ -2,6 +2,8 @@ package com.pij.zworkout.service.android;
 
 import android.content.Context;
 
+import com.pij.zworkout.service.api.WorkoutSerializerService;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -14,7 +16,17 @@ import dagger.Provides;
 public class FunctionalServiceModule {
 
     @Provides
-    FolderStorageService provideFolderStorageService(Context context) {
-        return new FolderStorageService(context.getFilesDir());
+    FolderStorageService provideFolderStorageService(Context context, WorkoutSerializerService serialiser) {
+        return new FolderStorageService(context.getFilesDir(), serialiser);
     }
+
+    @Provides
+    DummyWorkoutSerializerService provideDummyWorkoutSerializerService() {
+        return new DummyWorkoutSerializerService();
+    }
+
+    //    @Provides
+//    WorkoutSerializerService provideXmlWorkoutSerializerService() {
+//        return new XmlWorkoutSerializerService();
+//    }
 }

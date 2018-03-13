@@ -2,6 +2,7 @@ package com.pij.zworkout.service.api;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 
 /**
@@ -13,4 +14,6 @@ import io.reactivex.Observable;
 public interface StorageService {
 
     Observable<List<WorkoutFile>> workouts();
+
+    Completable save(Workout data, WorkoutFile file);
 }

@@ -5,6 +5,8 @@ import android.content.res.Resources;
 
 import com.pij.horrocks.DefaultEngine;
 import com.pij.horrocks.Logger;
+import com.pij.horrocks.MemoryStorage;
+import com.pij.horrocks.Storage;
 import com.pij.zworkout.FragmentScoped;
 import com.pij.zworkout.R;
 import com.pij.zworkout.service.api.StorageService;
@@ -26,16 +28,25 @@ public class WorkoutDetailModule {
     @FragmentScoped
     @Provides
     WorkoutViewModel provideHorrocksViewModel(Logger logger,
+                                              Storage<State> storage,
                                               StorageLoadingFeature loadingFeature,
                                               SaveFeature saveFeature,
                                               CreateWorkoutFeature createWorkoutFeature) {
         return HorrocksWorkoutViewModel.create(logger,
                 new DefaultEngine<>(logger),
+                storage,
                 new NameFeature(),
                 loadingFeature,
                 saveFeature,
                 createWorkoutFeature
         );
+    }
+
+
+    @FragmentScoped
+    @Provides
+    Storage<State> provideMemoryStorage() {
+        return new MemoryStorage<>(HorrocksWorkoutViewModel.initialState());
     }
 
     @Provides
@@ -51,9 +62,9 @@ public class WorkoutDetailModule {
     }
 
     @Provides
-    SaveFeature provideSaveFeature(Logger logger, StorageService storage, Resources resources) {
+    SaveFeature provideSaveFeature(Logger logger, StorageService storage, Storage<State> stateProvider, Resources resources) {
         String defaultErrorMessage = resources.getString(R.string.workout_save_error_message);
-        return new SaveFeature(logger, storage, defaultErrorMessage);
+        return new SaveFeature(logger, storage, stateProvider::load, defaultErrorMessage);
     }
 
 }

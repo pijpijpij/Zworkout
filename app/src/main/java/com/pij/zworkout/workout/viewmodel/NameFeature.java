@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.pij.horrocks.Interaction;
 import com.pij.horrocks.Reducer;
-import com.pij.zworkout.workout.Model;
+import com.pij.zworkout.workout.State;
 
 /**
  * <p>Created on 01/03/2018.</p>
@@ -12,13 +12,13 @@ import com.pij.zworkout.workout.Model;
  * @author Pierrejean
  */
 
-public class NameFeature implements Interaction<String, Model> {
+public class NameFeature implements Interaction<String, State> {
 
     @NonNull
     @Override
-    public Reducer<Model> process(@NonNull String name) {
+    public Reducer<State> process(@NonNull String name) {
         return current -> current.toBuilder()
-                .name(name)
+                .workout(current.workout().toBuilder().name(name).build())
                 .build();
     }
 }

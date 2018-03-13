@@ -1,9 +1,8 @@
 package com.pij.zworkout.workout.viewmodel
 
-import com.annimon.stream.Optional
-import com.pij.zworkout.workout.Model
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import com.pij.zworkout.workout.StateTestUtil
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 
 /**
@@ -15,17 +14,16 @@ import org.junit.Test
 class CreateWorkoutFeatureTest {
 
     @Test
-    fun `Adds an initial - empty - model`() {
+    fun `Sets the workout name on the model`() {
         // given
-        val current = Model.create(true, Optional.empty(), "")
+        val current = StateTestUtil.empty()
         val sut = CreateWorkoutFeature { "name" }
 
         // when
         val next = sut.process(Any()).reduce(current)
 
         // then
-        assertEquals(next, Model.create(true, Optional.empty(), "name"))
-
+        assertEquals(next.workout().name(), "name")
     }
 
 }
