@@ -65,6 +65,28 @@ allprojects {
     project.version = scmVersion.version
     project.group = rootProject.group
 
+    ext.calculateVersionCode = { String versionName ->
+        def shortVersion = versionName.split("-", 2)[0]
+        def strings = shortVersion.split("\\.", 3)
+        def numbers = strings.collect {
+            try {
+                it.toInteger()
+            } catch (ignored) {
+                0
+            }
+        }
+        while (numbers.size < 3) {
+            numbers.add(0)
+        }
+        def result = 0
+        numbers.eachWithIndex { number, i ->
+            if (i < 3) {
+                result = result * 1000 + number
+            }
+        }
+        result
+    }
+
 }
 
 /*
