@@ -2,6 +2,8 @@ package com.pij.zworkout.service.android;
 
 import android.content.Context;
 
+import com.pij.utils.Logger;
+
 import dagger.Module;
 import dagger.Provides;
 
@@ -15,8 +17,8 @@ import dagger.Provides;
 public class ServiceModule {
 
     @Provides
-    FolderStorageService provideFolderStorageService(Context context) {
-        return new FolderStorageService(context.getFilesDir());
+    FolderStorageService provideFolderStorageService(Context context, Logger logger) {
+        return new FolderStorageService(context.getFilesDir(), logger);
     }
 
 }

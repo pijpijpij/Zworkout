@@ -3,7 +3,7 @@ package com.pij.zworkout.workout.viewmodel
 import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.StateProvider
-import com.pij.horrocks.SysoutLogger
+import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.WorkoutInfo
 import com.pij.zworkout.service.api.WorkoutFile
 import com.pij.zworkout.service.api.WorkoutFileTestUtil

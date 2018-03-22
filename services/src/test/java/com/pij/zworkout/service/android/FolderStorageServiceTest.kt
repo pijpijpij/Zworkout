@@ -1,6 +1,7 @@
 package com.pij.zworkout.service.android
 
 import com.annimon.stream.Stream
+import com.pij.utils.SysoutLogger
 import com.pij.zworkout.service.api.WorkoutFile
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -21,13 +22,13 @@ class FolderStorageServiceTest {
 
     @Rule
     @kotlin.jvm.JvmField
-    public val folderManager = TemporaryFolder()
+    val folderManager = TemporaryFolder()
 
     private lateinit var sut: FolderStorageService
 
     @BeforeTest
     fun setUp() {
-        sut = FolderStorageService(folderManager.root)
+        sut = FolderStorageService(folderManager.root, SysoutLogger())
     }
 
     private fun create(uri: URI) = WorkoutFile.UNDEFINED.toBuilder().uri(uri).build()

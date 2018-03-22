@@ -17,9 +17,9 @@ package com.pij.zworkout.workout.viewmodel;
 import android.support.annotation.NonNull;
 
 import com.pij.horrocks.AsyncInteraction;
-import com.pij.horrocks.Logger;
 import com.pij.horrocks.Reducer;
 import com.pij.horrocks.StateProvider;
+import com.pij.utils.Logger;
 import com.pij.zworkout.uc.WorkoutPersistenceUC;
 import com.pij.zworkout.workout.State;
 

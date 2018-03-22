@@ -66,6 +66,7 @@ dependencies {
     implementation project(path: ':persistence-api')
     implementation project(path: ':persistence')
     implementation "com.github.pijpijpij:Horrocks:$horrockVersion"
+    implementation "org.bitbucket.pijpijpij.android-utils:android-utils:$utilsVersion"
     implementation "com.annimon:stream:$streamVersion"
     // Autovalue
     compileOnly "com.google.auto.value:auto-value:$autoValueVersion"

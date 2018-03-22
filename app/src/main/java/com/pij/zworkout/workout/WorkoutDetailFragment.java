@@ -7,6 +7,9 @@ import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.util.ObjectsCompat;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -60,8 +63,7 @@ public class WorkoutDetailFragment extends DaggerFragment {
     }
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.workout_detail, container, false);
     }
 
@@ -69,6 +71,8 @@ public class WorkoutDetailFragment extends DaggerFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         ActivityStarter.fill(this, savedInstanceState);
         unbinder = ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
+
         subscriptions.addAll(
                 viewModel.model().map(Model::inProgress).subscribe(this::showInProgress),
                 viewModel.model().map(Model::showError).filter(Optional::isPresent).map(Optional::get).subscribe(this::showError),
@@ -90,6 +94,23 @@ public class WorkoutDetailFragment extends DaggerFragment {
         unbinder.unbind();
         unbinder = null;
         super.onDestroyView();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.workout_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.menu_save:
+                viewModel.save();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @OnTextChanged(R.id.name)

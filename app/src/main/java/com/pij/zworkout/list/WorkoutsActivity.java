@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.annimon.stream.Optional;
 import com.annimon.stream.function.Consumer;
-import com.pij.horrocks.Logger;
+import com.pij.utils.Logger;
 import com.pij.zworkout.R;
 import com.pij.zworkout.workout.WorkoutDetailActivity;
 import com.pij.zworkout.workout.WorkoutDetailFragment;

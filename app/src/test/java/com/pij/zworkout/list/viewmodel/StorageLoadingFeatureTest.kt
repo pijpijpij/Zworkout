@@ -1,7 +1,7 @@
 package com.pij.zworkout.list.viewmodel
 
 import com.annimon.stream.Optional
-import com.pij.horrocks.SysoutLogger
+import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.Model
 import com.pij.zworkout.list.WorkoutInfo
 import com.pij.zworkout.service.api.StorageService

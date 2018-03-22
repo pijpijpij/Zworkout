@@ -4,9 +4,9 @@ package com.pij.zworkout.workout;
 import android.content.res.Resources;
 
 import com.pij.horrocks.DefaultEngine;
-import com.pij.horrocks.Logger;
 import com.pij.horrocks.MemoryStorage;
 import com.pij.horrocks.Storage;
+import com.pij.utils.Logger;
 import com.pij.zworkout.FragmentScoped;
 import com.pij.zworkout.R;
 import com.pij.zworkout.service.api.StorageService;

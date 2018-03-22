@@ -20,6 +20,7 @@ public class PersistableWorkout {
 
     public static class EmptyString {
         @Text(required = false)
+        @Nullable
         public String value;
 
         public static EmptyString create(@Nullable String value) {

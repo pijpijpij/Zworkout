@@ -2,6 +2,7 @@ package com.pij.zworkout.workout.viewmodel
 
 import com.annimon.stream.Optional
 import com.pij.horrocks.*
+import com.pij.utils.SysoutLogger
 import com.pij.zworkout.service.api.WorkoutFileTestUtil
 import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.workout.Model

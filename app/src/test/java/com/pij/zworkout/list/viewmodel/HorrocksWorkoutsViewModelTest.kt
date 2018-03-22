@@ -1,7 +1,11 @@
 package com.pij.zworkout.list.viewmodel
 
 import com.annimon.stream.Optional
-import com.pij.horrocks.*
+import com.pij.horrocks.AsyncInteraction
+import com.pij.horrocks.DefaultEngine
+import com.pij.horrocks.Interaction
+import com.pij.horrocks.Reducer
+import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.Model
 import com.pij.zworkout.list.WorkoutInfo
 import io.reactivex.Observable

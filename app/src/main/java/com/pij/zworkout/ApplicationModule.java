@@ -17,10 +17,9 @@ package com.pij.zworkout;
 import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
-import android.util.Log;
 
-import com.pij.horrocks.Logger;
+import com.pij.android.utils.AndroidDebugLogger;
+import com.pij.utils.Logger;
 
 import dagger.Binds;
 import dagger.Module;
@@ -35,29 +34,8 @@ abstract class ApplicationModule {
 
     @Reusable
     @Provides
-    static Logger provideLogger() {
-        return new Logger() {
-            @Override
-            public void print(@NonNull Class<?> javaClass, @NonNull String message) {
-                Log.d(javaClass.getSimpleName(), message);
-            }
-
-            @Override
-            public void print(@NonNull Class<?> javaClass, @NonNull String message, @NonNull Throwable e) {
-                Log.d(javaClass.getSimpleName(), message, e);
-            }
-
-            @Override
-            public void print(@NonNull Class<?> aClass, @NonNull String messageTemplate, @NonNull Object... args) {
-                print(aClass, String.format(messageTemplate, args));
-            }
-
-            @Override
-            public void print(@NonNull Class<?> aClass, @NonNull Throwable throwable, @NonNull String messageTemplate,
-                              @NonNull Object... args) {
-                print(aClass, String.format(messageTemplate, args), throwable);
-            }
-        };
+    static Logger provideAndroidDebugLogger() {
+        return new AndroidDebugLogger();
     }
 
     @Provides
