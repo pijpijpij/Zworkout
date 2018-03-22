@@ -7,26 +7,27 @@ android:
     - platform-tools
     - tools
     # The BuildTools version used by the project
-    - build-tools-27.0.2
+    - build-tools-27.0.1
     # The SDK version used to compile the project
     - android-27
 
-    # The emulator
-    - android-21
+#    # The emulator
+#    - android-21
 
-    # System image for emulator during your tests
-    - sys-img-armeabi-v7a-android-21
+#    # System image for emulator during your tests
+#    - sys-img-armeabi-v7a-android-21
 
 # Emulator Management: Create, Start and Wait
-before_script:
-  - android list targets
-  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
-  - emulator -avd test -no-audio -no-window &
-  - android-wait-for-emulator
-  - adb shell input keyevent 82 &
+#before_script:
+#  - android list targets
+#  - echo no | android create avd --force -n test -t android-21 --abi armeabi-v7a
+#  - emulator -avd test -no-audio -no-window &
+#  - android-wait-for-emulator
+#  - adb shell input keyevent 82 &
 
 script:
-  - travis_wait 40 ./gradlew build connectedCheck
+  - ./gradlew build test
+#  - travis_wait 40 ./gradlew build connectedCheck
 
 notifications:
   email: false

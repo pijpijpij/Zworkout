@@ -1,1 +1,1 @@
-include ':app', ':service-api', ':services'
+include ':app', ':service-api', ':services', 'persistence-api', 'persistence'

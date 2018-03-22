@@ -5,10 +5,10 @@ import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.StateProvider
 import com.pij.horrocks.SysoutLogger
 import com.pij.zworkout.list.WorkoutInfo
-import com.pij.zworkout.service.api.StorageService
-import com.pij.zworkout.service.api.Workout
 import com.pij.zworkout.service.api.WorkoutFile
 import com.pij.zworkout.service.api.WorkoutFileTestUtil
+import com.pij.zworkout.uc.Workout
+import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import io.reactivex.Completable
 import org.mockito.ArgumentMatchers
@@ -24,7 +24,7 @@ import kotlin.test.Test
  */
 class SaveFeatureTest {
 
-    private lateinit var storageServiceMock: StorageService
+    private lateinit var storageMock: WorkoutPersistenceUC
     private lateinit var stateProviderMock: StateProvider<State>
 
     private val defaultState = State.create(false, Optional.empty(), false, Workout.EMPTY, WorkoutFileTestUtil.empty())
@@ -35,13 +35,13 @@ class SaveFeatureTest {
 
     @BeforeTest
     fun setUp() {
-        storageServiceMock = mock()
+        storageMock = mock()
         stateProviderMock = mock()
-        `when`(storageServiceMock.save(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Completable.never())
+        `when`(storageMock.save(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Completable.never())
         `when`(stateProviderMock.get()).thenReturn(defaultState)
         workoutFile = WorkoutFile.create(URI.create("some/file"), "zip", Optional.of("zap"))
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.of("zap"))
-        sut = SaveFeature(SysoutLogger(), storageServiceMock, stateProviderMock, "the default error message")
+        sut = SaveFeature(SysoutLogger(), storageMock, stateProviderMock, "the default error message")
     }
 
     @Test
@@ -60,7 +60,7 @@ class SaveFeatureTest {
     @Test
     fun `When storage succeeds, sut emits not in progress`() {
         // given
-        `when`(storageServiceMock.save(any(), any())).thenReturn(Completable.complete())
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.complete())
 
         // when
         val states = sut.process(Any())
@@ -75,7 +75,7 @@ class SaveFeatureTest {
     @Test
     fun `When storage succeeds, sut emits showSaved`() {
         // given
-        `when`(storageServiceMock.save(any(), any())).thenReturn(Completable.complete())
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.complete())
 
         // when
         val states = sut.process(Any())
@@ -90,7 +90,7 @@ class SaveFeatureTest {
     @Test
     fun `When storage succeeds, sut completes`() {
         // given
-        `when`(storageServiceMock.save(any(), any())).thenReturn(Completable.complete())
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.complete())
 
         // when
         val observer = sut.process(Any())
@@ -103,7 +103,7 @@ class SaveFeatureTest {
     @Test
     fun `When store fails, sut emits not in progress`() {
         // given
-        `when`(storageServiceMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException("the error message")))
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException("the error message")))
 
         // when
         val states = sut.process(Any())
@@ -118,7 +118,7 @@ class SaveFeatureTest {
     @Test
     fun `When store fails with a message, sut emits Failure with the exception message`() {
         // given
-        `when`(storageServiceMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException("the error message")))
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException("the error message")))
 
         // when
         val states = sut.process(Any())
@@ -133,7 +133,7 @@ class SaveFeatureTest {
     @Test
     fun `When store fails with an empty message, sut emits Failure with the default message`() {
         // given
-        `when`(storageServiceMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException()))
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException()))
 
         // when
         val states = sut.process(Any())
@@ -148,7 +148,7 @@ class SaveFeatureTest {
     @Test
     fun `When store fails, sut completes`() {
         // given
-        `when`(storageServiceMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException("the error message")))
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.error(IllegalAccessException("the error message")))
 
         // when
         val states = sut.process(Any())

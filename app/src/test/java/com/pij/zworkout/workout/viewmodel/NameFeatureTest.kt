@@ -1,8 +1,8 @@
 package com.pij.zworkout.workout.viewmodel
 
 import com.annimon.stream.Optional
-import com.pij.zworkout.service.api.Workout
 import com.pij.zworkout.service.api.WorkoutFileTestUtil
+import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.workout.State
 import kotlin.test.Test
 import kotlin.test.assertEquals

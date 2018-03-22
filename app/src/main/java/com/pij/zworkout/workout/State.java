@@ -2,8 +2,8 @@ package com.pij.zworkout.workout;
 
 import com.annimon.stream.Optional;
 import com.google.auto.value.AutoValue;
-import com.pij.zworkout.service.api.Workout;
 import com.pij.zworkout.service.api.WorkoutFile;
+import com.pij.zworkout.uc.Workout;
 
 import org.jetbrains.annotations.NotNull;
 

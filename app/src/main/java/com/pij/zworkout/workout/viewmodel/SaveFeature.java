@@ -20,7 +20,7 @@ import com.pij.horrocks.AsyncInteraction;
 import com.pij.horrocks.Logger;
 import com.pij.horrocks.Reducer;
 import com.pij.horrocks.StateProvider;
-import com.pij.zworkout.service.api.StorageService;
+import com.pij.zworkout.uc.WorkoutPersistenceUC;
 import com.pij.zworkout.workout.State;
 
 import io.reactivex.Observable;
@@ -38,9 +38,9 @@ public class SaveFeature implements AsyncInteraction<Object, State> {
     private final StateProvider<State> stateSource;
     private final String defaultErrorMessage;
     private final Logger logger;
-    private final StorageService storage;
+    private final WorkoutPersistenceUC storage;
 
-    public SaveFeature(Logger logger, StorageService storage, StateProvider<State> stateSource, String defaultErrorMessage) {
+    public SaveFeature(Logger logger, WorkoutPersistenceUC storage, StateProvider<State> stateSource, String defaultErrorMessage) {
         this.logger = logger;
         this.storage = storage;
         this.stateSource = stateSource;

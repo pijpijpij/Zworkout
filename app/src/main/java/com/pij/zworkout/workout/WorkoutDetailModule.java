@@ -10,6 +10,7 @@ import com.pij.horrocks.Storage;
 import com.pij.zworkout.FragmentScoped;
 import com.pij.zworkout.R;
 import com.pij.zworkout.service.api.StorageService;
+import com.pij.zworkout.uc.WorkoutPersistenceUC;
 import com.pij.zworkout.workout.viewmodel.CreateWorkoutFeature;
 import com.pij.zworkout.workout.viewmodel.HorrocksWorkoutViewModel;
 import com.pij.zworkout.workout.viewmodel.NameFeature;
@@ -62,7 +63,7 @@ public class WorkoutDetailModule {
     }
 
     @Provides
-    SaveFeature provideSaveFeature(Logger logger, StorageService storage, Storage<State> stateProvider, Resources resources) {
+    SaveFeature provideSaveFeature(Logger logger, WorkoutPersistenceUC storage, Storage<State> stateProvider, Resources resources) {
         String defaultErrorMessage = resources.getString(R.string.workout_save_error_message);
         return new SaveFeature(logger, storage, stateProvider::load, defaultErrorMessage);
     }

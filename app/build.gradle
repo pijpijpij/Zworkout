@@ -17,28 +17,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
 
-ext.calculateVersionCode = { String versionName ->
-    def shortVersion = versionName.split("-", 2)[0]
-    def strings = shortVersion.split("\\.", 3)
-    def numbers = strings.collect {
-        try {
-            it.toInteger()
-        } catch (ignored) {
-            0
-        }
-    }
-    while (numbers.size < 3) {
-        numbers.add(0)
-    }
-    def result = 0
-    numbers.eachWithIndex { number, i ->
-        if (i < 3) {
-            result = result * 1000 + number
-        }
-    }
-    result
-}
-
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
@@ -85,6 +63,8 @@ android {
 dependencies {
     implementation project(path: ':service-api')
     implementation project(path: ':services')
+    implementation project(path: ':persistence-api')
+    implementation project(path: ':persistence')
     implementation "com.github.pijpijpij:Horrocks:$horrockVersion"
     implementation "com.annimon:stream:$streamVersion"
     // Autovalue
@@ -100,6 +80,7 @@ dependencies {
 //    implementation "com.android.support:support-v4:$supportLibraryVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rxJava2Version"
+    implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
 //    implementation "android.arch.persistence.room:runtime:$roomVersion"
 //    kapt "android.arch.persistence.room:compiler:$roomVersion"
     implementation "com.marcinmoskala.activitystarter:activitystarter:$activityStarterVersion"

@@ -1,6 +1,6 @@
-package com.pij.zworkout.service.api;
+package com.pij.zworkout.persistence.api;
 
-import java.io.File;
+import java.io.OutputStream;
 
 import io.reactivex.Completable;
 
@@ -11,5 +11,5 @@ import io.reactivex.Completable;
  */
 
 public interface WorkoutSerializerService {
-    Completable write(Workout data, File target);
+    Completable write(PersistableWorkout data, OutputStream target);
 }

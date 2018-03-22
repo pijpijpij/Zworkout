@@ -1,9 +1,9 @@
-package com.pij.zworkout.service.android;
+package com.pij.zworkout.persistence.xml;
 
-import com.pij.zworkout.service.api.Workout;
-import com.pij.zworkout.service.api.WorkoutSerializerService;
+import com.pij.zworkout.persistence.api.PersistableWorkout;
+import com.pij.zworkout.persistence.api.WorkoutSerializerService;
 
-import java.io.File;
+import java.io.OutputStream;
 
 import io.reactivex.Completable;
 
@@ -15,7 +15,8 @@ import io.reactivex.Completable;
 class DummyWorkoutSerializerService implements WorkoutSerializerService {
 
     @Override
-    public Completable write(Workout data, File target) {
+    public Completable write(PersistableWorkout data, OutputStream target) {
         return Completable.error(new UnsupportedOperationException("write([data, target]) not implemented."));
     }
+
 }

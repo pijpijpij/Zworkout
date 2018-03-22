@@ -1,9 +1,11 @@
 package com.pij.zworkout.service.api;
 
+import java.io.OutputStream;
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.annotations.CheckReturnValue;
 
 /**
  * <p>Created on 02/03/2018.</p>
@@ -13,7 +15,9 @@ import io.reactivex.Observable;
 
 public interface StorageService {
 
+    @CheckReturnValue
     Observable<List<WorkoutFile>> workouts();
 
-    Completable save(Workout data, WorkoutFile file);
+    @CheckReturnValue
+    Single<OutputStream> open(WorkoutFile file);
 }

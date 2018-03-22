@@ -1,4 +1,4 @@
-package com.pij.zworkout.service.api;
+package com.pij.zworkout.uc;
 
 import com.google.auto.value.AutoValue;
 

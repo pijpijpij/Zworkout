@@ -2,7 +2,9 @@ package com.pij.zworkout;
 
 import android.app.Application;
 
-import com.pij.zworkout.service.android.ServiceModule;
+import com.pij.zworkout.persistence.xml.PersistenceModule;
+import com.pij.zworkout.service.android.ServiceMappingModule;
+import com.pij.zworkout.uc.UCModule;
 
 import javax.inject.Singleton;
 
@@ -15,7 +17,9 @@ import dagger.android.support.AndroidSupportInjectionModule;
 @Component(modules = {
         ApplicationModule.class,
         ActivityBindingModule.class,
-        ServiceModule.class,
+        UCModule.class,
+        ServiceMappingModule.class,
+        PersistenceModule.class,
         AndroidSupportInjectionModule.class
 })
 

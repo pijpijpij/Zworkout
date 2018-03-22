@@ -1,20 +1,12 @@
 package com.pij.zworkout.service.android
 
 import com.annimon.stream.Stream
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.mock
-import com.nhaarman.mockitokotlin2.verify
-import com.pij.zworkout.service.api.Workout
 import com.pij.zworkout.service.api.WorkoutFile
-import com.pij.zworkout.service.api.WorkoutSerializerService
-import io.reactivex.Completable
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.mockito.Mockito.`when`
 import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -33,13 +25,12 @@ class FolderStorageServiceTest {
 
     private lateinit var sut: FolderStorageService
 
-    private lateinit var serializerMock: WorkoutSerializerService
-
     @BeforeTest
     fun setUp() {
-        serializerMock = mock()
-        sut = FolderStorageService(folderManager.root, serializerMock)
+        sut = FolderStorageService(folderManager.root)
     }
+
+    private fun create(uri: URI) = WorkoutFile.UNDEFINED.toBuilder().uri(uri).build()
 
     private fun createWorkoutFile(filename: String): WorkoutFile {
         val file = folderManager.newFile(filename)
@@ -49,7 +40,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `load() emits empty when the root folder is empty`() {
+    fun `workouts() emits empty when the root folder is empty`() {
         // given
 
         //when
@@ -61,7 +52,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `load() emits empty when only non-Zwift files are in the root folder`() {
+    fun `workouts() emits empty when only non-Zwift files are in the root folder`() {
         // given
         folderManager.newFile("file1")
         folderManager.newFile("file2.jpg")
@@ -75,7 +66,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `load() emits a list of 2 when there are 2 Zwift files in the root folder in spite of case issues in file extension`() {
+    fun `workouts() emits a list of 2 when there are 2 Zwift files in the root folder in spite of case issues in file extension`() {
         // given
         folderManager.newFile("file1.Zwo")
         folderManager.newFile("file2.ZWO")
@@ -89,7 +80,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `load() emits a list a single file if there's a single Zwift file in the root folder`() {
+    fun `workouts() emits a list a single file if there's a single Zwift file in the root folder`() {
         // given
         folderManager.newFile("file1.zwo")
 
@@ -101,7 +92,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `load() emits a list with the single Zwift file in the root folder`() {
+    fun `workouts() emits a list with the single Zwift file in the root folder`() {
         // given
         val file1 = folderManager.newFile("file1.zwo")
 
@@ -117,7 +108,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `load() emits a list with all 3 Zwift files in the root folder`() {
+    fun `workouts() emits a list with all 3 Zwift files in the root folder`() {
         // given
         val file1 = folderManager.newFile("file1.zwo")
         val file2 = folderManager.newFile("file2.zwo")
@@ -135,99 +126,61 @@ class FolderStorageServiceTest {
 
 
     @Test
-    fun `save does not throw`() {
+    fun `calling open() without subscribing to it does not throw`() {
         // given
 
         // when
-        sut.save(Workout.EMPTY, WorkoutFile.UNDEFINED)
+        sut.open(WorkoutFile.UNDEFINED)
 
         // then
     }
 
     @Test
-    fun `save() onto an undefined File errors`() {
+    fun `open() an undefined File errors`() {
         // given
+        val file = WorkoutFile.UNDEFINED
 
         // when
-        val result = sut.save(Workout.EMPTY, WorkoutFile.UNDEFINED).test()
+        val stream = sut.open(file).test()
 
         // then
-        result.assertError(IllegalArgumentException::class.java)
+        stream.assertError(IllegalArgumentException::class.java)
     }
 
     @Test
-    fun `save() onto a non-absolute URI errors`() {
+    fun `open() a non-absolute URI errors`() {
         // given
-        val file: WorkoutFile = create(URI.create("somestuff"))
+        val file = create(URI.create("somestuff"))
 
         // when
-        val result = sut.save(Workout.EMPTY, file).test()
+        val stream = sut.open(file).test()
 
         // then
-        result.assertError(IllegalArgumentException::class.java)
+        stream.assertError(IllegalArgumentException::class.java)
     }
 
     @Test
-    fun `save() onto a absolute non-file URI errors`() {
+    fun `open() an absolute non-file URI errors`() {
         // given
-        val file: WorkoutFile = create(URI.create("http://somestuff"))
+        val file = create(URI.create("http://somestuff"))
 
         // when
-        val result = sut.save(Workout.EMPTY, file).test()
+        val stream = sut.open(file).test()
 
         // then
-        result.assertError(IllegalArgumentException::class.java)
-    }
-
-    private fun create(uri: URI) = WorkoutFile.UNDEFINED.toBuilder().uri(uri).build()
-
-    @Test
-    fun `save() onto a absolute file URI does not error`() {
-        // given
-        val dummyFile = createWorkoutFile("afile.zwo")
-        `when`(serializerMock.write(any(), any())).thenReturn(Completable.never())
-
-        // when
-        val result = sut.save(Workout.EMPTY, dummyFile).test()
-
-        // then
-        result.assertNoErrors()
+        stream.assertError(IllegalArgumentException::class.java)
     }
 
     @Test
-    fun `save() ont a file URI calls the workout serializer`() {
+    fun `open() a file URI does not error`() {
         // given
-        val dummyFile = createWorkoutFile("dummyFile")
+        val file = createWorkoutFile("afile.zwo")
 
         // when
-        sut.save(Workout.EMPTY, dummyFile).test()
+        val stream = sut.open(file).test()
 
         // then
-        verify(serializerMock).write(eq(Workout.EMPTY), any())
+        stream.assertNoErrors()
     }
 
-    @Test
-    fun `save() succeeds when the workout serializer succeeds`() {
-        // given
-        val dummyFile = createWorkoutFile("dummyFile")
-        `when`(serializerMock.write(any(), any())).thenReturn(Completable.complete())
-
-        // when
-        val result = sut.save(Workout.EMPTY, dummyFile).test()
-
-        // then
-        result.assertComplete()
-    }
-
-    @Test
-    fun `save() fails when the workout serializer fails`() {
-        // given
-        `when`(serializerMock.write(any(), any())).thenReturn(Completable.error(IllegalStateException()))
-
-        // when
-        val result = sut.save(Workout.EMPTY, WorkoutFile.UNDEFINED).test()
-
-        // then
-        result.assertError { true }
-    }
 }

@@ -2,16 +2,15 @@ package com.pij.zworkout.service.android;
 
 import com.annimon.stream.Optional;
 import com.pij.zworkout.service.api.StorageService;
-import com.pij.zworkout.service.api.Workout;
 import com.pij.zworkout.service.api.WorkoutFile;
-import com.pij.zworkout.service.api.WorkoutSerializerService;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import io.reactivex.Completable;
 import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.Single;
@@ -25,12 +24,10 @@ import io.reactivex.Single;
 public class FolderStorageService implements StorageService {
 
     private final File root;
-    private final WorkoutSerializerService serialiser;
     private final Pattern fileMatcher = Pattern.compile("(.*)\\.zwo$", Pattern.CASE_INSENSITIVE);
 
-    public FolderStorageService(File root, WorkoutSerializerService serialiser) {
+    public FolderStorageService(File root) {
         this.root = root;
-        this.serialiser = serialiser;
     }
 
     @Override
@@ -42,12 +39,8 @@ public class FolderStorageService implements StorageService {
     }
 
     @Override
-    public Completable save(Workout data, WorkoutFile file) {
-        return Single.zip(
-                Single.just(data),
-                Single.just(file.uri()).map(File::new),
-                serialiser::write)
-                .flatMapCompletable(serialisation -> serialisation);
+    public Single<OutputStream> open(WorkoutFile file) {
+        return Single.just(file.uri()).map(File::new).map(FileOutputStream::new);
     }
 
     private Maybe<WorkoutFile> convert(File file) {
