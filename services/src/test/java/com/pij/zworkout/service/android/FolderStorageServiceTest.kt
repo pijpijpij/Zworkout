@@ -21,7 +21,7 @@ import kotlin.test.Test
 class FolderStorageServiceTest {
 
     @Rule
-    @kotlin.jvm.JvmField
+    @JvmField
     val folderManager = TemporaryFolder()
 
     private lateinit var sut: FolderStorageService
