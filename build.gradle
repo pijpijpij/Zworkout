@@ -125,7 +125,7 @@ ext {
 
     streamVersion = '1.1.9'
     autoValueVersion = '1.5.1'
-    rxJava2Version = '2.1.10'
+    rxJava2Version = '2.1.12'
     rxAndroidVersion = '2.0.2'
     rxKotlinVersion = '2.2.0'
     horrockVersion= '0.2.2'
