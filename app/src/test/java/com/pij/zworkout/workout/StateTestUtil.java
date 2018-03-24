@@ -11,6 +11,6 @@ import com.pij.zworkout.uc.Workout;
 public class StateTestUtil {
 
     public static State empty() {
-        return State.create(false, Optional.empty(), false, Workout.EMPTY, Optional.empty());
+        return State.create(false, Optional.empty(), false, Workout.EMPTY, true, Optional.empty());
     }
 }

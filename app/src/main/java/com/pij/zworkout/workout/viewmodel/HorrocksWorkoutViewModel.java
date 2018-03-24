@@ -87,12 +87,15 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
                 .showSaved(false)
                 .workout(Workout.EMPTY)
                 .file(Optional.empty())
+                .nameIsEditable(true)
                 .build();
     }
 
     @NonNull
     private State resetTransient(@NonNull State input) {
         return input.toBuilder()
+                .showError(Optional.empty())
+                .showSaved(false)
                 // TODO code that
                 .build();
     }

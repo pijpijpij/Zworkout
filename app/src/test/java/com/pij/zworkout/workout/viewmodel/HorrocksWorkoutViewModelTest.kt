@@ -23,7 +23,7 @@ import kotlin.test.Test
 class HorrocksWorkoutViewModelTest {
 
     private val simpleModel = Model.create(true, Optional.empty(), false, "")
-    private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, Optional.empty())
+    private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, false, Optional.empty())
 
     /** Provides {@link #simpleState} when called.
      */

@@ -10,6 +10,7 @@ import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import io.reactivex.Completable
+import org.junit.Assume
 import org.mockito.ArgumentMatchers
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.any
@@ -26,7 +27,7 @@ class SaveFeatureTest {
     private lateinit var storageMock: WorkoutPersistenceUC
     private lateinit var stateProviderMock: StateProvider<State>
 
-    private val defaultState = State.create(false, Optional.empty(), false, Workout.EMPTY, Optional.empty())
+    private val defaultState = State.create(false, Optional.empty(), false, Workout.EMPTY, false, Optional.empty())
 
     private lateinit var sut: SaveFeature
     private lateinit var workoutFile: WorkoutFile
@@ -85,6 +86,22 @@ class SaveFeatureTest {
         // then
         states.assertValue { it.showSaved() }
     }
+
+    @Test
+    fun `When storage succeeds, sut emits name not editable`() {
+        // given
+        `when`(storageMock.save(any(), any())).thenReturn(Completable.complete())
+        Assume.assumeTrue(defaultState.nameIsEditable())
+
+        // when
+        val states = sut.process(Any())
+                .map { result -> result.reduce(defaultState) }
+                .skip(1)
+                .test()
+
+        states.assertValue { !it.nameIsEditable() }
+    }
+
 
     @Test
     fun `When storage succeeds, sut completes`() {

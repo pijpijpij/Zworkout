@@ -4,6 +4,7 @@ import com.pij.zworkout.workout.StateTestUtil
 import javax.inject.Provider
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 import kotlin.test.expect
 
 
@@ -39,6 +40,19 @@ class CreateWorkoutFeatureTest {
 
         // then
         assertFalse(next.file().isPresent)
+    }
+
+    @Test
+    fun `Makes the name editable`() {
+        // given
+        val current = StateTestUtil.empty()
+        val sut = CreateWorkoutFeature(Provider { "name" })
+
+        // when
+        val next = sut.process(Any()).reduce(current)
+
+        // then
+        assertTrue(next.nameIsEditable())
     }
 
 }
