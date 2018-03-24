@@ -1,6 +1,7 @@
 package com.pij.zworkout.workout.viewmodel
 
 import com.pij.zworkout.workout.StateTestUtil
+import javax.inject.Provider
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.expect
@@ -18,7 +19,7 @@ class CreateWorkoutFeatureTest {
     fun `Applies the workout name to the model`() {
         // given
         val current = StateTestUtil.empty()
-        val sut = CreateWorkoutFeature { "name" }
+        val sut = CreateWorkoutFeature(Provider { "name" })
 
         // when
         val next = sut.process(Any()).reduce(current)
@@ -31,7 +32,7 @@ class CreateWorkoutFeatureTest {
     fun `Defines initial file as empty`() {
         // given
         val current = StateTestUtil.empty()
-        val sut = CreateWorkoutFeature { "name" }
+        val sut = CreateWorkoutFeature(Provider { "name" })
 
         // when
         val next = sut.process(Any()).reduce(current)
