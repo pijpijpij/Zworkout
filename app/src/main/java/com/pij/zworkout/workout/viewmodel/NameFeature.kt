@@ -18,10 +18,10 @@ class NameFeature : Interaction<String, State> {
      */
     override fun process(name: String): Reducer<State> {
         return Reducer { current ->
-            val workout = current.toBuilder().workout(current.workout().name(name))
+            val result = current.toBuilder().workout(current.workout().name(name))
             val file = current.file()
-            file.uri().executeIfAbsent { workout.file(file.toBuilder().name(name).build()) }
-            workout.build()
+            file.uri().executeIfAbsent { result.file(file.toBuilder().name(name).build()) }
+            result.build()
         }
     }
 }
