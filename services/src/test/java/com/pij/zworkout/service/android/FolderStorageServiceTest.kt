@@ -1,16 +1,17 @@
 package com.pij.zworkout.service.android
 
-import com.annimon.stream.Stream
+import com.annimon.stream.Optional
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.service.api.WorkoutFile
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.arrayWithSize
 import org.hamcrest.Matchers.containsInAnyOrder
-import org.hamcrest.Matchers.equalTo
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.expect
 
 /**
  *
@@ -31,7 +32,7 @@ class FolderStorageServiceTest {
         sut = FolderStorageService(folderManager.root, SysoutLogger())
     }
 
-    private fun create(uri: URI) = WorkoutFile.UNDEFINED.toBuilder().uri(uri).build()
+    private fun create(uri: URI) = WorkoutFile.UNDEFINED.toBuilder().uri(Optional.of(uri)).build()
 
     private fun createWorkoutFile(filename: String): WorkoutFile {
         val file = folderManager.newFile(filename)
@@ -104,8 +105,8 @@ class FolderStorageServiceTest {
 
         // then
         val result = files.values()[0]
-        assertThat(result.uri(), equalTo(file1.toURI()))
-        assertThat(result.name(), equalTo("file1"))
+        expect(file1.toURI()) { result.uri().get() }
+        expect("file1") { result.name() }
     }
 
     @Test
@@ -121,8 +122,8 @@ class FolderStorageServiceTest {
                 .test()
 
         // then
-        assertThat(Stream.of(files.values()).map(WorkoutFile::uri).toList(), containsInAnyOrder(file1.toURI(), file2.toURI(), file3.toURI()))
-        assertThat(Stream.of(files.values()).map(WorkoutFile::name).toList(), containsInAnyOrder("file1", "file2", "file3"))
+        assertThat(files.values().map(WorkoutFile::uri).map(Optional<URI>::get), containsInAnyOrder(file1.toURI(), file2.toURI(), file3.toURI()))
+        assertThat(files.values().map(WorkoutFile::name), containsInAnyOrder("file1", "file2", "file3"))
     }
 
 
@@ -131,21 +132,59 @@ class FolderStorageServiceTest {
         // given
 
         // when
-        sut.open(WorkoutFile.UNDEFINED)
+        sut.openForWrite(WorkoutFile.UNDEFINED)
 
         // then
     }
 
     @Test
-    fun `open() an undefined File errors`() {
+    fun `open() an undefined File does not fail`() {
         // given
         val file = WorkoutFile.UNDEFINED
 
         // when
-        val stream = sut.open(file).test()
+        val stream = sut.openForWrite(file).test()
 
         // then
-        stream.assertError(IllegalArgumentException::class.java)
+        stream.assertNoErrors()
+    }
+
+    @Test
+    fun `open() an undefined file creates it`() {
+        // given
+        val file = WorkoutFile.UNDEFINED
+
+        // when
+        sut.openForWrite(file).test()
+
+        // then
+        val expectedFile = folderManager.root.list { _, name -> name == ".zwo" }
+        assertThat(expectedFile, arrayWithSize(1))
+    }
+
+    @Test
+    fun `open() a non existent File works`() {
+        // given
+        val file = WorkoutFile.UNDEFINED.toBuilder().name("hello").build()
+
+        // when
+        val stream = sut.openForWrite(file).test()
+
+        // then
+        stream.assertNoErrors()
+    }
+
+    @Test
+    fun `open() a non-existent file creates it`() {
+        // given
+        val file = WorkoutFile.UNDEFINED.toBuilder().name("hello").build()
+
+        // when
+        sut.openForWrite(file).test()
+
+        // then
+        val expectedFile = folderManager.root.list { _, name -> name == "hello.zwo" }
+        assertThat(expectedFile, arrayWithSize(1))
     }
 
     @Test
@@ -154,7 +193,7 @@ class FolderStorageServiceTest {
         val file = create(URI.create("somestuff"))
 
         // when
-        val stream = sut.open(file).test()
+        val stream = sut.openForWrite(file).test()
 
         // then
         stream.assertError(IllegalArgumentException::class.java)
@@ -166,7 +205,7 @@ class FolderStorageServiceTest {
         val file = create(URI.create("http://somestuff"))
 
         // when
-        val stream = sut.open(file).test()
+        val stream = sut.openForWrite(file).test()
 
         // then
         stream.assertError(IllegalArgumentException::class.java)
@@ -178,7 +217,7 @@ class FolderStorageServiceTest {
         val file = createWorkoutFile("afile.zwo")
 
         // when
-        val stream = sut.open(file).test()
+        val stream = sut.openForWrite(file).test()
 
         // then
         stream.assertNoErrors()

@@ -39,7 +39,7 @@ public class DefaultWorkoutPersistenceUC implements WorkoutPersistenceUC {
     public Completable save(Workout data, WorkoutFile file) {
         return Single.zip(
                 Single.just(data).map(converter::convert),
-                storageService.open(file),
+                storageService.openForWrite(file),
                 workoutSerializerService::write)
                 .flatMapCompletable(serialisation -> serialisation);
     }

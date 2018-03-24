@@ -85,7 +85,7 @@ public class StorageLoadingFeature implements AsyncInteraction<Object, Model> {
 
     private WorkoutInfo convert(WorkoutFile file) {
         return WorkoutInfo.builder()
-                .id(file.uri().toString())
+                .id(file.uri().get().toString())
                 .name(file.name())
                 .details(file.detail())
                 .build();

@@ -24,8 +24,10 @@ public class CreateWorkoutFeature implements Interaction<Object, State> {
     @NonNull
     @Override
     public Reducer<State> process(@NonNull Object event) {
-        // TODO write this
-        return current -> current.withWorkout(current.workout().name(name.get()));
+        return current -> current.toBuilder()
+                .workout(current.workout().name(name.get()))
+                .file(current.file().toBuilder().name(name.get()).build())
+                .build();
     }
 
 }

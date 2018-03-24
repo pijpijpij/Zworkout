@@ -19,5 +19,5 @@ public interface StorageService {
     Observable<List<WorkoutFile>> workouts();
 
     @CheckReturnValue
-    Single<OutputStream> open(WorkoutFile file);
+    Single<OutputStream> openForWrite(WorkoutFile file);
 }

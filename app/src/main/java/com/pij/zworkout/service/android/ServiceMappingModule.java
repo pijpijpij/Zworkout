@@ -40,8 +40,8 @@ public class ServiceMappingModule {
             }
 
             @Override
-            public Single<OutputStream> open(WorkoutFile file) {
-                return functional.open(file).compose(threader.forSingle());
+            public Single<OutputStream> openForWrite(WorkoutFile file) {
+                return functional.openForWrite(file).compose(threader.forSingle());
             }
         };
     }

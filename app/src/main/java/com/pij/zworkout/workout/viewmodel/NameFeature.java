@@ -17,6 +17,7 @@ public class NameFeature implements Interaction<String, State> {
     @NonNull
     @Override
     public Reducer<State> process(@NonNull String name) {
+        // TODO change the name of the file if it does not exist
         return current -> current.toBuilder()
                 .workout(current.workout().toBuilder().name(name).build())
                 .build();

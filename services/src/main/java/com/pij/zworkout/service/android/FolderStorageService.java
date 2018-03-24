@@ -25,6 +25,7 @@ import io.reactivex.Single;
 public class FolderStorageService implements StorageService {
 
     private final File root;
+    private final String fileExtension = ".zwo";
     private final Pattern fileMatcher = Pattern.compile("(.*)\\.zwo$", Pattern.CASE_INSENSITIVE);
     private final Logger logger;
 
@@ -42,11 +43,19 @@ public class FolderStorageService implements StorageService {
     }
 
     @Override
-    public Single<OutputStream> open(WorkoutFile file) {
-        return Single.just(file.uri()).map(File::new).map(FileOutputStream::new)
+    public Single<OutputStream> openForWrite(WorkoutFile file) {
+        return fileUri(file).map(FileOutputStream::new)
                 .cast(OutputStream.class)
                 .doOnError(e -> logger.print(getClass(), e, ""))
                 ;
+    }
+
+    private Single<File> fileUri(WorkoutFile file) {
+        return Maybe.just(file.uri())
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(File::new)
+                .toSingle(new File(root, file.name() + fileExtension));
     }
 
     private Maybe<WorkoutFile> convert(File file) {
@@ -56,10 +65,11 @@ public class FolderStorageService implements StorageService {
                 .filter(Matcher::matches)
                 .map(matcher -> matcher.group(1));
 
-        return Maybe.zip(name, Maybe.just(file), this::createWorkoutFile);
+        return Maybe.zip(name, Maybe.just(file), this::workoutFile);
     }
 
-    private WorkoutFile createWorkoutFile(String workoutName, File file) {
+    private WorkoutFile workoutFile(String workoutName, File file) {
         return WorkoutFile.create(file.toURI(), workoutName, Optional.empty());
     }
+
 }

@@ -75,7 +75,7 @@ public class StorageLoadingFeature implements AsyncInteraction<String, State> {
                 Observable.just(current -> updateFailureState(current,
                         new UnsupportedOperationException("apply([workoutId]) not implemented.")));
 //        return storage.workout(workoutId)
-//                .doOnError(e -> logger.print(getClass(), "Could not load data", e))
+//                .doOnError(e -> logger.print(getClass(), e, "Could not load data"))
 //                .flatMapSingle(files -> Observable.fromIterable(files).map(this::convert).toList())
 //                .map(descriptions -> (Reducer<Model>) current -> updateSuccessState(current, descriptions))
 //                .onErrorReturn(e -> current -> updateFailureState(current, e))

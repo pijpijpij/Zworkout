@@ -7,6 +7,8 @@ import com.google.auto.value.AutoValue;
 
 import java.net.URI;
 
+import static com.annimon.stream.Optional.empty;
+
 /**
  * <p>Created on 02/03/2018.</p>
  *
@@ -15,9 +17,13 @@ import java.net.URI;
 @AutoValue
 public abstract class WorkoutFile {
 
-    public static WorkoutFile UNDEFINED = WorkoutFile.create(URI.create("empty"), "", Optional.empty());
+    public static WorkoutFile UNDEFINED = WorkoutFile.builder().name("").build();
 
-    public static WorkoutFile create(URI uri, String name, Optional<String> detail) {
+    public static WorkoutFile create(@NonNull URI uri, @NonNull String name, @NonNull Optional<String> detail) {
+        return create(Optional.of(uri), name, detail);
+    }
+
+    public static WorkoutFile create(Optional<URI> uri, String name, Optional<String> detail) {
         return builder()
                 .uri(uri)
                 .name(name)
@@ -26,11 +32,14 @@ public abstract class WorkoutFile {
     }
 
     public static Builder builder() {
-        return new AutoValue_WorkoutFile.Builder();
+        return new AutoValue_WorkoutFile.Builder()
+                .detail(empty())
+                .uri(empty())
+                ;
     }
 
     @NonNull
-    public abstract URI uri();
+    public abstract Optional<URI> uri();
 
     @NonNull
     public abstract String name();
@@ -42,7 +51,7 @@ public abstract class WorkoutFile {
 
     @AutoValue.Builder
     public abstract static class Builder {
-        public abstract Builder uri(URI uri);
+        public abstract Builder uri(Optional<URI> uri);
 
         public abstract Builder name(String name);
 
