@@ -49,6 +49,8 @@ public class WorkoutDetailFragment extends DaggerFragment {
     View workoutDetail;
     @BindView(R.id.name)
     TextView name;
+    @BindView(R.id.description)
+    TextView description;
     @Inject
     WorkoutViewModel viewModel;
     private Unbinder unbinder;
@@ -77,7 +79,8 @@ public class WorkoutDetailFragment extends DaggerFragment {
                 viewModel.model().map(Model::showError).filter(Optional::isPresent).map(Optional::get).subscribe(this::showError),
                 viewModel.model().map(Model::inProgress).distinctUntilChanged().subscribe(this::showInProgress),
                 viewModel.model().map(Model::name).distinctUntilChanged().subscribe(this::displayName),
-                viewModel.model().map(Model::nameIsReadOnly).distinctUntilChanged().subscribe(this::disableName)
+                viewModel.model().map(Model::nameIsReadOnly).distinctUntilChanged().subscribe(this::disableName),
+                viewModel.model().map(Model::description).distinctUntilChanged().subscribe(this::displayDescription)
         );
 
         if (savedInstanceState == null) {
@@ -117,6 +120,17 @@ public class WorkoutDetailFragment extends DaggerFragment {
     @OnTextChanged(R.id.name)
     void setName(CharSequence newValue) {
         viewModel.name(newValue.toString());
+    }
+
+    @OnTextChanged(R.id.description)
+    void setDescription(CharSequence newValue) {
+        viewModel.description(newValue.toString());
+    }
+
+    private void displayDescription(String newValue) {
+        if (!ObjectsCompat.equals(description.getText().toString(), newValue)) {
+            description.setText(newValue);
+        }
     }
 
     private void disableName(boolean readOnly) {

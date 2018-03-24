@@ -48,6 +48,12 @@ public abstract class State {
 
     public abstract Builder toBuilder();
 
+
+    public State withWorkout(Workout workout) {
+        return toBuilder().workout(workout).build();
+    }
+
+
     @AutoValue.Builder
     public abstract static class Builder {
         public abstract Builder inProgress(boolean inProgress);

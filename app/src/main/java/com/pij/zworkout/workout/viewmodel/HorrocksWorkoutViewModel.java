@@ -37,11 +37,13 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
     private final ReducerCreator<Object, State> createWorkout;
     private final ReducerCreator<Object, State> save;
     private final ReducerCreator<String, State> name;
+    private final ReducerCreator<String, State> description;
 
     private HorrocksWorkoutViewModel(Logger logger,
                                      Engine<State, Model> engine,
                                      Storage<State> storage,
                                      ReducerCreator<String, State> nameFeature,
+                                     ReducerCreator<String, State> descriptionFeature,
                                      ReducerCreator<String, State> loadingFeature,
                                      ReducerCreator<Object, State> saveFeature,
                                      ReducerCreator<Object, State> createWorkoutFeature
@@ -49,6 +51,7 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
         this.logger = logger;
 
         name = nameFeature;
+        description = descriptionFeature;
         loader = loadingFeature;
         save = saveFeature;
         createWorkout = createWorkoutFeature;
@@ -56,7 +59,7 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
                 .store(storage)
                 .transientResetter(this::resetTransient)
                 .stateToModel(this::convert)
-                .creators(asList(name, loader, save, createWorkout))
+                .creators(asList(name, description, loader, save, createWorkout))
                 .build();
         modelStream = engine.runWith(engineConfiguration).share();
     }
@@ -68,12 +71,14 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
                                                   Engine<State, Model> engine,
                                                   Storage<State> storage,
                                                   Interaction<String, State> nameFeature,
+                                                  Interaction<String, State> descriptionFeature,
                                                   AsyncInteraction<String, State> loadingFeature,
                                                   AsyncInteraction<Object, State> saveFeature,
                                                   Interaction<Object, State> createWorkoutFeature
     ) {
         return new HorrocksWorkoutViewModel(logger, engine, storage,
                 new SingleReducerCreator<>(nameFeature, logger),
+                new SingleReducerCreator<>(descriptionFeature, logger),
                 new MultipleReducerCreator<>(loadingFeature, logger),
                 new MultipleReducerCreator<>(saveFeature, logger),
                 new SingleReducerCreator<>(createWorkoutFeature, logger)
@@ -108,6 +113,7 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
                 .showError(state.showError())
                 .name(state.workout().name())
                 .nameIsReadOnly(state.nameIsReadOnly())
+                .description(state.workout().description())
                 .build();
     }
 
@@ -133,6 +139,11 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
     @Override
     public void name(@NotNull String newValue) {
         name.trigger(newValue);
+    }
+
+    @Override
+    public void description(String newValue) {
+        description.trigger(newValue);
     }
 
     @Override

@@ -9,9 +9,9 @@ import com.pij.horrocks.Storage;
 import com.pij.utils.Logger;
 import com.pij.zworkout.FragmentScoped;
 import com.pij.zworkout.R;
-import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.uc.WorkoutPersistenceUC;
 import com.pij.zworkout.workout.viewmodel.CreateWorkoutFeature;
+import com.pij.zworkout.workout.viewmodel.DescriptionFeature;
 import com.pij.zworkout.workout.viewmodel.HorrocksWorkoutViewModel;
 import com.pij.zworkout.workout.viewmodel.NameFeature;
 import com.pij.zworkout.workout.viewmodel.SaveFeature;
@@ -37,6 +37,7 @@ public class WorkoutDetailModule {
                 new DefaultEngine<>(logger),
                 storage,
                 new NameFeature(),
+                new DescriptionFeature(),
                 loadingFeature,
                 saveFeature,
                 createWorkoutFeature
@@ -57,7 +58,7 @@ public class WorkoutDetailModule {
     }
 
     @Provides
-    StorageLoadingFeature provideStorageLoadingFeature(Logger logger, StorageService storage, Resources resources) {
+    StorageLoadingFeature provideStorageLoadingFeature(Logger logger, WorkoutPersistenceUC storage, Resources resources) {
         String defaultErrorMessage = resources.getString(R.string.list_loading_error_message);
         return new StorageLoadingFeature(logger, storage, defaultErrorMessage);
     }

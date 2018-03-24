@@ -41,7 +41,7 @@ class DefaultWorkoutPersistenceUCTest {
         serializerMock = mock()
         converterMock = mock()
         `when`(storageMock.workouts()).thenReturn(Observable.never())
-        `when`(converterMock.convert(any())).thenReturn(PersistableWorkoutTestUtil.empty())
+        `when`(converterMock.convert(any<Workout>())).thenReturn(PersistableWorkoutTestUtil.empty())
         `when`(storageMock.open(any())).thenReturn(Single.never())
         sut = DefaultWorkoutPersistenceUC(storageMock, serializerMock, converterMock)
     }

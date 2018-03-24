@@ -23,5 +23,7 @@ public interface WorkoutViewModel {
 
     void name(@NotNull String newValue);
 
+    void description(String newValue);
+
     void save();
 }

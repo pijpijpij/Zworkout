@@ -12,20 +12,20 @@ import kotlin.test.assertEquals
  *
  * @author Pierrejean
  */
-class NameFeatureTest {
+class DescriptionFeatureTest {
 
     @Test
-    fun `Reducer puts new name in the workout`() {
+    fun `Reducer puts new description in the workout`() {
         // given
-        val currentWorkout = Workout.EMPTY.name("the original")
+        val currentWorkout = Workout.EMPTY.toBuilder().description("the original").build()
         val current = StateTestUtil.empty().withWorkout(currentWorkout)
-        val sut = NameFeature()
+        val sut = DescriptionFeature()
 
         // when
         val next = sut.process("the new one").reduce(current)
 
         // then
-        assertEquals("the new one", next.workout().name())
+        assertEquals("the new one", next.workout().description())
     }
 
 }

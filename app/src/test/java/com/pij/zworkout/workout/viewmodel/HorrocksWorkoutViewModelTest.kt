@@ -22,7 +22,7 @@ import kotlin.test.Test
  */
 class HorrocksWorkoutViewModelTest {
 
-    private val simpleModel = Model.create(true, Optional.empty(), false, "", false)
+    private val simpleModel = Model.create(true, Optional.empty(), false, "", false, "")
     private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, false, Optional.empty())
 
     /** Provides {@link #simpleState} when called.
@@ -39,6 +39,8 @@ class HorrocksWorkoutViewModelTest {
     @Mock
     private lateinit var nameFeatureMock: Interaction<String, State>
     @Mock
+    private lateinit var descriptionFeatureMock: Interaction<String, State>
+    @Mock
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
 
 
@@ -48,6 +50,7 @@ class HorrocksWorkoutViewModelTest {
         sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
                 MemoryStorage<State>(HorrocksWorkoutViewModel.initialState()),
                 nameFeatureMock,
+                descriptionFeatureMock,
                 loadingFeatureMock,
                 saveFeatureMock,
                 createWorkoutFeatureMock)
@@ -83,7 +86,7 @@ class HorrocksWorkoutViewModelTest {
         val observer = sut.model().test()
 
         // then
-        observer.assertValue(Model.create(false, Optional.empty(), false, "", false))
+        observer.assertValue(Model.create(false, Optional.empty(), false, "", false, ""))
     }
 
     @Test
@@ -107,6 +110,32 @@ class HorrocksWorkoutViewModelTest {
 
         // when
         sut.name("whatever")
+
+        // then
+        observer.assertValue(simpleModel)
+    }
+
+    @Test
+    fun `Changing description triggers DescriptionFeature`() {
+        // given
+        `when`(descriptionFeatureMock.process("a description")).thenReturn(simpleResult)
+        sut.model().test()
+
+        // when
+        sut.description("a description")
+
+        // then
+        verify(descriptionFeatureMock).process("a description")
+    }
+
+    @Test
+    fun `model() returns model provided by ChangeDescriptionFeature on setDescription()`() {
+        // given
+        `when`(descriptionFeatureMock.process(anyString())).thenReturn(Reducer { _ -> simpleState })
+        val observer = sut.model().skip(1).test()
+
+        // when
+        sut.description("whatever")
 
         // then
         observer.assertValue(simpleModel)

@@ -64,7 +64,9 @@ class PersistableWorkoutTest {
             fun data(): Collection<Array<Any>> {
                 return listOf(
                         arrayOf<Any>("<workout_file><name/></workout_file>"),
-                        arrayOf<Any>("<workout_file><name></name></workout_file>")
+                        arrayOf<Any>("<workout_file><name></name></workout_file>"),
+                        arrayOf<Any>("<workout_file><name/><description/></workout_file>"),
+                        arrayOf<Any>("<workout_file><name/><description> </description></workout_file>")
                 )
             }
         }

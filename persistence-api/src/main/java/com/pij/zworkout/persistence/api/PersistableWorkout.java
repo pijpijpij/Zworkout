@@ -1,9 +1,11 @@
 package com.pij.zworkout.persistence.api;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import org.simpleframework.xml.Default;
 import org.simpleframework.xml.DefaultType;
+import org.simpleframework.xml.Element;
 import org.simpleframework.xml.Root;
 import org.simpleframework.xml.Text;
 
@@ -16,7 +18,12 @@ import org.simpleframework.xml.Text;
 @Default(DefaultType.FIELD)
 public class PersistableWorkout {
 
-    public EmptyString name;
+    @NonNull
+    public EmptyString name = new EmptyString();
+
+    @Nullable
+    @Element(required = false)
+    public String description;
 
     public static class EmptyString {
         @Text(required = false)

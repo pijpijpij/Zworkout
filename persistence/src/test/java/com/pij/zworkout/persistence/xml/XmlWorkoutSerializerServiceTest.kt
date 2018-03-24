@@ -78,7 +78,7 @@ class XmlWorkoutSerializerServiceTest {
         // given
         val output = ByteArrayOutputStream()
         val data = PersistableWorkout()
-        `when`(persisterMock.write(any(), any(OutputStream::class.java))).thenThrow(IllegalArgumentException("who ha!"))
+        `when`(persisterMock.write(any(), any<OutputStream>())).thenThrow(IllegalArgumentException("who ha!"))
 
         // when
         val result = sut.write(data, output).test()

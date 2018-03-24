@@ -18,7 +18,7 @@ import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
 import com.pij.utils.Logger
-import com.pij.zworkout.service.api.StorageService
+import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import io.reactivex.Observable
 
@@ -30,7 +30,7 @@ import io.reactivex.Observable
  */
 class StorageLoadingFeature(
         private val logger: Logger,
-        private val storage: StorageService,
+        private val storage: WorkoutPersistenceUC,
         private val defaultErrorMessage: String
 ) : AsyncInteraction<String, State> {
 

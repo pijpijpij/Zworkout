@@ -1,5 +1,7 @@
 package com.pij.zworkout.workout;
 
+import android.support.annotation.NonNull;
+
 import com.annimon.stream.Optional;
 import com.google.auto.value.AutoValue;
 
@@ -17,13 +19,14 @@ public abstract class Model {
         return new AutoValue_Model.Builder();
     }
 
-    public static Model create(boolean inProgress, Optional<String> showError, boolean showSaved, String name, boolean nameIsReadOnly) {
+    public static Model create(boolean inProgress, Optional<String> showError, boolean showSaved, String name, boolean nameIsReadOnly, String description) {
         return builder()
                 .inProgress(inProgress)
                 .showError(showError)
                 .showSaved(showSaved)
                 .name(name)
                 .nameIsReadOnly(nameIsReadOnly)
+                .description(description)
                 .build();
     }
 
@@ -39,6 +42,9 @@ public abstract class Model {
 
     public abstract boolean nameIsReadOnly();
 
+    @NonNull
+    public abstract String description();
+
     public abstract Builder toBuilder();
 
     @AutoValue.Builder
@@ -52,6 +58,8 @@ public abstract class Model {
         public abstract Builder name(String name);
 
         public abstract Builder nameIsReadOnly(boolean nameIsReadOnly);
+
+        public abstract Builder description(String description);
 
         public abstract Model build();
     }
