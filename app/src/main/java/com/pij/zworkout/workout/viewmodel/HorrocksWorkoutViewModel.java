@@ -87,7 +87,7 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
                 .showSaved(false)
                 .workout(Workout.EMPTY)
                 .file(Optional.empty())
-                .nameIsEditable(true)
+                .nameIsReadOnly(false)
                 .build();
     }
 
@@ -107,6 +107,7 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
                 .showSaved(state.showSaved())
                 .showError(state.showError())
                 .name(state.workout().name())
+                .nameIsReadOnly(state.nameIsReadOnly())
                 .build();
     }
 

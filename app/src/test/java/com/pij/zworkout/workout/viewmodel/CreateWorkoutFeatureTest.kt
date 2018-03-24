@@ -4,7 +4,6 @@ import com.pij.zworkout.workout.StateTestUtil
 import javax.inject.Provider
 import kotlin.test.Test
 import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 import kotlin.test.expect
 
 
@@ -52,7 +51,7 @@ class CreateWorkoutFeatureTest {
         val next = sut.process(Any()).reduce(current)
 
         // then
-        assertTrue(next.nameIsEditable())
+        assertFalse(next.nameIsReadOnly())
     }
 
 }

@@ -22,7 +22,7 @@ import kotlin.test.Test
  */
 class HorrocksWorkoutViewModelTest {
 
-    private val simpleModel = Model.create(true, Optional.empty(), false, "")
+    private val simpleModel = Model.create(true, Optional.empty(), false, "", false)
     private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, false, Optional.empty())
 
     /** Provides {@link #simpleState} when called.
@@ -83,7 +83,7 @@ class HorrocksWorkoutViewModelTest {
         val observer = sut.model().test()
 
         // then
-        observer.assertValue(Model.create(false, Optional.empty(), false, ""))
+        observer.assertValue(Model.create(false, Optional.empty(), false, "", false))
     }
 
     @Test

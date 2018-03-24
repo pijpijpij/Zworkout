@@ -37,7 +37,7 @@ class StorageLoadingFeature(
     private fun updateSuccessState(current: State/*, List<WorkoutDescriptor> list*/): State {
         return current.toBuilder()
                 // TODO write this
-                .nameIsEditable(false)
+                .nameIsReadOnly(false)
                 .inProgress(false)
                 .build()
     }

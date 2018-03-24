@@ -22,7 +22,7 @@ class CreateWorkoutFeature(private val name: Provider<String>) : Interaction<Any
             current.toBuilder()
                     .workout(current.workout().name(name.get()))
                     .file(Optional.empty<File>())
-                    .nameIsEditable(true)
+                    .nameIsReadOnly(false)
                     .build()
         }
     }

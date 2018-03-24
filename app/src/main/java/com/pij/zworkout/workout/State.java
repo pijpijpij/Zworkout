@@ -20,13 +20,13 @@ public abstract class State {
         return new AutoValue_State.Builder();
     }
 
-    public static State create(boolean inProgress, Optional<String> showError, boolean showSaved, Workout workout, boolean nameIsEditable, Optional<File> file) {
+    public static State create(boolean inProgress, Optional<String> showError, boolean showSaved, Workout workout, boolean nameIsReadOnly, Optional<File> file) {
         return builder()
                 .inProgress(inProgress)
                 .showError(showError)
                 .showSaved(showSaved)
                 .workout(workout)
-                .nameIsEditable(nameIsEditable)
+                .nameIsReadOnly(nameIsReadOnly)
                 .file(file)
                 .build();
     }
@@ -41,7 +41,7 @@ public abstract class State {
     @NotNull
     public abstract Workout workout();
 
-    public abstract boolean nameIsEditable();
+    public abstract boolean nameIsReadOnly();
 
     @NotNull
     public abstract Optional<File> file();
@@ -60,7 +60,7 @@ public abstract class State {
 
         public abstract Builder file(Optional<File> file);
 
-        public abstract Builder nameIsEditable(boolean nameIsEditable);
+        public abstract Builder nameIsReadOnly(boolean nameIsReadOnly);
 
         public abstract State build();
     }

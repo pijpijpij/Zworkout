@@ -88,10 +88,10 @@ class SaveFeatureTest {
     }
 
     @Test
-    fun `When storage succeeds, sut emits name not editable`() {
+    fun `When storage succeeds, sut emits name read-only`() {
         // given
         `when`(storageMock.save(any(), any())).thenReturn(Completable.complete())
-        Assume.assumeTrue(defaultState.nameIsEditable())
+        Assume.assumeTrue(defaultState.nameIsReadOnly())
 
         // when
         val states = sut.process(Any())
@@ -99,7 +99,7 @@ class SaveFeatureTest {
                 .skip(1)
                 .test()
 
-        states.assertValue { !it.nameIsEditable() }
+        states.assertValue { !it.nameIsReadOnly() }
     }
 
 

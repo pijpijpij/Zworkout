@@ -74,9 +74,10 @@ public class WorkoutDetailFragment extends DaggerFragment {
         setHasOptionsMenu(true);
 
         subscriptions.addAll(
-                viewModel.model().map(Model::inProgress).subscribe(this::showInProgress),
                 viewModel.model().map(Model::showError).filter(Optional::isPresent).map(Optional::get).subscribe(this::showError),
-                viewModel.model().map(Model::name).subscribe(this::displayName)
+                viewModel.model().map(Model::inProgress).distinctUntilChanged().subscribe(this::showInProgress),
+                viewModel.model().map(Model::name).distinctUntilChanged().subscribe(this::displayName),
+                viewModel.model().map(Model::nameIsReadOnly).distinctUntilChanged().subscribe(this::disableName)
         );
 
         if (savedInstanceState == null) {
@@ -116,6 +117,10 @@ public class WorkoutDetailFragment extends DaggerFragment {
     @OnTextChanged(R.id.name)
     void setName(CharSequence newValue) {
         viewModel.name(newValue.toString());
+    }
+
+    private void disableName(boolean readOnly) {
+        name.setEnabled(!readOnly);
     }
 
     private void displayName(String newValue) {

@@ -17,12 +17,13 @@ public abstract class Model {
         return new AutoValue_Model.Builder();
     }
 
-    public static Model create(boolean inProgress, Optional<String> showError, boolean showSaved, String name) {
+    public static Model create(boolean inProgress, Optional<String> showError, boolean showSaved, String name, boolean nameIsReadOnly) {
         return builder()
                 .inProgress(inProgress)
                 .showError(showError)
                 .showSaved(showSaved)
                 .name(name)
+                .nameIsReadOnly(nameIsReadOnly)
                 .build();
     }
 
@@ -36,6 +37,8 @@ public abstract class Model {
     @NotNull
     public abstract String name();
 
+    public abstract boolean nameIsReadOnly();
+
     public abstract Builder toBuilder();
 
     @AutoValue.Builder
@@ -47,6 +50,8 @@ public abstract class Model {
         public abstract Builder showSaved(boolean showSaved);
 
         public abstract Builder name(String name);
+
+        public abstract Builder nameIsReadOnly(boolean nameIsReadOnly);
 
         public abstract Model build();
     }
