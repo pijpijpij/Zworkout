@@ -128,7 +128,7 @@ ext {
     rxJava2Version = '2.1.10'
     rxAndroidVersion = '2.0.2'
     rxKotlinVersion = '2.2.0'
-    horrockVersion= '0.2.1'
+    horrockVersion= '0.2.2'
     simpleXmlVersion = '2.7.1'
     daggerVersion = '2.14.1'
     utilsVersion = '1.2.3'
