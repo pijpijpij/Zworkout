@@ -104,7 +104,7 @@ public class HorrocksWorkoutsViewModel implements WorkoutsViewModel {
     @Override
     public Observable<Model> model() {
         return modelStream
-                .doOnError(e -> logger.print(getClass(), "Terminal Damage!!!", e))
+                .doOnError(e -> logger.print(getClass(), e, "Terminal Damage!!!"))
                 .doOnComplete(() -> logger.print(getClass(), "model() completed!!!"))
                 ;
     }
