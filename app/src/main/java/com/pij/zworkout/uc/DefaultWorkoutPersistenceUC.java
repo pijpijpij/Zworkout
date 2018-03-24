@@ -1,9 +1,11 @@
 package com.pij.zworkout.uc;
 
+import com.annimon.stream.Optional;
 import com.pij.zworkout.persistence.api.WorkoutSerializerService;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.service.api.WorkoutFile;
 
+import java.io.File;
 import java.util.List;
 
 import io.reactivex.Completable;
@@ -17,6 +19,8 @@ import io.reactivex.Single;
  */
 
 public class DefaultWorkoutPersistenceUC implements WorkoutPersistenceUC {
+
+    private final static String FILE_EXTENSION = ".zwo";
 
     private final StorageService storageService;
     private final WorkoutSerializerService workoutSerializerService;
@@ -36,12 +40,15 @@ public class DefaultWorkoutPersistenceUC implements WorkoutPersistenceUC {
     }
 
     @Override
-    public Completable save(Workout data, WorkoutFile file) {
-        return Single.zip(
+    public Completable save(Workout data, Optional<File> file) {
+        return Single.defer(() -> Single.zip(
                 Single.just(data).map(converter::convert),
-                storageService.openForWrite(file),
-                workoutSerializerService::write)
+                calculateFile(data, file).flatMap(storageService::open),
+                workoutSerializerService::write))
                 .flatMapCompletable(serialisation -> serialisation);
     }
 
+    private Single<File> calculateFile(Workout data, Optional<File> file) {
+        return file.isPresent() ? Single.just(file.get()) : storageService.create(data.name() + FILE_EXTENSION);
+    }
 }

@@ -3,6 +3,7 @@ package com.pij.zworkout.service.android;
 import com.pij.zworkout.service.api.StorageService;
 import com.pij.zworkout.service.api.WorkoutFile;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -40,8 +41,13 @@ public class ServiceMappingModule {
             }
 
             @Override
-            public Single<OutputStream> openForWrite(WorkoutFile file) {
-                return functional.openForWrite(file).compose(threader.forSingle());
+            public Single<File> create(String name) {
+                return functional.create(name).compose(threader.forSingle());
+            }
+
+            @Override
+            public Single<OutputStream> open(File file) {
+                return functional.open(file).compose(threader.forSingle());
             }
         };
     }

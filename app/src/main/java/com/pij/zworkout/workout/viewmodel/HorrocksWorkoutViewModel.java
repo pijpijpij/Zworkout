@@ -12,7 +12,6 @@ import com.pij.horrocks.ReducerCreator;
 import com.pij.horrocks.SingleReducerCreator;
 import com.pij.horrocks.Storage;
 import com.pij.utils.Logger;
-import com.pij.zworkout.service.api.WorkoutFile;
 import com.pij.zworkout.uc.Workout;
 import com.pij.zworkout.workout.Model;
 import com.pij.zworkout.workout.State;
@@ -87,7 +86,7 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
                 .showError(Optional.empty())
                 .showSaved(false)
                 .workout(Workout.EMPTY)
-                .file(WorkoutFile.UNDEFINED)
+                .file(Optional.empty())
                 .build();
     }
 

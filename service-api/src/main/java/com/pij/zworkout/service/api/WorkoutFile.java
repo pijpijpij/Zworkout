@@ -19,23 +19,24 @@ public abstract class WorkoutFile {
 
     public static WorkoutFile UNDEFINED = WorkoutFile.builder().name("").build();
 
-    public static WorkoutFile create(@NonNull URI uri, @NonNull String name, @NonNull Optional<String> detail) {
-        return create(Optional.of(uri), name, detail);
-    }
-
-    public static WorkoutFile create(Optional<URI> uri, String name, Optional<String> detail) {
+    public static WorkoutFile create(@NonNull URI uri, @NonNull String name) {
         return builder()
-                .uri(uri)
+                .uri(Optional.of(uri))
                 .name(name)
-                .detail(detail)
                 .build();
     }
 
     public static Builder builder() {
         return new AutoValue_WorkoutFile.Builder()
-                .detail(empty())
                 .uri(empty())
                 ;
+    }
+
+    public static WorkoutFile create(Optional<URI> uri, String name) {
+        return builder()
+                .uri(uri)
+                .name(name)
+                .build();
     }
 
     @NonNull
@@ -44,9 +45,6 @@ public abstract class WorkoutFile {
     @NonNull
     public abstract String name();
 
-    @NonNull
-    public abstract Optional<String> detail();
-
     public abstract Builder toBuilder();
 
     @AutoValue.Builder
@@ -54,8 +52,6 @@ public abstract class WorkoutFile {
         public abstract Builder uri(Optional<URI> uri);
 
         public abstract Builder name(String name);
-
-        public abstract Builder detail(Optional<String> detail);
 
         public abstract WorkoutFile build();
     }

@@ -1,5 +1,6 @@
 package com.pij.zworkout.service.api;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -19,5 +20,8 @@ public interface StorageService {
     Observable<List<WorkoutFile>> workouts();
 
     @CheckReturnValue
-    Single<OutputStream> openForWrite(WorkoutFile file);
+    Single<File> create(String name);
+
+    @CheckReturnValue
+    Single<OutputStream> open(File file);
 }

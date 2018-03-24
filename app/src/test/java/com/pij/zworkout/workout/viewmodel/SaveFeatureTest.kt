@@ -6,7 +6,6 @@ import com.pij.horrocks.StateProvider
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.WorkoutInfo
 import com.pij.zworkout.service.api.WorkoutFile
-import com.pij.zworkout.service.api.WorkoutFileTestUtil
 import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
@@ -27,7 +26,7 @@ class SaveFeatureTest {
     private lateinit var storageMock: WorkoutPersistenceUC
     private lateinit var stateProviderMock: StateProvider<State>
 
-    private val defaultState = State.create(false, Optional.empty(), false, Workout.EMPTY, WorkoutFileTestUtil.empty())
+    private val defaultState = State.create(false, Optional.empty(), false, Workout.EMPTY, Optional.empty())
 
     private lateinit var sut: SaveFeature
     private lateinit var workoutFile: WorkoutFile
@@ -39,7 +38,7 @@ class SaveFeatureTest {
         stateProviderMock = mock()
         `when`(storageMock.save(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Completable.never())
         `when`(stateProviderMock.get()).thenReturn(defaultState)
-        workoutFile = WorkoutFile.create(URI.create("some/file"), "zip", Optional.of("zap"))
+        workoutFile = WorkoutFile.create(URI.create("some/file"), "zip")
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.of("zap"))
         sut = SaveFeature(SysoutLogger(), storageMock, stateProviderMock, "the default error message")
     }

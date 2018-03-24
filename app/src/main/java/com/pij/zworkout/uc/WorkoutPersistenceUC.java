@@ -1,7 +1,9 @@
 package com.pij.zworkout.uc;
 
+import com.annimon.stream.Optional;
 import com.pij.zworkout.service.api.WorkoutFile;
 
+import java.io.File;
 import java.util.List;
 
 import io.reactivex.Completable;
@@ -17,5 +19,5 @@ public interface WorkoutPersistenceUC {
 
     Observable<List<WorkoutFile>> workouts();
 
-    Completable save(Workout data, WorkoutFile file);
+    Completable save(Workout data, Optional<File> file);
 }

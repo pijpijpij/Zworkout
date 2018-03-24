@@ -3,7 +3,6 @@ package com.pij.zworkout.workout.viewmodel
 import com.annimon.stream.Optional
 import com.pij.horrocks.*
 import com.pij.utils.SysoutLogger
-import com.pij.zworkout.service.api.WorkoutFileTestUtil
 import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.workout.Model
 import com.pij.zworkout.workout.State
@@ -24,7 +23,7 @@ import kotlin.test.Test
 class HorrocksWorkoutViewModelTest {
 
     private val simpleModel = Model.create(true, Optional.empty(), false, "")
-    private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, WorkoutFileTestUtil.empty())
+    private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, Optional.empty())
 
     /** Provides {@link #simpleState} when called.
      */

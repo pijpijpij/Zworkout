@@ -13,6 +13,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import org.mockito.Mockito.`when`
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -30,7 +31,7 @@ class DefaultWorkoutPersistenceUCTest {
     private lateinit var storageMock: StorageService
     private lateinit var serializerMock: WorkoutSerializerService
 
-    private val dummyFile = WorkoutFile.UNDEFINED
+    private val dummyFile = File("")
 
     private lateinit var converterMock: PersistableWorkoutConverter
 
@@ -41,7 +42,7 @@ class DefaultWorkoutPersistenceUCTest {
         converterMock = mock()
         `when`(storageMock.workouts()).thenReturn(Observable.never())
         `when`(converterMock.convert(any())).thenReturn(PersistableWorkoutTestUtil.empty())
-        `when`(storageMock.openForWrite(any())).thenReturn(Single.never())
+        `when`(storageMock.open(any())).thenReturn(Single.never())
         sut = DefaultWorkoutPersistenceUC(storageMock, serializerMock, converterMock)
     }
 
@@ -111,7 +112,7 @@ class DefaultWorkoutPersistenceUCTest {
         // given
 
         // when
-        sut.save(Workout.EMPTY, dummyFile)
+        sut.save(Workout.EMPTY, Optional.of(dummyFile))
 
         // then
     }
@@ -121,19 +122,19 @@ class DefaultWorkoutPersistenceUCTest {
         // given
 
         // when
-        sut.save(Workout.EMPTY, dummyFile).test()
+        sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
 
         // then
-        verify(storageMock).openForWrite(dummyFile)
+        verify(storageMock).open(dummyFile)
     }
 
     @Test
     fun `save() calls the workout serializer`() {
         // given
-        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
+        `when`(storageMock.open(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
 
         // when
-        sut.save(Workout.EMPTY, dummyFile).test()
+        sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
 
         // then
         verify(serializerMock).write(any(), any())
@@ -142,11 +143,11 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() succeeds when the workout serializer succeeds`() {
         // given
-        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
+        `when`(storageMock.open(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
         `when`(serializerMock.write(any(), any())).thenReturn(Completable.complete())
 
         // when
-        val result = sut.save(Workout.EMPTY, dummyFile).test()
+        val result = sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
 
         // then
         result.assertComplete()
@@ -155,10 +156,10 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() fails when the storage service fails`() {
         // given
-        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.error(IllegalStateException()))
+        `when`(storageMock.open(dummyFile)).thenReturn(Single.error(IllegalStateException()))
 
         // when
-        val result = sut.save(Workout.EMPTY, dummyFile).test()
+        val result = sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
 
         // then
         result.assertError { true }
@@ -167,13 +168,51 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() fails when the workout serializer fails`() {
         // given
-        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
+        `when`(storageMock.open(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
         `when`(serializerMock.write(any(), any())).thenReturn(Completable.error(IllegalStateException()))
 
         // when
-        val result = sut.save(Workout.EMPTY, dummyFile).test()
+        val result = sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
 
         // then
         result.assertError { true }
     }
+
+    @Test
+    fun `save() creates the file with the storage if no file is specified`() {
+        // given
+        val workout = Workout.EMPTY.name("hello!")
+
+        // when
+        sut.save(workout, Optional.empty()).test()
+
+        // then
+        verify(storageMock).create(any())
+    }
+
+    @Test
+    fun `save() defines initial file name with a ZWO extension if no file is specified`() {
+        // given
+        val workout = Workout.EMPTY.name("hello!")
+
+        // when
+        sut.save(workout, Optional.empty()).test()
+
+        // then
+        verify(storageMock).create("hello!.zwo")
+    }
+
+    @Test
+    fun `save() opens the newly created file if no file is specified`() {
+        // given
+        `when`(storageMock.create("hello!.zwo")).thenReturn(Single.just(dummyFile))
+        val workout = Workout.EMPTY.name("hello!")
+
+        // when
+        sut.save(workout, Optional.empty()).test()
+
+        // then
+        verify(storageMock).open(dummyFile)
+    }
+
 }

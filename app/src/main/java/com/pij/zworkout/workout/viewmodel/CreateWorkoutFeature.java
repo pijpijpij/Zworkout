@@ -2,6 +2,7 @@ package com.pij.zworkout.workout.viewmodel;
 
 import android.support.annotation.NonNull;
 
+import com.annimon.stream.Optional;
 import com.pij.horrocks.Interaction;
 import com.pij.horrocks.Reducer;
 import com.pij.zworkout.workout.State;
@@ -26,7 +27,7 @@ public class CreateWorkoutFeature implements Interaction<Object, State> {
     public Reducer<State> process(@NonNull Object event) {
         return current -> current.toBuilder()
                 .workout(current.workout().name(name.get()))
-                .file(current.file().toBuilder().name(name.get()).build())
+                .file(Optional.empty())
                 .build();
     }
 

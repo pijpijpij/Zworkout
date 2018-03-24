@@ -4,10 +4,11 @@ import com.annimon.stream.Optional
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.service.api.WorkoutFile
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.arrayWithSize
 import org.hamcrest.Matchers.containsInAnyOrder
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import java.io.File
 import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -30,15 +31,6 @@ class FolderStorageServiceTest {
     @BeforeTest
     fun setUp() {
         sut = FolderStorageService(folderManager.root, SysoutLogger())
-    }
-
-    private fun create(uri: URI) = WorkoutFile.UNDEFINED.toBuilder().uri(Optional.of(uri)).build()
-
-    private fun createWorkoutFile(filename: String): WorkoutFile {
-        val file = folderManager.newFile(filename)
-        val dummyFile = create(file.toURI())
-        file.delete()
-        return dummyFile
     }
 
     @Test
@@ -128,96 +120,137 @@ class FolderStorageServiceTest {
 
 
     @Test
+    fun `calling create() without subscribing to it does not throw`() {
+        // given
+
+        // when
+        sut.create("")
+
+        // then
+    }
+
+    @Test
+    fun `create() with an empty name fails`() {
+        // given
+
+        // when
+        val result = sut.create("").test()
+
+        // then
+        result.assertError(IllegalArgumentException::class.java)
+        result.assertError { it -> it.message!!.contains("already exists") }
+    }
+
+    @Test
+    fun `create() with a valid name does not fail`() {
+        // given
+
+        // when
+        val result = sut.create("zipzap").test()
+
+        // then
+        result.assertNoErrors()
+    }
+
+    @Test
+    fun `create() with a valid name on an existing file emits error`() {
+        // given
+        val file = folderManager.newFile("file1")
+        assumeTrue(file.exists())
+
+        // when
+        val result = sut.create("file1").test()
+
+        // then
+        result.assertError(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun `create() with a valid name on a new file succeeds`() {
+        // given
+
+        // when
+        val file = sut.create("file1").test()
+
+        // then
+        file.assertComplete()
+    }
+
+    @Test
+    fun `create() with a valid name on a new file does not create the file`() {
+        // given
+
+        // when
+        val file = sut.create("file1").test()
+
+        // then
+        file.assertValue { f -> !f.exists() }
+    }
+
+
+    @Test
     fun `calling open() without subscribing to it does not throw`() {
         // given
 
         // when
-        sut.openForWrite(WorkoutFile.UNDEFINED)
+        sut.open(File(""))
 
         // then
     }
 
     @Test
-    fun `open() an undefined File does not fail`() {
+    fun `open() an undefined file fails`() {
         // given
-        val file = WorkoutFile.UNDEFINED
 
         // when
-        val stream = sut.openForWrite(file).test()
-
-        // then
-        stream.assertNoErrors()
-    }
-
-    @Test
-    fun `open() an undefined file creates it`() {
-        // given
-        val file = WorkoutFile.UNDEFINED
-
-        // when
-        sut.openForWrite(file).test()
-
-        // then
-        val expectedFile = folderManager.root.list { _, name -> name == ".zwo" }
-        assertThat(expectedFile, arrayWithSize(1))
-    }
-
-    @Test
-    fun `open() a non existent File works`() {
-        // given
-        val file = WorkoutFile.UNDEFINED.toBuilder().name("hello").build()
-
-        // when
-        val stream = sut.openForWrite(file).test()
-
-        // then
-        stream.assertNoErrors()
-    }
-
-    @Test
-    fun `open() a non-existent file creates it`() {
-        // given
-        val file = WorkoutFile.UNDEFINED.toBuilder().name("hello").build()
-
-        // when
-        sut.openForWrite(file).test()
-
-        // then
-        val expectedFile = folderManager.root.list { _, name -> name == "hello.zwo" }
-        assertThat(expectedFile, arrayWithSize(1))
-    }
-
-    @Test
-    fun `open() a non-absolute URI errors`() {
-        // given
-        val file = create(URI.create("somestuff"))
-
-        // when
-        val stream = sut.openForWrite(file).test()
+        val stream = sut.open(File("")).test()
 
         // then
         stream.assertError(IllegalArgumentException::class.java)
     }
 
     @Test
-    fun `open() an absolute non-file URI errors`() {
+    fun `open() a relative file fails`() {
         // given
-        val file = create(URI.create("http://somestuff"))
 
         // when
-        val stream = sut.openForWrite(file).test()
+        val stream = sut.open(File("some name")).test()
 
         // then
         stream.assertError(IllegalArgumentException::class.java)
     }
 
     @Test
-    fun `open() a file URI does not error`() {
+    fun `open() a file outside of the root fails`() {
         // given
-        val file = createWorkoutFile("afile.zwo")
+        val file = File("some name").absoluteFile
 
         // when
-        val stream = sut.openForWrite(file).test()
+        val stream = sut.open(file).test()
+
+        // then
+        stream.assertError(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun `open() a non-existent file in the root does not fail`() {
+        // given
+        val file = File(folderManager.root, "hello")
+
+        // when
+        val stream = sut.open(file).test()
+
+        // then
+        stream.assertNoErrors()
+    }
+
+    @Test
+    fun `open() an existing file in the root does not fail`() {
+        // given
+        val file = folderManager.newFile()
+
+        // when
+        val stream = sut.open(file).test()
 
         // then
         stream.assertNoErrors()

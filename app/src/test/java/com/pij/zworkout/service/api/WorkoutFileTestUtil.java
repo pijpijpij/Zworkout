@@ -10,7 +10,7 @@ import com.annimon.stream.Optional;
 public class WorkoutFileTestUtil {
 
     public static WorkoutFile empty() {
-        return WorkoutFile.create(Optional.empty(), "", Optional.empty());
+        return WorkoutFile.create(Optional.empty(), "");
     }
 
 }

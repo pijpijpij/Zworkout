@@ -16,6 +16,7 @@ package com.pij.zworkout.list.viewmodel;
 
 import android.support.annotation.NonNull;
 
+import com.annimon.stream.Optional;
 import com.pij.horrocks.AsyncInteraction;
 import com.pij.horrocks.Reducer;
 import com.pij.utils.Logger;
@@ -87,7 +88,8 @@ public class StorageLoadingFeature implements AsyncInteraction<Object, Model> {
         return WorkoutInfo.builder()
                 .id(file.uri().get().toString())
                 .name(file.name())
-                .details(file.detail())
+                // TODO implement details
+                .details(Optional.empty())
                 .build();
     }
 

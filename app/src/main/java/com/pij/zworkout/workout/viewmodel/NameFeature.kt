@@ -13,14 +13,11 @@ import com.pij.zworkout.workout.State
 
 class NameFeature : Interaction<String, State> {
 
-    /**
-     * Also changes the name of the file if it does not exist.
-     */
     override fun process(name: String): Reducer<State> {
         return Reducer { current ->
             val result = current.toBuilder().workout(current.workout().name(name))
-            val file = current.file()
-            file.uri().executeIfAbsent { result.file(file.toBuilder().name(name).build()) }
+//            val file = current.file()
+//            file.uri().executeIfAbsent { result.file(file.toBuilder().name(name).build()) }
             result.build()
         }
     }
