@@ -2,11 +2,11 @@ package com.pij.zworkout.persistence.xml
 
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.zworkout.persistence.api.PersistableWorkout
-import org.junit.Before
 import org.mockito.Mockito.*
 import org.simpleframework.xml.core.Persister
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
+import kotlin.test.BeforeTest
 import kotlin.test.Test
 
 /**
@@ -20,7 +20,7 @@ class XmlWorkoutSerializerServiceTest {
     private lateinit var persisterMock: Persister
     private lateinit var sut: XmlWorkoutSerializerService
 
-    @Before
+    @BeforeTest
     fun setUp() {
         persisterMock = mock()
         sut = XmlWorkoutSerializerService(persisterMock)

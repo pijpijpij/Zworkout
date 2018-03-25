@@ -11,13 +11,12 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
-import org.junit.Before
-import org.junit.Test
-
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
 import org.mockito.MockitoAnnotations
 import java.net.URI
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /**
  *
@@ -36,7 +35,7 @@ class StorageLoadingFeatureTest {
     private lateinit var workoutFile: WorkoutFile
     private lateinit var workoutInfo: WorkoutInfo
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         `when`(storageServiceMock.workouts()).thenReturn(Observable.never())
@@ -53,7 +52,7 @@ class StorageLoadingFeatureTest {
         val states = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
 
         // then
-        states.assertValue({ state -> state.inProgress() })
+        states.assertValue { state -> state.inProgress() }
     }
 
     @Test

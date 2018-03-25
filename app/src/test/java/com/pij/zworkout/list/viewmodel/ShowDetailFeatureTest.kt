@@ -6,7 +6,7 @@ import com.pij.zworkout.list.WorkoutInfo
 import junit.framework.TestCase.assertTrue
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.Test
+import kotlin.test.Test
 
 
 /**

@@ -4,7 +4,7 @@ import com.annimon.stream.Optional
 import com.pij.zworkout.list.Model
 import com.pij.zworkout.list.WorkoutInfo
 import junit.framework.TestCase.assertTrue
-import org.junit.Test
+import kotlin.test.Test
 
 
 /**

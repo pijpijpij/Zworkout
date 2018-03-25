@@ -12,11 +12,11 @@ import io.reactivex.Observable
 import junit.framework.TestCase.assertFalse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasSize
-import org.junit.Before
-import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
+import kotlin.test.BeforeTest
+import kotlin.test.Test
 
 /**
  *
@@ -35,7 +35,7 @@ class HorrocksWorkoutsViewModelTest {
     @Mock
     private lateinit var createWorkoutFeatureMock: Interaction<Any, Model>
 
-    @Before
+    @BeforeTest
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         sut = HorrocksWorkoutsViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),

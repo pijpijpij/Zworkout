@@ -61,12 +61,12 @@ class StorageLoadingFeature(
         return Observable.just(Reducer { current ->
             updateFailureState(current, UnsupportedOperationException("apply([workoutId]) not implemented."))
         })
-        //        return storage.workout(workoutId)
-        //                .doOnError(e -> logger.print(getClass(), e, "Could not load data"))
-        //                .flatMapSingle(files -> Observable.fromIterable(files).map(this::convert).toList())
-        //                .map(descriptions -> (Reducer<Model>) current -> updateSuccessState(current, descriptions))
-        //                .onErrorReturn(e -> current -> updateFailureState(current, e))
-        //                .startWith(this::updateStartState);
+//                return storage.workout(workoutId)
+//                        .doOnError(e -> logger.print(getClass(), e, "Could not load data"))
+//                        .flatMapSingle(files -> Observable.fromIterable(files).map(this::convert).toList())
+//                        .map(descriptions -> (Reducer<Model>) current -> updateSuccessState(current, descriptions))
+//                        .onErrorReturn(e -> current -> updateFailureState(current, e))
+//                        .startWith(this::updateStartState);
     }
 
 }
