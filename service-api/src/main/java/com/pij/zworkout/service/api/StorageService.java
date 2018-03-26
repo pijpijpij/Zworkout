@@ -1,6 +1,7 @@
 package com.pij.zworkout.service.api;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
@@ -23,5 +24,8 @@ public interface StorageService {
     Single<File> create(String name);
 
     @CheckReturnValue
-    Single<OutputStream> openForWrite(File file);
+    Single<OutputStream> openForWrite(File target);
+
+    @CheckReturnValue
+    Single<InputStream> openForRead(File source);
 }

@@ -4,6 +4,7 @@ import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
+import com.pij.zworkout.persistence.api.PersistableWorkout
 import com.pij.zworkout.persistence.api.PersistableWorkoutTestUtil
 import com.pij.zworkout.persistence.api.WorkoutSerializerService
 import com.pij.zworkout.service.api.StorageService
@@ -12,6 +13,7 @@ import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 import org.mockito.Mockito.`when`
+import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.net.URI
@@ -30,10 +32,10 @@ class DefaultWorkoutPersistenceUCTest {
 
     private lateinit var storageMock: StorageService
     private lateinit var serializerMock: WorkoutSerializerService
+    private lateinit var converterMock: PersistableWorkoutConverter
 
     private val dummyFile = File("")
 
-    private lateinit var converterMock: PersistableWorkoutConverter
 
     @BeforeTest
     fun setUp() {
@@ -42,6 +44,7 @@ class DefaultWorkoutPersistenceUCTest {
         converterMock = mock()
         `when`(storageMock.workouts()).thenReturn(Observable.never())
         `when`(converterMock.convert(any<Workout>())).thenReturn(PersistableWorkoutTestUtil.empty())
+        `when`(storageMock.create(any())).thenReturn(Single.never())
         `when`(storageMock.openForWrite(any())).thenReturn(Single.never())
         sut = DefaultWorkoutPersistenceUC(storageMock, serializerMock, converterMock)
     }
@@ -108,7 +111,7 @@ class DefaultWorkoutPersistenceUCTest {
 
 
     @Test
-    fun `save() does not throw`() {
+    fun `Calling save() without subscribing does not throw`() {
         // given
 
         // when
@@ -213,6 +216,67 @@ class DefaultWorkoutPersistenceUCTest {
 
         // then
         verify(storageMock).openForWrite(dummyFile)
+    }
+
+
+    @Test
+    fun `Calling load() without subscribing does not throw`() {
+        // given
+
+        // when
+        sut.load(dummyFile)
+
+        // then
+    }
+
+    @Test
+    fun `load() calls the storage service`() {
+        // given
+
+        // when
+        sut.load(dummyFile).test()
+
+        // then
+        verify(storageMock).openForRead(dummyFile)
+    }
+
+    @Test
+    fun `load() uses the serializer Service to map the workout data`() {
+        // given
+        `when`(storageMock.openForRead(dummyFile)).thenReturn(Single.just(ByteArrayInputStream(byteArrayOf())))
+
+        // when
+        sut.load(dummyFile).test()
+
+        // then
+        verify(serializerMock).read(any())
+    }
+
+    @Test
+    fun `load() uses the converter Service to map the workout data`() {
+        // given
+        `when`(storageMock.openForRead(dummyFile)).thenReturn(Single.just(ByteArrayInputStream(byteArrayOf())))
+        `when`(serializerMock.read(any())).thenReturn(Single.just(PersistableWorkoutTestUtil.empty()))
+
+        // when
+        sut.load(dummyFile).test()
+
+        // then
+        verify(converterMock).convert(any<PersistableWorkout>())
+    }
+
+    @Test
+    fun `load() provides a workout if storage, serializer and converter succeed`() {
+        // given
+        `when`(storageMock.openForRead(dummyFile)).thenReturn(Single.just(ByteArrayInputStream(byteArrayOf())))
+        `when`(serializerMock.read(any())).thenReturn(Single.just(PersistableWorkoutTestUtil.empty()))
+        `when`(converterMock.convert(any<PersistableWorkout>())).thenReturn(Workout.EMPTY)
+
+        // when
+        val workout = sut.load(dummyFile).test()
+
+        // then
+        workout.assertValueCount(1)
     }
 
 }

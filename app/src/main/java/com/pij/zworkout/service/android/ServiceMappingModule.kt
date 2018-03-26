@@ -33,7 +33,9 @@ class ServiceMappingModule {
 
             override fun create(name: String) = functional.create(name).compose(threader.forSingle())
 
-            override fun openForWrite(file: File) = functional.openForWrite(file).compose(threader.forSingle())
+            override fun openForWrite(target: File) = functional.openForWrite(target).compose(threader.forSingle())
+
+            override fun openForRead(source: File) = functional.openForRead(source).compose(threader.forSingle())
         }
     }
 

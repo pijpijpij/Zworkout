@@ -8,6 +8,7 @@ import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.functions.BiFunction
 import java.io.File
+import java.io.InputStream
 import java.io.OutputStream
 import java.util.regex.Pattern
 
@@ -41,6 +42,10 @@ class FolderStorageService(private val root: File, private val logger: Logger) :
                 .map { it.outputStream() }
                 .cast(OutputStream::class.java)
                 .doOnError { e -> logger.print(javaClass, e, "") }
+    }
+
+    override fun openForRead(source: File): Single<InputStream> {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun defaultFile(name: String): File = File(root, name)

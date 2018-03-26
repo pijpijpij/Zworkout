@@ -189,7 +189,7 @@ class FolderStorageServiceTest {
 
 
     @Test
-    fun `calling open() without subscribing to it does not throw`() {
+    fun `calling openForWrite() without subscribing to it does not throw`() {
         // given
 
         // when
@@ -199,7 +199,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `open() an undefined file fails`() {
+    fun `openForWrite() an undefined file fails`() {
         // given
 
         // when
@@ -210,7 +210,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `open() a relative file fails`() {
+    fun `openForWrite() a relative file fails`() {
         // given
 
         // when
@@ -221,7 +221,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `open() a file outside of the root fails`() {
+    fun `openForWrite() a file outside of the root fails`() {
         // given
         val file = File("some name").absoluteFile
 
@@ -233,7 +233,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `open() a non-existent file in the root does not fail`() {
+    fun `openForWrite() a non-existent file in the root does not fail`() {
         // given
         val file = File(folderManager.root, "hello")
 
@@ -245,7 +245,7 @@ class FolderStorageServiceTest {
     }
 
     @Test
-    fun `open() an existing file in the root does not fail`() {
+    fun `openForWrite() an existing file in the root does not fail`() {
         // given
         val file = folderManager.newFile()
 
