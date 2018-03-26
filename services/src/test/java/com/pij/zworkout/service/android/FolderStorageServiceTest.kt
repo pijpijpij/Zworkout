@@ -9,6 +9,7 @@ import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
+import java.io.FileNotFoundException
 import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -120,7 +121,7 @@ class FolderStorageServiceTest {
 
 
     @Test
-    fun `calling create() without subscribing to it does not throw`() {
+    fun `Calling create() without subscribing to it does not throw`() {
         // given
 
         // when
@@ -189,7 +190,7 @@ class FolderStorageServiceTest {
 
 
     @Test
-    fun `calling openForWrite() without subscribing to it does not throw`() {
+    fun `Calling openForWrite() without subscribing to it does not throw`() {
         // given
 
         // when
@@ -251,6 +252,75 @@ class FolderStorageServiceTest {
 
         // when
         val stream = sut.openForWrite(file).test()
+
+        // then
+        stream.assertNoErrors()
+    }
+
+
+    @Test
+    fun `Calling openForRead() without subscribing to it does not throw`() {
+        // given
+
+        // when
+        sut.openForRead(File(""))
+
+        // then
+    }
+
+    @Test
+    fun `openForRead() an undefined file fails`() {
+        // given
+
+        // when
+        val stream = sut.openForRead(File("")).test()
+
+        // then
+        stream.assertError(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun `openForRead() a relative file fails`() {
+        // given
+
+        // when
+        val stream = sut.openForRead(File("some name")).test()
+
+        // then
+        stream.assertError(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun `openForRead() a file outside of the root fails`() {
+        // given
+        val file = File("some name").absoluteFile
+
+        // when
+        val stream = sut.openForRead(file).test()
+
+        // then
+        stream.assertError(IllegalArgumentException::class.java)
+    }
+
+    @Test
+    fun `openForRead() a non-existent file in the root does not fail`() {
+        // given
+        val file = File(folderManager.root, "hello")
+
+        // when
+        val stream = sut.openForRead(file).test()
+
+        // then
+        stream.assertError(FileNotFoundException::class.java)
+    }
+
+    @Test
+    fun `openForRead() an existing file in the root does not fail`() {
+        // given
+        val file = folderManager.newFile()
+
+        // when
+        val stream = sut.openForRead(file).test()
 
         // then
         stream.assertNoErrors()

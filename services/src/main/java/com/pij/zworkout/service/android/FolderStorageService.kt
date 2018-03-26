@@ -38,14 +38,18 @@ class FolderStorageService(private val root: File, private val logger: Logger) :
 
     override fun openForWrite(target: File): Single<OutputStream> {
         return Single.just(target)
-                .doOnSuccess { it -> checkIsInRoot(it) }
+                .doOnSuccess { checkIsInRoot(it) }
                 .map { it.outputStream() }
                 .cast(OutputStream::class.java)
-                .doOnError { e -> logger.print(javaClass, e, "") }
+                .doOnError { logger.print(javaClass, it, "") }
     }
 
     override fun openForRead(source: File): Single<InputStream> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Single.just(source)
+                .doOnSuccess { checkIsInRoot(it) }
+                .map { it.inputStream() }
+                .cast(InputStream::class.java)
+                .doOnError { logger.print(javaClass, it, "") }
     }
 
     private fun defaultFile(name: String): File = File(root, name)

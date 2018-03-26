@@ -23,7 +23,7 @@ internal class XmlWorkoutSerializerService(private val serializer: Persister) : 
     }
 
     override fun read(source: InputStream): Single<PersistableWorkout> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Single.just(source).map { serializer.read(PersistableWorkout(), it) }
     }
 
 }
