@@ -12,38 +12,35 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.pij.zworkout;
+package com.pij.zworkout
 
-import android.app.Application;
-import android.content.Context;
-import android.content.res.Resources;
-
-import com.pij.android.utils.AndroidDebugLogger;
-import com.pij.utils.Logger;
-
-import dagger.Binds;
-import dagger.Module;
-import dagger.Provides;
-import dagger.Reusable;
+import android.app.Application
+import android.content.Context
+import android.content.res.Resources
+import com.pij.android.utils.AndroidDebugLogger
+import com.pij.utils.Logger
+import dagger.Module
+import dagger.Provides
+import dagger.Reusable
 
 /**
  * Provides system-level objects.
  */
 @Module
-abstract class ApplicationModule {
+internal class ApplicationModule {
+
+    @Provides
+    internal fun bindContext(application: Application): Context = application
 
     @Reusable
     @Provides
-    static Logger provideAndroidDebugLogger() {
-        return new AndroidDebugLogger();
+    internal fun provideAndroidDebugLogger(): Logger {
+        return AndroidDebugLogger()
     }
 
     @Provides
-    static Resources providesResources(Context context) {
-        return context.getResources();
+    fun providesResources(context: Context): Resources {
+        return context.resources
     }
-
-    @Binds
-    abstract Context bindContext(Application application);
 }
 

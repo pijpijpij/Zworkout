@@ -12,26 +12,26 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.pij.zworkout.uc;
+package com.pij.zworkout.uc
 
-import com.pij.zworkout.persistence.api.WorkoutSerializerService;
-import com.pij.zworkout.service.api.StorageService;
+import com.pij.zworkout.persistence.api.WorkoutSerializerService
+import com.pij.zworkout.service.api.StorageService
 
-import dagger.Module;
-import dagger.Provides;
-import dagger.Reusable;
+import dagger.Module
+import dagger.Provides
+import dagger.Reusable
 
 /**
  * Provides functional objects
  */
 @Module
-public abstract class UCModule {
+class UCModule {
 
     @Reusable
     @Provides
-    static WorkoutPersistenceUC provideDefaultWorkoutPersistenceUC(StorageService storageService,
-                                                                   WorkoutSerializerService workoutSerializerService) {
-        return new DefaultWorkoutPersistenceUC(storageService, workoutSerializerService, new PersistableWorkoutConverter());
+    internal fun provideDefaultWorkoutPersistenceUC(storageService: StorageService,
+                                                    workoutSerializerService: WorkoutSerializerService): WorkoutPersistenceUC {
+        return DefaultWorkoutPersistenceUC(storageService, workoutSerializerService, PersistableWorkoutConverter())
     }
 
 }
