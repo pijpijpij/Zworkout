@@ -14,6 +14,7 @@
 
 package com.pij.zworkout.workout.viewmodel
 
+import com.annimon.stream.Optional
 import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
@@ -22,7 +23,7 @@ import com.pij.utils.Logger
 import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import io.reactivex.Observable
-import io.reactivex.Single
+import java.io.File
 
 /**
  *
@@ -37,8 +38,9 @@ class SaveFeature(
         private val defaultErrorMessage: String
 ) : AsyncInteraction<Any, State> {
 
-    private fun updateSuccessState(current: State): State {
+    private fun updateSuccessState(current: State, updatedFileName: File): State {
         return current.toBuilder()
+                .file(Optional.of(updatedFileName))
                 .showSaved(true)
                 .inProgress(false)
                 .build()
@@ -63,7 +65,7 @@ class SaveFeature(
         return Observable.just(stateSource.get())
                 .flatMapSingle { state ->
                     storage.save(state.workout(), state.file())
-                            .andThen(Single.just(Reducer<State> { updateSuccessState(it) }))
+                            .map { Reducer<State> { current -> updateSuccessState(current, it) } }
                             .onErrorReturn { e -> Reducer { current -> updateFailureState(current, e) } }
                 }
                 .startWith(Reducer { this.updateStartState(it) })

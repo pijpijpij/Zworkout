@@ -4,10 +4,8 @@ import com.annimon.stream.Optional
 import com.pij.zworkout.persistence.api.WorkoutSerializerService
 import com.pij.zworkout.service.api.StorageService
 import com.pij.zworkout.service.api.WorkoutFile
-import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
-import io.reactivex.rxkotlin.Singles
 import java.io.File
 
 /**
@@ -27,11 +25,18 @@ internal class DefaultWorkoutPersistenceUC(private val storageService: StorageSe
         return storageService.workouts()
     }
 
-    override fun save(data: Workout, target: Optional<File>): Completable {
-        return Singles.zip(
-                Single.just(data).map { converter.convert(it) },
-                calculateFile(data, target).flatMap { storageService.openForWrite(it) })
-                .flatMapCompletable { workoutSerializerService.write(it.first, it.second) }
+    override fun save(data: Workout, target: Optional<File>): Single<File> {
+        return calculateFile(data, target)
+                .flatMap { file ->
+                    storageService.openForWrite(file)
+                            .flatMapCompletable { output ->
+                                Single.just(data)
+                                        .map { converter.convert(it) }
+                                        .flatMapCompletable { workoutSerializerService.write(it, output) }
+                                        .doAfterTerminate { output.close() }
+                            }
+                            .andThen(Single.just(file))
+                }
     }
 
     private fun calculateFile(data: Workout, file: Optional<File>): Single<File> {
@@ -41,8 +46,13 @@ internal class DefaultWorkoutPersistenceUC(private val storageService: StorageSe
 
     override fun load(source: File): Single<Workout> {
         return Single.just(source)
-                .flatMap { storageService.openForRead(it) }
-                .flatMap { workoutSerializerService.read(it) }
-                .map { converter.convert(it) }
+                .flatMap {
+                    storageService.openForRead(it)
+                            .flatMap { input ->
+                                workoutSerializerService.read(input)
+                                        .map { converter.convert(it) }
+                                        .doAfterTerminate { input.close() }
+                            }
+                }
     }
 }

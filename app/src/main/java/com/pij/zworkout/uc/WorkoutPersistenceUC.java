@@ -6,7 +6,6 @@ import com.pij.zworkout.service.api.WorkoutFile;
 import java.io.File;
 import java.util.List;
 
-import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 
@@ -21,7 +20,7 @@ public interface WorkoutPersistenceUC {
     Observable<List<WorkoutFile>> workouts();
 
     // TODO replace File by URI
-    Completable save(Workout data, Optional<File> file);
+    Single<File> save(Workout data, Optional<File> file);
 
     // TODO replace File by URI
     Single<Workout> load(File source);
