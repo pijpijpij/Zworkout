@@ -193,7 +193,7 @@ class FolderStorageServiceTest {
         // given
 
         // when
-        sut.open(File(""))
+        sut.openForWrite(File(""))
 
         // then
     }
@@ -203,7 +203,7 @@ class FolderStorageServiceTest {
         // given
 
         // when
-        val stream = sut.open(File("")).test()
+        val stream = sut.openForWrite(File("")).test()
 
         // then
         stream.assertError(IllegalArgumentException::class.java)
@@ -214,7 +214,7 @@ class FolderStorageServiceTest {
         // given
 
         // when
-        val stream = sut.open(File("some name")).test()
+        val stream = sut.openForWrite(File("some name")).test()
 
         // then
         stream.assertError(IllegalArgumentException::class.java)
@@ -226,7 +226,7 @@ class FolderStorageServiceTest {
         val file = File("some name").absoluteFile
 
         // when
-        val stream = sut.open(file).test()
+        val stream = sut.openForWrite(file).test()
 
         // then
         stream.assertError(IllegalArgumentException::class.java)
@@ -238,7 +238,7 @@ class FolderStorageServiceTest {
         val file = File(folderManager.root, "hello")
 
         // when
-        val stream = sut.open(file).test()
+        val stream = sut.openForWrite(file).test()
 
         // then
         stream.assertNoErrors()
@@ -250,7 +250,7 @@ class FolderStorageServiceTest {
         val file = folderManager.newFile()
 
         // when
-        val stream = sut.open(file).test()
+        val stream = sut.openForWrite(file).test()
 
         // then
         stream.assertNoErrors()

@@ -23,5 +23,5 @@ public interface StorageService {
     Single<File> create(String name);
 
     @CheckReturnValue
-    Single<OutputStream> open(File file);
+    Single<OutputStream> openForWrite(File file);
 }

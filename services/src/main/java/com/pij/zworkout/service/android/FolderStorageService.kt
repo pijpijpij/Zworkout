@@ -35,7 +35,7 @@ class FolderStorageService(private val root: File, private val logger: Logger) :
                 .doOnSuccess { checkDoesNotExist(it) }
     }
 
-    override fun open(target: File): Single<OutputStream> {
+    override fun openForWrite(target: File): Single<OutputStream> {
         return Single.just(target)
                 .doOnSuccess { it -> checkIsInRoot(it) }
                 .map { it.outputStream() }

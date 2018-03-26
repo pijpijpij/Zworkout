@@ -42,7 +42,7 @@ class DefaultWorkoutPersistenceUCTest {
         converterMock = mock()
         `when`(storageMock.workouts()).thenReturn(Observable.never())
         `when`(converterMock.convert(any<Workout>())).thenReturn(PersistableWorkoutTestUtil.empty())
-        `when`(storageMock.open(any())).thenReturn(Single.never())
+        `when`(storageMock.openForWrite(any())).thenReturn(Single.never())
         sut = DefaultWorkoutPersistenceUC(storageMock, serializerMock, converterMock)
     }
 
@@ -125,13 +125,13 @@ class DefaultWorkoutPersistenceUCTest {
         sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
 
         // then
-        verify(storageMock).open(dummyFile)
+        verify(storageMock).openForWrite(dummyFile)
     }
 
     @Test
     fun `save() calls the workout serializer`() {
         // given
-        `when`(storageMock.open(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
+        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
 
         // when
         sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
@@ -143,7 +143,7 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() succeeds when the workout serializer succeeds`() {
         // given
-        `when`(storageMock.open(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
+        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
         `when`(serializerMock.write(any(), any())).thenReturn(Completable.complete())
 
         // when
@@ -156,7 +156,7 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() fails when the storage service fails`() {
         // given
-        `when`(storageMock.open(dummyFile)).thenReturn(Single.error(IllegalStateException()))
+        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.error(IllegalStateException()))
 
         // when
         val result = sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
@@ -168,7 +168,7 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() fails when the workout serializer fails`() {
         // given
-        `when`(storageMock.open(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
+        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
         `when`(serializerMock.write(any(), any())).thenReturn(Completable.error(IllegalStateException()))
 
         // when
@@ -212,7 +212,7 @@ class DefaultWorkoutPersistenceUCTest {
         sut.save(workout, Optional.empty()).test()
 
         // then
-        verify(storageMock).open(dummyFile)
+        verify(storageMock).openForWrite(dummyFile)
     }
 
 }
