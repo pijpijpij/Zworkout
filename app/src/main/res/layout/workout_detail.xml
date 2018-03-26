@@ -6,6 +6,7 @@
     tools:context="com.pij.zworkout.workout.WorkoutDetailFragment">
 
     <android.support.constraint.ConstraintLayout
+        android:focusableInTouchMode="true"
         android:id="@+id/workout_detail"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
