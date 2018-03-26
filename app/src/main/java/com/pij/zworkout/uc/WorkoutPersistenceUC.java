@@ -8,6 +8,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
+import io.reactivex.Single;
 
 /**
  * <p>Created on 02/03/2018.</p>
@@ -19,5 +20,9 @@ public interface WorkoutPersistenceUC {
 
     Observable<List<WorkoutFile>> workouts();
 
+    // TODO replace File by URI
     Completable save(Workout data, Optional<File> file);
+
+    // TODO replace File by URI
+    Single<Workout> load(File source);
 }

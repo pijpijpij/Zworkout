@@ -13,9 +13,9 @@ import com.pij.zworkout.uc.WorkoutPersistenceUC;
 import com.pij.zworkout.workout.viewmodel.CreateWorkoutFeature;
 import com.pij.zworkout.workout.viewmodel.DescriptionFeature;
 import com.pij.zworkout.workout.viewmodel.HorrocksWorkoutViewModel;
+import com.pij.zworkout.workout.viewmodel.LoadFeature;
 import com.pij.zworkout.workout.viewmodel.NameFeature;
 import com.pij.zworkout.workout.viewmodel.SaveFeature;
-import com.pij.zworkout.workout.viewmodel.StorageLoadingFeature;
 
 import dagger.Module;
 import dagger.Provides;
@@ -30,7 +30,7 @@ public class WorkoutDetailModule {
     @Provides
     WorkoutViewModel provideHorrocksViewModel(Logger logger,
                                               Storage<State> storage,
-                                              StorageLoadingFeature loadingFeature,
+                                              LoadFeature loadingFeature,
                                               SaveFeature saveFeature,
                                               CreateWorkoutFeature createWorkoutFeature) {
         return HorrocksWorkoutViewModel.create(logger,
@@ -58,9 +58,9 @@ public class WorkoutDetailModule {
     }
 
     @Provides
-    StorageLoadingFeature provideStorageLoadingFeature(Logger logger, WorkoutPersistenceUC storage, Resources resources) {
+    LoadFeature provideStorageLoadingFeature(Logger logger, WorkoutPersistenceUC storage, Resources resources) {
         String defaultErrorMessage = resources.getString(R.string.list_loading_error_message);
-        return new StorageLoadingFeature(logger, storage, defaultErrorMessage);
+        return new LoadFeature(logger, storage, defaultErrorMessage);
     }
 
     @Provides

@@ -18,9 +18,12 @@ import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
 import com.pij.utils.Logger
+import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import io.reactivex.Observable
+import java.io.File
+import java.net.URI
 
 /**
  *
@@ -28,15 +31,15 @@ import io.reactivex.Observable
  *
  * @author PierreJean
  */
-class StorageLoadingFeature(
+class LoadFeature(
         private val logger: Logger,
         private val storage: WorkoutPersistenceUC,
         private val defaultErrorMessage: String
 ) : AsyncInteraction<String, State> {
 
-    private fun updateSuccessState(current: State/*, List<WorkoutDescriptor> list*/): State {
+    private fun updateSuccessState(current: State, workout: Workout): State {
         return current.toBuilder()
-                // TODO write this
+                .workout(workout)
                 .nameIsReadOnly(false)
                 .inProgress(false)
                 .build()
@@ -58,15 +61,13 @@ class StorageLoadingFeature(
     }
 
     override fun process(workoutId: String): Observable<Reducer<State>> {
-        return Observable.just(Reducer { current ->
-            updateFailureState(current, UnsupportedOperationException("apply([workoutId]) not implemented."))
-        })
-//                return storage.workout(workoutId)
-//                        .doOnError(e -> logger.print(getClass(), e, "Could not load data"))
-//                        .flatMapSingle(files -> Observable.fromIterable(files).map(this::convert).toList())
-//                        .map(descriptions -> (Reducer<Model>) current -> updateSuccessState(current, descriptions))
-//                        .onErrorReturn(e -> current -> updateFailureState(current, e))
-//                        .startWith(this::updateStartState);
+        return Observable.just(workoutId)
+                .map { it -> URI.create(it) }
+                .map { File(it) }
+                .flatMapSingle { storage.load(it) }
+                .doOnError { logger.print(this.javaClass, it, "Could not load data") }
+                .map { workout -> Reducer<State> { updateSuccessState(it, workout) } }
+                .onErrorReturn { e -> Reducer { updateFailureState(it, e) } }
+                .startWith(Reducer { updateStartState(it) })
     }
-
 }

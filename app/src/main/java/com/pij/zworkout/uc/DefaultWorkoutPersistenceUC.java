@@ -48,6 +48,11 @@ public class DefaultWorkoutPersistenceUC implements WorkoutPersistenceUC {
                 .flatMapCompletable(serialisation -> serialisation);
     }
 
+    @Override
+    public Single<Workout> load(File source) {
+        return Single.error(new UnsupportedOperationException("load([source]) not implemented."));
+    }
+
     private Single<File> calculateFile(Workout data, Optional<File> file) {
         return file.isPresent() ? Single.just(file.get()) : storageService.create(data.name() + FILE_EXTENSION);
     }
