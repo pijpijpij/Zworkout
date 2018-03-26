@@ -90,6 +90,21 @@ class LoadFeatureTest {
     }
 
     @Test
+    fun `After store provides workout, sut emits file`() {
+        // given
+        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.just(loadedWorkout))
+
+        // when
+        val state = runSutOn(defaultWorkoutId, defaultState)
+                .skip(1)
+                .map { it.file().get() }
+                .test()
+
+        // then
+        state.assertValue(File(URI.create(defaultWorkoutId)))
+    }
+
+    @Test
     fun `After store provides workout, sut emits workout`() {
         // given
         `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.just(loadedWorkout))

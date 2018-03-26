@@ -14,6 +14,7 @@
 
 package com.pij.zworkout.workout.viewmodel
 
+import com.annimon.stream.Optional
 import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
@@ -37,9 +38,10 @@ class LoadFeature(
         private val defaultErrorMessage: String
 ) : AsyncInteraction<String, State> {
 
-    private fun updateSuccessState(current: State, workout: Workout): State {
+    private fun updateSuccessState(current: State, workout: Workout, file: File): State {
         return current.toBuilder()
                 .workout(workout)
+                .file(Optional.of(file))
                 .nameIsReadOnly(false)
                 .inProgress(false)
                 .build()
@@ -64,9 +66,11 @@ class LoadFeature(
         return Observable.just(workoutId)
                 .map { it -> URI.create(it) }
                 .map { File(it) }
-                .flatMapSingle { storage.load(it) }
-                .doOnError { logger.print(this.javaClass, it, "Could not load data") }
-                .map { workout -> Reducer<State> { updateSuccessState(it, workout) } }
+                .flatMapSingle { file ->
+                    storage.load(file)
+                            .doOnError { logger.print(this.javaClass, it, "Could not load data") }
+                            .map { workout -> Reducer<State> { current -> updateSuccessState(current, workout, file) } }
+                }
                 .onErrorReturn { e -> Reducer { updateFailureState(it, e) } }
                 .startWith(Reducer { updateStartState(it) })
     }
