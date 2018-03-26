@@ -1,17 +1,14 @@
-package com.pij.zworkout.workout.viewmodel
+package com.pij.zworkout.workout
 
 import com.annimon.stream.Optional
+import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.*
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.uc.Workout
-import com.pij.zworkout.workout.Model
-import com.pij.zworkout.workout.State
+import com.pij.zworkout.workout.HorrocksWorkoutViewModel
 import io.reactivex.Observable
-import org.mockito.Mock
 import org.mockito.Mockito.*
-import org.mockito.MockitoAnnotations
 import kotlin.test.BeforeTest
-import kotlin.test.Ignore
 import kotlin.test.Test
 
 /**
@@ -32,21 +29,20 @@ class HorrocksWorkoutViewModelTest {
 
     private lateinit var sut: HorrocksWorkoutViewModel
 
-    @Mock
     private lateinit var loadingFeatureMock: AsyncInteraction<String, State>
-    @Mock
     private lateinit var createWorkoutFeatureMock: Interaction<Any, State>
-    @Mock
     private lateinit var nameFeatureMock: Interaction<String, State>
-    @Mock
     private lateinit var descriptionFeatureMock: Interaction<String, State>
-    @Mock
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
 
 
     @BeforeTest
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        loadingFeatureMock = mock()
+        createWorkoutFeatureMock = mock()
+        nameFeatureMock = mock()
+        descriptionFeatureMock = mock()
+        saveFeatureMock = mock()
         sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
                 MemoryStorage<State>(HorrocksWorkoutViewModel.initialState()),
                 nameFeatureMock,
@@ -141,7 +137,6 @@ class HorrocksWorkoutViewModelTest {
         observer.assertValue(simpleModel)
     }
 
-    @Ignore("not implemented yet")
     @Test
     fun `Loading triggers LoadingFeature`() {
         // given
@@ -155,7 +150,6 @@ class HorrocksWorkoutViewModelTest {
         verify(loadingFeatureMock).process("an id")
     }
 
-    @Ignore("not implemented yet")
     @Test
     fun `model() returns model provided by LoadingFeature on load()`() {
         // given

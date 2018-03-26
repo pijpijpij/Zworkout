@@ -1,6 +1,7 @@
-package com.pij.zworkout.workout.viewmodel
+package com.pij.zworkout.workout.feature
 
 import com.annimon.stream.Optional
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.StateProvider
 import com.pij.utils.SysoutLogger
@@ -10,11 +11,9 @@ import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import io.reactivex.Single
-import org.junit.Assume
 import org.junit.Assume.assumeFalse
-import org.mockito.ArgumentMatchers
+import org.junit.Assume.assumeTrue
 import org.mockito.Mockito.`when`
-import org.mockito.Mockito.any
 import java.io.File
 import java.net.URI
 import kotlin.test.BeforeTest
@@ -39,7 +38,7 @@ class SaveFeatureTest {
     fun setUp() {
         storageMock = mock()
         stateProviderMock = mock()
-        `when`(storageMock.save(ArgumentMatchers.any(), ArgumentMatchers.any())).thenReturn(Single.never())
+        `when`(storageMock.save(any(), any())).thenReturn(Single.never())
         `when`(stateProviderMock.get()).thenReturn(defaultState)
         workoutFile = WorkoutFile.create(URI.create("some/file"), "zip")
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.of("zap"))
@@ -110,7 +109,7 @@ class SaveFeatureTest {
     fun `When storage succeeds, sut emits name read-only`() {
         // given
         `when`(storageMock.save(any(), any())).thenReturn(Single.just(File("")))
-        Assume.assumeTrue(defaultState.nameIsReadOnly())
+        assumeTrue(!defaultState.nameIsReadOnly())
 
         // when
         val states = sut.process(Any())
@@ -118,7 +117,7 @@ class SaveFeatureTest {
                 .skip(1)
                 .test()
 
-        states.assertValue { !it.nameIsReadOnly() }
+        states.assertValue { it.nameIsReadOnly() }
     }
 
 

@@ -1,4 +1,4 @@
-package com.pij.zworkout.workout.viewmodel
+package com.pij.zworkout.workout.feature
 
 import com.pij.horrocks.Interaction
 import com.pij.horrocks.Reducer

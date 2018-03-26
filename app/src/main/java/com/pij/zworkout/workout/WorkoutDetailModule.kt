@@ -10,7 +10,7 @@ import com.pij.utils.Logger
 import com.pij.zworkout.FragmentScoped
 import com.pij.zworkout.R
 import com.pij.zworkout.uc.WorkoutPersistenceUC
-import com.pij.zworkout.workout.viewmodel.*
+import com.pij.zworkout.workout.feature.*
 import dagger.Module
 import dagger.Provides
 import javax.inject.Provider

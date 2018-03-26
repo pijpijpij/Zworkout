@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
  * @author Pierrejean
  */
 @AutoValue
-public abstract class Model {
+abstract class Model {
 
     public static Builder builder() {
         return new AutoValue_Model.Builder();

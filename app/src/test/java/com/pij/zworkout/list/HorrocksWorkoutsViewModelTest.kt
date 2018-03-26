@@ -1,20 +1,18 @@
-package com.pij.zworkout.list.viewmodel
+package com.pij.zworkout.list
 
 import com.annimon.stream.Optional
+import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.DefaultEngine
 import com.pij.horrocks.Interaction
 import com.pij.horrocks.Reducer
 import com.pij.utils.SysoutLogger
-import com.pij.zworkout.list.Model
-import com.pij.zworkout.list.WorkoutInfo
+import com.pij.zworkout.list.HorrocksWorkoutsViewModel
 import io.reactivex.Observable
 import junit.framework.TestCase.assertFalse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.hasSize
-import org.mockito.Mock
 import org.mockito.Mockito.*
-import org.mockito.MockitoAnnotations
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 
@@ -28,16 +26,15 @@ class HorrocksWorkoutsViewModelTest {
 
     private lateinit var sut: HorrocksWorkoutsViewModel
 
-    @Mock
     private lateinit var loadingFeatureMock: AsyncInteraction<Any, Model>
-    @Mock
     private lateinit var showDetailFeatureMock: Interaction<WorkoutInfo, Model>
-    @Mock
     private lateinit var createWorkoutFeatureMock: Interaction<Any, Model>
 
     @BeforeTest
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        loadingFeatureMock = mock()
+        showDetailFeatureMock = mock()
+        createWorkoutFeatureMock = mock()
         sut = HorrocksWorkoutsViewModel.create(SysoutLogger(), DefaultEngine<Model, Model>(SysoutLogger()),
                 loadingFeatureMock,
                 showDetailFeatureMock,

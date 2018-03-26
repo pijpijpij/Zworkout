@@ -1,4 +1,4 @@
-package com.pij.zworkout.workout.viewmodel;
+package com.pij.zworkout.workout;
 
 import android.support.annotation.NonNull;
 
@@ -13,9 +13,6 @@ import com.pij.horrocks.SingleReducerCreator;
 import com.pij.horrocks.Storage;
 import com.pij.utils.Logger;
 import com.pij.zworkout.uc.Workout;
-import com.pij.zworkout.workout.Model;
-import com.pij.zworkout.workout.State;
-import com.pij.zworkout.workout.WorkoutViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +26,7 @@ import static java.util.Arrays.asList;
  * @author Pierrejean
  */
 
-public class HorrocksWorkoutViewModel implements WorkoutViewModel {
+class HorrocksWorkoutViewModel implements WorkoutViewModel {
 
     private final Logger logger;
     private final Observable<Model> modelStream;
@@ -142,7 +139,7 @@ public class HorrocksWorkoutViewModel implements WorkoutViewModel {
     }
 
     @Override
-    public void description(String newValue) {
+    public void description(@NonNull String newValue) {
         description.trigger(newValue);
     }
 

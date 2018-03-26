@@ -7,10 +7,9 @@ import com.pij.horrocks.DefaultEngine
 import com.pij.utils.Logger
 import com.pij.zworkout.ActivityScoped
 import com.pij.zworkout.R
-import com.pij.zworkout.list.viewmodel.CreateWorkoutFeature
-import com.pij.zworkout.list.viewmodel.HorrocksWorkoutsViewModel
-import com.pij.zworkout.list.viewmodel.ShowDetailFeature
-import com.pij.zworkout.list.viewmodel.StorageLoadingFeature
+import com.pij.zworkout.list.feature.CreateWorkoutFeature
+import com.pij.zworkout.list.feature.ShowDetailFeature
+import com.pij.zworkout.list.feature.StorageLoadingFeature
 import com.pij.zworkout.service.api.StorageService
 
 import dagger.Module

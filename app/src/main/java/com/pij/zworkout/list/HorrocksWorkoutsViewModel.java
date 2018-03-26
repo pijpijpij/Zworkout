@@ -1,4 +1,4 @@
-package com.pij.zworkout.list.viewmodel;
+package com.pij.zworkout.list;
 
 import android.support.annotation.NonNull;
 
@@ -12,9 +12,6 @@ import com.pij.horrocks.MultipleReducerCreator;
 import com.pij.horrocks.ReducerCreator;
 import com.pij.horrocks.SingleReducerCreator;
 import com.pij.utils.Logger;
-import com.pij.zworkout.list.Model;
-import com.pij.zworkout.list.WorkoutInfo;
-import com.pij.zworkout.list.WorkoutsViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +26,7 @@ import static java.util.Collections.emptyList;
  * @author Pierrejean
  */
 
-public class HorrocksWorkoutsViewModel implements WorkoutsViewModel {
+class HorrocksWorkoutsViewModel implements WorkoutsViewModel {
 
     private final Logger logger;
     private final Observable<Model> modelStream;

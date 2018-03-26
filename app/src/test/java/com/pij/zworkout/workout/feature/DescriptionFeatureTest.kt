@@ -1,4 +1,4 @@
-package com.pij.zworkout.workout.viewmodel
+package com.pij.zworkout.workout.feature
 
 import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.workout.StateTestUtil

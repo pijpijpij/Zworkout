@@ -1,6 +1,7 @@
-package com.pij.zworkout.list.viewmodel
+package com.pij.zworkout.list.feature
 
 import com.annimon.stream.Optional
+import com.nhaarman.mockitokotlin2.mock
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.Model
 import com.pij.zworkout.list.WorkoutInfo
@@ -11,9 +12,7 @@ import junit.framework.TestCase.assertEquals
 import junit.framework.TestCase.assertFalse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
-import org.mockito.Mock
 import org.mockito.Mockito.`when`
-import org.mockito.MockitoAnnotations
 import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -26,7 +25,6 @@ import kotlin.test.Test
  */
 class StorageLoadingFeatureTest {
 
-    @Mock
     private lateinit var storageServiceMock: StorageService
 
     private val defaultState = Model.create(false, Optional.empty(), Optional.empty(), false, emptyList())
@@ -37,7 +35,7 @@ class StorageLoadingFeatureTest {
 
     @BeforeTest
     fun setUp() {
-        MockitoAnnotations.initMocks(this)
+        storageServiceMock = mock()
         `when`(storageServiceMock.workouts()).thenReturn(Observable.never())
         workoutFile = WorkoutFile.create(URI.create("some/file"), "zip")
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.empty())

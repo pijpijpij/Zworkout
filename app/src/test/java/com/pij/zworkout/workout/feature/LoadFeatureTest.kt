@@ -1,6 +1,7 @@
-package com.pij.zworkout.workout.viewmodel
+package com.pij.zworkout.workout.feature
 
 import com.annimon.stream.Optional
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.WorkoutInfo
@@ -10,7 +11,6 @@ import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import com.pij.zworkout.workout.StateTestUtil
 import io.reactivex.Single
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.`when`
 import java.io.File
 import java.net.URI
@@ -38,7 +38,7 @@ class LoadFeatureTest {
     @BeforeTest
     fun setUp() {
         workoutPersistenceMock = mock()
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.never())
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.never())
         workoutFile = WorkoutFile.create(URI.create("some/file"), "zip")
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.empty())
         sut = LoadFeature(SysoutLogger(), workoutPersistenceMock, "the default error message")

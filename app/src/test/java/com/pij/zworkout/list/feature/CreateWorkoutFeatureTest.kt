@@ -1,4 +1,4 @@
-package com.pij.zworkout.list.viewmodel
+package com.pij.zworkout.list.feature
 
 import com.annimon.stream.Optional
 import com.pij.zworkout.list.Model

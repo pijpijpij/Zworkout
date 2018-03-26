@@ -12,19 +12,18 @@
  * See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.pij.zworkout.workout.viewmodel
+package com.pij.zworkout.workout.feature
 
 import com.annimon.stream.Optional
 import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
+import com.pij.horrocks.StateProvider
 import com.pij.utils.Logger
-import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
 import io.reactivex.Observable
 import java.io.File
-import java.net.URI
 
 /**
  *
@@ -32,17 +31,18 @@ import java.net.URI
  *
  * @author PierreJean
  */
-class LoadFeature(
+class SaveFeature(
         private val logger: Logger,
         private val storage: WorkoutPersistenceUC,
+        private val stateSource: StateProvider<State>,
         private val defaultErrorMessage: String
-) : AsyncInteraction<String, State> {
+) : AsyncInteraction<Any, State> {
 
-    private fun updateSuccessState(current: State, workout: Workout, file: File): State {
+    private fun updateSuccessState(current: State, updatedFileName: File): State {
         return current.toBuilder()
-                .workout(workout)
-                .file(Optional.of(file))
-                .nameIsReadOnly(false)
+                .file(Optional.of(updatedFileName))
+                .nameIsReadOnly(true)
+                .showSaved(true)
                 .inProgress(false)
                 .build()
     }
@@ -62,16 +62,14 @@ class LoadFeature(
                 .build()
     }
 
-    override fun process(workoutId: String): Observable<Reducer<State>> {
-        return Observable.just(workoutId)
-                .map { it -> URI.create(it) }
-                .map { File(it) }
-                .flatMapSingle { file ->
-                    storage.load(file)
-                            .doOnError { logger.print(this.javaClass, it, "Could not load data") }
-                            .map { workout -> Reducer<State> { current -> updateSuccessState(current, workout, file) } }
+    override fun process(event: Any): Observable<Reducer<State>> {
+        return Observable.just(stateSource.get())
+                .flatMapSingle { state ->
+                    storage.save(state.workout(), state.file())
+                            .map { Reducer<State> { current -> updateSuccessState(current, it) } }
+                            .onErrorReturn { e -> Reducer { current -> updateFailureState(current, e) } }
                 }
-                .onErrorReturn { e -> Reducer { updateFailureState(it, e) } }
-                .startWith(Reducer { updateStartState(it) })
+                .startWith(Reducer { this.updateStartState(it) })
     }
+
 }
