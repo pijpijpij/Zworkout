@@ -23,7 +23,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists workout name`() {
         // given
-        val input = Workout.EMPTY.toBuilder().name("hello").build()
+        val input = Workout.EMPTY.copy(name = "hello")
 
         // when
         val result = sut.convert(input)
@@ -35,7 +35,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists description`() {
         // given
-        val input = Workout.EMPTY.toBuilder().description("hello").build()
+        val input = Workout.EMPTY.copy(description = "hello")
 
         // when
         val result = sut.convert(input)
@@ -54,7 +54,7 @@ class PersistableWorkoutConverterTest {
         val result = sut.convert(input)
 
         // then
-        assertEquals("hello!", result.name())
+        assertEquals("hello!", result.name)
     }
 
     @Test
@@ -68,7 +68,7 @@ class PersistableWorkoutConverterTest {
         val result = sut.convert(input)
 
         // then
-        assertTrue(result.description().isEmpty())
+        assertTrue(result.description.isEmpty())
     }
 
     @Test
@@ -82,6 +82,6 @@ class PersistableWorkoutConverterTest {
         val result = sut.convert(input)
 
         // then
-        assertEquals("hello!", result.description())
+        assertEquals("hello!", result.description)
     }
 }

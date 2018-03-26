@@ -66,8 +66,8 @@ class StorageLoadingFeature(private val logger: Logger, private val storage: Sto
 
     private fun convert(file: WorkoutFile): WorkoutInfo {
         return WorkoutInfo.builder()
-                .id(file.uri().get().toString())
-                .name(file.name())
+                .id(file.uri?.toString())
+                .name(file.name)
                 // TODO implement details
                 .details(Optional.empty())
                 .build()

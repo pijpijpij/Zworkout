@@ -1,6 +1,5 @@
 package com.pij.zworkout.service.android
 
-import com.annimon.stream.Optional
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.service.api.WorkoutFile
 import org.hamcrest.MatcherAssert.assertThat
@@ -10,10 +9,9 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.io.FileNotFoundException
-import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
-import kotlin.test.expect
+import kotlin.test.assertEquals
 
 /**
  *
@@ -98,8 +96,8 @@ class FolderStorageServiceTest {
 
         // then
         val result = files.values()[0]
-        expect(file1.toURI()) { result.uri().get() }
-        expect("file1") { result.name() }
+        assertEquals(file1.toURI(), result.uri)
+        assertEquals("file1", result.name )
     }
 
     @Test
@@ -115,7 +113,7 @@ class FolderStorageServiceTest {
                 .test()
 
         // then
-        assertThat(files.values().map(WorkoutFile::uri).map(Optional<URI>::get), containsInAnyOrder(file1.toURI(), file2.toURI(), file3.toURI()))
+        assertThat(files.values().map(WorkoutFile::uri), containsInAnyOrder(file1.toURI(), file2.toURI(), file3.toURI()))
         assertThat(files.values().map(WorkoutFile::name), containsInAnyOrder("file1", "file2", "file3"))
     }
 

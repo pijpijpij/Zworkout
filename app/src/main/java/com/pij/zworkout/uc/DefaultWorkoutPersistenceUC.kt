@@ -1,6 +1,5 @@
 package com.pij.zworkout.uc
 
-import com.annimon.stream.Optional
 import com.pij.zworkout.persistence.api.WorkoutSerializerService
 import com.pij.zworkout.service.api.StorageService
 import com.pij.zworkout.service.api.WorkoutFile
@@ -25,7 +24,7 @@ internal class DefaultWorkoutPersistenceUC(private val storageService: StorageSe
         return storageService.workouts()
     }
 
-    override fun save(data: Workout, target: Optional<File>): Single<File> {
+    override fun save(data: Workout, target: File?): Single<File> {
         return calculateFile(data, target)
                 .flatMap { file ->
                     storageService.openForWrite(file)
@@ -39,9 +38,11 @@ internal class DefaultWorkoutPersistenceUC(private val storageService: StorageSe
                 }
     }
 
-    private fun calculateFile(data: Workout, file: Optional<File>): Single<File> {
-        return if (file.isPresent) Single.just(file.get())
-        else storageService.create("${data.name()}.$fileExtension")
+    private fun calculateFile(data: Workout, file: File?): Single<File> {
+        return when {
+            file != null -> Single.just(file)
+            else -> storageService.create("${data.name}.$fileExtension")
+        }
     }
 
     override fun load(source: File): Single<Workout> {

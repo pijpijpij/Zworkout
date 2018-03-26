@@ -2,6 +2,7 @@ package com.pij.zworkout.workout.feature
 
 import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.StateProvider
 import com.pij.utils.SysoutLogger
@@ -28,7 +29,7 @@ class SaveFeatureTest {
     private lateinit var storageMock: WorkoutPersistenceUC
     private lateinit var stateProviderMock: StateProvider<State>
 
-    private val defaultState = State.create(false, Optional.empty(), false, Workout.EMPTY, false, Optional.empty())
+    private val defaultState = State(false, null, false, Workout.EMPTY, false, null)
 
     private lateinit var sut: SaveFeature
     private lateinit var workoutFile: WorkoutFile
@@ -40,7 +41,7 @@ class SaveFeatureTest {
         stateProviderMock = mock()
         `when`(storageMock.save(any(), any())).thenReturn(Single.never())
         `when`(stateProviderMock.get()).thenReturn(defaultState)
-        workoutFile = WorkoutFile.create(URI.create("some/file"), "zip")
+        workoutFile = WorkoutFile(URI.create("some/file"), "zip")
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.of("zap"))
         sut = SaveFeature(SysoutLogger(), storageMock, stateProviderMock, "the default error message")
     }
@@ -55,13 +56,13 @@ class SaveFeatureTest {
                 .test()
 
         // then
-        states.assertValue { it.inProgress() }
+        states.assertValue { it.inProgress }
     }
 
     @Test
     fun `When storage succeeds, sut emits not in progress`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.just(File("")))
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.just(File("")))
 
         // when
         val states = sut.process(Any())
@@ -70,13 +71,13 @@ class SaveFeatureTest {
                 .test()
 
         // then
-        states.assertValue { !it.inProgress() }
+        states.assertValue { !it.inProgress }
     }
 
     @Test
     fun `When storage succeeds, sut emits showSaved`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.just(File("")))
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.just(File("")))
 
         // when
         val states = sut.process(Any())
@@ -85,31 +86,30 @@ class SaveFeatureTest {
                 .test()
 
         // then
-        states.assertValue { it.showSaved() }
+        states.assertValue { it.showSaved }
     }
 
     @Test
     fun `When storage succeeds, sut emits updated file`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.just(File("")))
-        assumeFalse(defaultState.file().isPresent)
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.just(File("")))
+        assumeTrue(defaultState.file == null)
 
         // when
         val states = sut.process(Any())
                 .map { result -> result.reduce(defaultState) }
-                .map { it.file() }
                 .skip(1)
                 .test()
 
         // then
-        states.assertValue { it.isPresent }
+        states.assertValueCount(1)
     }
 
     @Test
     fun `When storage succeeds, sut emits name read-only`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.just(File("")))
-        assumeTrue(!defaultState.nameIsReadOnly())
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.just(File("")))
+        assumeFalse(defaultState.nameIsReadOnly)
 
         // when
         val states = sut.process(Any())
@@ -117,14 +117,14 @@ class SaveFeatureTest {
                 .skip(1)
                 .test()
 
-        states.assertValue { it.nameIsReadOnly() }
+        states.assertValue { it.nameIsReadOnly }
     }
 
 
     @Test
     fun `When storage succeeds, sut completes`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.just(File("")))
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.just(File("")))
 
         // when
         val observer = sut.process(Any())
@@ -137,7 +137,7 @@ class SaveFeatureTest {
     @Test
     fun `When store fails, sut emits not in progress`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.error(IllegalAccessException("the error message")))
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
         val states = sut.process(Any())
@@ -146,43 +146,45 @@ class SaveFeatureTest {
                 .test()
 
         // then
-        states.assertValue { !it.inProgress() }
+        states.assertValue { !it.inProgress }
     }
 
     @Test
     fun `When store fails with a message, sut emits Failure with the exception message`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.error(IllegalAccessException("the error message")))
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
         val states = sut.process(Any())
                 .map { result -> result.reduce(defaultState) }
                 .skip(1)
+                .map { it.showError }
                 .test()
 
         // then
-        states.assertValue { it.showError().get() == "the error message" }
+        states.assertValue("the error message")
     }
 
     @Test
     fun `When store fails with an empty message, sut emits Failure with the default message`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.error(IllegalAccessException()))
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.error(IllegalAccessException()))
 
         // when
         val states = sut.process(Any())
                 .map { result -> result.reduce(defaultState) }
                 .skip(1)
+                .map { it.showError }
                 .test()
 
         // then
-        states.assertValue { it.showError().get() == "the default error message" }
+        states.assertValue("the default error message")
     }
 
     @Test
     fun `When store fails, sut completes`() {
         // given
-        `when`(storageMock.save(any(), any())).thenReturn(Single.error(IllegalAccessException("the error message")))
+        `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
         val states = sut.process(Any())

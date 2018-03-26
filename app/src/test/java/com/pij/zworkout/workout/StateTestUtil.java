@@ -1,6 +1,5 @@
 package com.pij.zworkout.workout;
 
-import com.annimon.stream.Optional;
 import com.pij.zworkout.uc.Workout;
 
 /**
@@ -11,6 +10,6 @@ import com.pij.zworkout.uc.Workout;
 public class StateTestUtil {
 
     public static State empty() {
-        return State.create(false, Optional.empty(), false, Workout.EMPTY, true, Optional.empty());
+        return new State(false, null, false, Workout.Companion.getEMPTY(), true, null);
     }
 }

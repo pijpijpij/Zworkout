@@ -14,8 +14,6 @@
 
 package com.pij.zworkout.workout.feature
 
-import com.annimon.stream.Optional
-import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
 import com.pij.horrocks.StateProvider
@@ -39,33 +37,30 @@ class SaveFeature(
 ) : AsyncInteraction<Any, State> {
 
     private fun updateSuccessState(current: State, updatedFileName: File): State {
-        return current.toBuilder()
-                .file(Optional.of(updatedFileName))
-                .nameIsReadOnly(true)
-                .showSaved(true)
-                .inProgress(false)
-                .build()
+        return current.copy(
+                file = updatedFileName,
+                nameIsReadOnly = true,
+                showSaved = true,
+                inProgress = false)
     }
 
     private fun updateFailureState(current: State, error: Throwable): State {
         val errorMessage = error.message
         val actualMessage = errorMessage ?: defaultErrorMessage
-        return current.toBuilder()
-                .showError(of(actualMessage))
-                .inProgress(false)
-                .build()
+        return current.copy(
+                showError = actualMessage,
+                inProgress = false)
     }
 
     private fun updateStartState(current: State): State {
-        return current.toBuilder()
-                .inProgress(true)
-                .build()
+        return current.copy(
+                inProgress = true)
     }
 
     override fun process(event: Any): Observable<Reducer<State>> {
         return Observable.just(stateSource.get())
                 .flatMapSingle { state ->
-                    storage.save(state.workout(), state.file())
+                    storage.save(state.workout, state.file)
                             .map { Reducer<State> { current -> updateSuccessState(current, it) } }
                             .onErrorReturn { e -> Reducer { current -> updateFailureState(current, e) } }
                 }

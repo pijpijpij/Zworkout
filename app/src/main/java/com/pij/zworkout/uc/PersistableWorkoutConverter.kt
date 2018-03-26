@@ -1,7 +1,6 @@
 package com.pij.zworkout.uc
 
 import com.pij.zworkout.persistence.api.PersistableWorkout
-
 import com.pij.zworkout.persistence.api.PersistableWorkout.EmptyString
 
 /**
@@ -15,15 +14,15 @@ internal class PersistableWorkoutConverter {
 
     fun convert(input: Workout): PersistableWorkout {
         val result = PersistableWorkout()
-        result.name = EmptyString.create(input.name())
-        result.description = input.description()
+        result.name = EmptyString.create(input.name)
+        result.description = input.description
         return result
     }
 
     fun convert(input: PersistableWorkout): Workout {
-        return Workout.builder()
-                .name(input.name.value)
-                .description(input.description ?: "")
-                .build()
+        return Workout(
+                name = input.name.value ?: "",
+                description = input.description ?: ""
+        )
     }
 }

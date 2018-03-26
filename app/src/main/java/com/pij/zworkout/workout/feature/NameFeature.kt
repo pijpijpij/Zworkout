@@ -15,9 +15,7 @@ class NameFeature : Interaction<String, State> {
 
     override fun process(name: String): Reducer<State> {
         return Reducer { current ->
-            current.toBuilder()
-                    .workout(current.workout().name(name))
-                    .build()
+            current.copy(workout = current.workout.copy(name = name))
         }
     }
 }

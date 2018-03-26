@@ -4,6 +4,7 @@ import com.pij.zworkout.workout.StateTestUtil
 import javax.inject.Provider
 import kotlin.test.Test
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
 import kotlin.test.expect
 
 
@@ -25,7 +26,7 @@ class CreateWorkoutFeatureTest {
         val next = sut.process(Any()).reduce(current)
 
         // then
-        expect("name") { next.workout().name() }
+        expect("name") { next.workout.name }
     }
 
     @Test
@@ -38,7 +39,7 @@ class CreateWorkoutFeatureTest {
         val next = sut.process(Any()).reduce(current)
 
         // then
-        assertFalse(next.file().isPresent)
+        assertNull(next.file)
     }
 
     @Test
@@ -51,7 +52,7 @@ class CreateWorkoutFeatureTest {
         val next = sut.process(Any()).reduce(current)
 
         // then
-        assertFalse(next.nameIsReadOnly())
+        assertFalse(next.nameIsReadOnly)
     }
 
 }

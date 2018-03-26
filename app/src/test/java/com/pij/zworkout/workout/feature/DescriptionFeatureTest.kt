@@ -17,15 +17,15 @@ class DescriptionFeatureTest {
     @Test
     fun `Reducer puts new description in the workout`() {
         // given
-        val currentWorkout = Workout.EMPTY.toBuilder().description("the original").build()
-        val current = StateTestUtil.empty().withWorkout(currentWorkout)
+        val currentWorkout = Workout.EMPTY.copy(description = "the original")
+        val current = StateTestUtil.empty().copy(workout = currentWorkout)
         val sut = DescriptionFeature()
 
         // when
         val next = sut.process("the new one").reduce(current)
 
         // then
-        assertEquals("the new one", next.workout().description())
+        assertEquals("the new one", next.workout.description)
     }
 
 }

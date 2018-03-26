@@ -37,7 +37,7 @@ class StorageLoadingFeatureTest {
     fun setUp() {
         storageServiceMock = mock()
         `when`(storageServiceMock.workouts()).thenReturn(Observable.never())
-        workoutFile = WorkoutFile.create(URI.create("some/file"), "zip")
+        workoutFile = WorkoutFile(URI.create("some/file"), "zip")
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.empty())
         sut = StorageLoadingFeature(SysoutLogger(), storageServiceMock, "the default error message")
     }

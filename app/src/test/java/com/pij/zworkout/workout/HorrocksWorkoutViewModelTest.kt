@@ -5,7 +5,6 @@ import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.*
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.uc.Workout
-import com.pij.zworkout.workout.HorrocksWorkoutViewModel
 import io.reactivex.Observable
 import org.mockito.Mockito.*
 import kotlin.test.BeforeTest
@@ -20,7 +19,7 @@ import kotlin.test.Test
 class HorrocksWorkoutViewModelTest {
 
     private val simpleModel = Model.create(true, Optional.empty(), false, "", false, "")
-    private val simpleState = State.create(true, Optional.empty(), false, Workout.EMPTY, false, Optional.empty())
+    private val simpleState = State(true, null, false, Workout.EMPTY, false, null)
 
     /** Provides {@link #simpleState} when called.
      */
@@ -44,7 +43,7 @@ class HorrocksWorkoutViewModelTest {
         descriptionFeatureMock = mock()
         saveFeatureMock = mock()
         sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
-                MemoryStorage<State>(HorrocksWorkoutViewModel.initialState()),
+                MemoryStorage(HorrocksWorkoutViewModel.initialState()),
                 nameFeatureMock,
                 descriptionFeatureMock,
                 loadingFeatureMock,

@@ -1,6 +1,5 @@
 package com.pij.zworkout.uc
 
-import com.annimon.stream.Optional
 import com.pij.zworkout.service.api.WorkoutFile
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -18,7 +17,7 @@ interface WorkoutPersistenceUC {
     fun workouts(): Observable<List<WorkoutFile>>
 
     // TODO replace File by URI
-    fun save(data: Workout, target: Optional<File>): Single<File>
+    fun save(data: Workout, target: File?): Single<File>
 
     // TODO replace File by URI
     fun load(source: File): Single<Workout>

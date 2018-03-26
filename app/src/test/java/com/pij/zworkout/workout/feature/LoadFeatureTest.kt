@@ -27,8 +27,8 @@ class LoadFeatureTest {
 
     private lateinit var workoutPersistenceMock: WorkoutPersistenceUC
 
-    private val loadedWorkout = Workout.EMPTY.name("just loaded")
-    private val defaultState: State = StateTestUtil.empty().withWorkout(Workout.EMPTY)
+    private val loadedWorkout = Workout.EMPTY.copy(name = "just loaded")
+    private val defaultState: State = StateTestUtil.empty().copy(workout = Workout.EMPTY)
     private val defaultWorkoutId = "file:///workout/id"
 
     private lateinit var sut: LoadFeature
@@ -39,7 +39,7 @@ class LoadFeatureTest {
     fun setUp() {
         workoutPersistenceMock = mock()
         `when`(workoutPersistenceMock.load(any())).thenReturn(Single.never())
-        workoutFile = WorkoutFile.create(URI.create("some/file"), "zip")
+        workoutFile = WorkoutFile(URI.create("some/file"), "zip")
         workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.empty())
         sut = LoadFeature(SysoutLogger(), workoutPersistenceMock, "the default error message")
     }
@@ -53,7 +53,7 @@ class LoadFeatureTest {
         // when
         val state = runSutOn(defaultWorkoutId, defaultState)
                 .take(1)
-                .map { it.inProgress() }
+                .map { it.inProgress }
                 .test()
 
         // then
@@ -67,22 +67,21 @@ class LoadFeatureTest {
         // when
         val state = runSutOn("not a valid id", defaultState)
                 .skip(1)
-                .map { it.showError() }
                 .test()
 
         // then
-        state.assertValue { it.isPresent }
+        state.assertValue { it.showError != null }
     }
 
     @Test
     fun `After store provides workout, sut emits not in Progress`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.just(loadedWorkout))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.just(loadedWorkout))
 
         // when
         val state = runSutOn(defaultWorkoutId, defaultState)
                 .skip(1)
-                .map { it.inProgress() }
+                .map { it.inProgress }
                 .test()
 
         // then
@@ -92,12 +91,12 @@ class LoadFeatureTest {
     @Test
     fun `After store provides workout, sut emits file`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.just(loadedWorkout))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.just(loadedWorkout))
 
         // when
         val state = runSutOn(defaultWorkoutId, defaultState)
                 .skip(1)
-                .map { it.file().get() }
+                .map { it.file }
                 .test()
 
         // then
@@ -107,12 +106,12 @@ class LoadFeatureTest {
     @Test
     fun `After store provides workout, sut emits workout`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.just(loadedWorkout))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.just(loadedWorkout))
 
         // when
         val state = runSutOn(defaultWorkoutId, defaultState)
                 .skip(1)
-                .map { it.workout() }
+                .map { it.workout }
                 .test()
 
         // then
@@ -122,7 +121,7 @@ class LoadFeatureTest {
     @Test
     fun `After store provides workout, sut completes`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.just(loadedWorkout))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.just(loadedWorkout))
 
         // when
         val observer = runSutOn(defaultWorkoutId, defaultState).test()
@@ -134,12 +133,12 @@ class LoadFeatureTest {
     @Test
     fun `After store fails to provide workout, sut emits not in Progress`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.error(IllegalAccessException("the error message")))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
         val state = runSutOn(defaultWorkoutId, defaultState)
                 .skip(1)
-                .map { it.inProgress() }
+                .map { it.inProgress }
                 .test()
 
         // then
@@ -149,12 +148,12 @@ class LoadFeatureTest {
     @Test
     fun `When store fails to provide workout with a message, sut emits Failure with the exception message`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.error(IllegalAccessException("the error message")))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
         val state = runSutOn(defaultWorkoutId, defaultState)
                 .skip(1)
-                .map { it.showError().get() }
+                .map { it.showError }
                 .test()
 
         // then
@@ -164,12 +163,12 @@ class LoadFeatureTest {
     @Test
     fun `When store fails to provide workout with an empty message, sut emits Failure with the default message`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.error(IllegalAccessException()))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.error(IllegalAccessException()))
 
         // when
         val state = runSutOn(defaultWorkoutId, defaultState)
                 .skip(1)
-                .map { it.showError().get() }
+                .map { it.showError }
                 .test()
 
         // then
@@ -179,7 +178,7 @@ class LoadFeatureTest {
     @Test
     fun `When store fails to provide workout, sut completes`() {
         // given
-        `when`(workoutPersistenceMock.load(any<File>())).thenReturn(Single.error(IllegalAccessException("the error message")))
+        `when`(workoutPersistenceMock.load(any())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
         val observer = runSutOn(defaultWorkoutId, defaultState).test()

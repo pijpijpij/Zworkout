@@ -73,7 +73,7 @@ class FolderStorageService(private val root: File, private val logger: Logger) :
     }
 
     private fun workoutFile(workoutName: String, file: File): WorkoutFile {
-        return WorkoutFile.create(file.toURI(), workoutName)
+        return WorkoutFile(file.toURI(), workoutName)
     }
 
 }

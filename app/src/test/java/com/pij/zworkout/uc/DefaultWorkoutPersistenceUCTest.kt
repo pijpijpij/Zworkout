@@ -1,6 +1,5 @@
 package com.pij.zworkout.uc
 
-import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.verify
@@ -49,7 +48,7 @@ class DefaultWorkoutPersistenceUCTest {
         sut = DefaultWorkoutPersistenceUC(storageMock, serializerMock, converterMock)
     }
 
-    private fun create(uri: String) = WorkoutFile.UNDEFINED.toBuilder().uri(Optional.of(URI.create(uri))).build()
+    private fun create(uri: String) = WorkoutFile.UNDEFINED.copy(uri=URI.create(uri))
 
     @Test
     fun `workouts() does not throw`() {
@@ -115,7 +114,7 @@ class DefaultWorkoutPersistenceUCTest {
         // given
 
         // when
-        sut.save(Workout.EMPTY, Optional.of(dummyFile))
+        sut.save(Workout.EMPTY, dummyFile)
 
         // then
     }
@@ -125,7 +124,7 @@ class DefaultWorkoutPersistenceUCTest {
         // given
 
         // when
-        sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
+        sut.save(Workout.EMPTY, dummyFile).test()
 
         // then
         verify(storageMock).openForWrite(dummyFile)
@@ -137,7 +136,7 @@ class DefaultWorkoutPersistenceUCTest {
         `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just(ByteArrayOutputStream()))
 
         // when
-        sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
+        sut.save(Workout.EMPTY, dummyFile).test()
 
         // then
         verify(serializerMock).write(any(), any())
@@ -150,7 +149,7 @@ class DefaultWorkoutPersistenceUCTest {
         `when`(serializerMock.write(any(), any())).thenReturn(Completable.complete())
 
         // when
-        val result = sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
+        val result = sut.save(Workout.EMPTY, dummyFile).test()
 
         // then
         result.assertComplete()
@@ -162,7 +161,7 @@ class DefaultWorkoutPersistenceUCTest {
         `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.error(IllegalStateException()))
 
         // when
-        val result = sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
+        val result = sut.save(Workout.EMPTY, dummyFile).test()
 
         // then
         result.assertError { true }
@@ -175,7 +174,7 @@ class DefaultWorkoutPersistenceUCTest {
         `when`(serializerMock.write(any(), any())).thenReturn(Completable.error(IllegalStateException()))
 
         // when
-        val result = sut.save(Workout.EMPTY, Optional.of(dummyFile)).test()
+        val result = sut.save(Workout.EMPTY, dummyFile).test()
 
         // then
         result.assertError { true }
@@ -184,10 +183,10 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() creates the file with the storage if no file is specified`() {
         // given
-        val workout = Workout.EMPTY.name("hello!")
+        val workout = Workout.EMPTY.copy(name = "hello!")
 
         // when
-        sut.save(workout, Optional.empty()).test()
+        sut.save(workout, null).test()
 
         // then
         verify(storageMock).create(any())
@@ -196,10 +195,10 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `save() defines initial file name with a ZWO extension if no file is specified`() {
         // given
-        val workout = Workout.EMPTY.name("hello!")
+        val workout = Workout.EMPTY.copy(name = "hello!")
 
         // when
-        sut.save(workout, Optional.empty()).test()
+        sut.save(workout, null).test()
 
         // then
         verify(storageMock).create("hello!.zwo")
@@ -209,10 +208,10 @@ class DefaultWorkoutPersistenceUCTest {
     fun `save() opens the newly created file if no file is specified`() {
         // given
         `when`(storageMock.create("hello!.zwo")).thenReturn(Single.just(dummyFile))
-        val workout = Workout.EMPTY.name("hello!")
+        val workout = Workout.EMPTY.copy(name = "hello!")
 
         // when
-        sut.save(workout, Optional.empty()).test()
+        sut.save(workout, null).test()
 
         // then
         verify(storageMock).openForWrite(dummyFile)

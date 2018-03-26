@@ -14,8 +14,6 @@
 
 package com.pij.zworkout.workout.feature
 
-import com.annimon.stream.Optional
-import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
 import com.pij.utils.Logger
@@ -39,27 +37,24 @@ class LoadFeature(
 ) : AsyncInteraction<String, State> {
 
     private fun updateSuccessState(current: State, workout: Workout, file: File): State {
-        return current.toBuilder()
-                .workout(workout)
-                .file(Optional.of(file))
-                .nameIsReadOnly(false)
-                .inProgress(false)
-                .build()
+        return current.copy(
+                workout = workout,
+                file = file,
+                nameIsReadOnly = false,
+                inProgress = false)
     }
 
     private fun updateFailureState(current: State, error: Throwable): State {
         val errorMessage = error.message
         val actualMessage = errorMessage ?: defaultErrorMessage
-        return current.toBuilder()
-                .showError(of(actualMessage))
-                .inProgress(false)
-                .build()
+        return current.copy(
+                showError = actualMessage,
+                inProgress = false)
     }
 
     private fun updateStartState(current: State): State {
-        return current.toBuilder()
-                .inProgress(true)
-                .build()
+        return current.copy(
+                inProgress = true)
     }
 
     override fun process(workoutId: String): Observable<Reducer<State>> {

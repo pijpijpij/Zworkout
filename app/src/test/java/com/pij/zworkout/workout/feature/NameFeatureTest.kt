@@ -17,15 +17,15 @@ class NameFeatureTest {
     @Test
     fun `Reducer puts new name in the workout`() {
         // given
-        val currentWorkout = Workout.EMPTY.name("the original")
-        val current = StateTestUtil.empty().withWorkout(currentWorkout)
+        val currentWorkout = Workout.EMPTY.copy(name = "the original")
+        val current = StateTestUtil.empty().copy(workout = currentWorkout)
         val sut = NameFeature()
 
         // when
         val next = sut.process("the new one").reduce(current)
 
         // then
-        assertEquals("the new one", next.workout().name())
+        assertEquals("the new one", next.workout.name)
     }
 
 }

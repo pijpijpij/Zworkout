@@ -15,9 +15,7 @@ class DescriptionFeature : Interaction<String, State> {
 
     override fun process(description: String): Reducer<State> {
         return Reducer { current ->
-            current.toBuilder()
-                    .workout(current.workout().toBuilder().description(description).build())
-                    .build()
+            current.copy(workout = current.workout.copy(description = description))
         }
     }
 }
