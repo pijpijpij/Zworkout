@@ -131,7 +131,7 @@ ext {
     horrockVersion= '0.2.2'
     simpleXmlVersion = '2.7.1'
     daggerVersion = '2.14.1'
-    utilsVersion = '1.2.3'
+    utilsVersion = '1.2.4'
     activityStarterVersion = '1.11-beta'
     butterknifeVersion = '8.8.1'
     dexmakerVersion = '1.2'
