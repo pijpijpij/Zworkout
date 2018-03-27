@@ -10,10 +10,10 @@ buildscript {
         }
     }
 
-    ext.kotlin_version = '1.2.20'
+    ext.kotlin_version = '1.2.31'
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.android.tools.build:gradle:3.1.0'
         //noinspection DifferentKotlinGradleVersion
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'pl.allegro.tech.build:axion-release-plugin:1.9.0'
