@@ -1,5 +1,6 @@
 package com.pij.zworkout.persistence.xml
 
+import android.support.annotation.VisibleForTesting
 import com.pij.zworkout.persistence.api.PersistableWorkout
 import com.pij.zworkout.persistence.api.WorkoutSerializerService
 import io.reactivex.Completable
@@ -15,8 +16,8 @@ import java.io.OutputStream
  *
  * @author Pierrejean
  */
-
-internal class XmlWorkoutSerializerService(private val serializer: Persister) : WorkoutSerializerService {
+@VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+class XmlWorkoutSerializerService(private val serializer: Persister) : WorkoutSerializerService {
 
     override fun write(data: PersistableWorkout, target: OutputStream): Completable {
         return { serializer.write(data, target) }.toCompletable()
