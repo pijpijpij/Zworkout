@@ -5,6 +5,11 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+    }
+
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
