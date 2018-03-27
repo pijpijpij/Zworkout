@@ -30,20 +30,18 @@
             android:text="@string/list_empty"
             android:textAppearance="?android:attr/textAppearanceLarge" />
 
-        <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <android.support.v7.widget.RecyclerView
             android:id="@android:id/list"
-            android:name="com.pij.zworkout.WorkoutListFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layoutManager="LinearLayoutManager"
-            tools:context="com.pij.zworkout.list.WorkoutsActivity"
+            app:layoutManager="android.support.v7.widget.LinearLayoutManager"
             tools:listitem="@layout/workout_list_item" />
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/workout_detail_container"
         android:layout_width="0dp"
+        tools:ignore="InconsistentLayout"
         android:layout_height="match_parent"
         android:layout_weight="3" />
 
