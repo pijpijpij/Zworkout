@@ -1,6 +1,5 @@
 package com.pij.zworkout.workout.feature
 
-import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.anyOrNull
 import com.nhaarman.mockitokotlin2.mock
@@ -42,22 +41,25 @@ class SaveFeatureTest {
         `when`(storageMock.save(any(), any())).thenReturn(Single.never())
         `when`(stateProviderMock.get()).thenReturn(defaultState)
         workoutFile = WorkoutFile(URI.create("some/file"), "zip")
-        workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.of("zap"))
+        workoutInfo = WorkoutInfo("some/file", "zip", "zap")
         sut = SaveFeature(SysoutLogger(), storageMock, stateProviderMock, "the default error message")
     }
+
+    private fun runSutOn(state: State) = sut.process(Any()).map { it.reduce(state) }
 
     @Test
     fun `Before storage service saves the workout, sut emits Start`() {
         // given
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
+                .map { it.inProgress }
                 .test()
 
         // then
-        states.assertValue { it.inProgress }
+        states.assertValue(true)
     }
+
 
     @Test
     fun `When storage succeeds, sut emits not in progress`() {
@@ -65,13 +67,13 @@ class SaveFeatureTest {
         `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.just(File("")))
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
                 .skip(1)
+                .map { it.inProgress }
                 .test()
 
         // then
-        states.assertValue { !it.inProgress }
+        states.assertValue(false)
     }
 
     @Test
@@ -80,13 +82,13 @@ class SaveFeatureTest {
         `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.just(File("")))
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
                 .skip(1)
+                .map { it.showSaved }
                 .test()
 
         // then
-        states.assertValue { it.showSaved }
+        states.assertValue(true)
     }
 
     @Test
@@ -96,8 +98,7 @@ class SaveFeatureTest {
         assumeTrue(defaultState.file == null)
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
                 .skip(1)
                 .test()
 
@@ -112,8 +113,7 @@ class SaveFeatureTest {
         assumeFalse(defaultState.nameIsReadOnly)
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
                 .skip(1)
                 .test()
 
@@ -140,8 +140,7 @@ class SaveFeatureTest {
         `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
                 .skip(1)
                 .test()
 
@@ -155,8 +154,7 @@ class SaveFeatureTest {
         `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.error(IllegalAccessException("the error message")))
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
                 .skip(1)
                 .map { it.showError }
                 .test()
@@ -171,8 +169,7 @@ class SaveFeatureTest {
         `when`(storageMock.save(any(), anyOrNull())).thenReturn(Single.error(IllegalAccessException()))
 
         // when
-        val states = sut.process(Any())
-                .map { result -> result.reduce(defaultState) }
+        val states = runSutOn(defaultState)
                 .skip(1)
                 .map { it.showError }
                 .test()

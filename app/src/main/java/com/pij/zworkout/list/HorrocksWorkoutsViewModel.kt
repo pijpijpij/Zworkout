@@ -1,10 +1,8 @@
 package com.pij.zworkout.list
 
-import com.annimon.stream.Optional
 import com.pij.horrocks.*
 import com.pij.utils.Logger
 import io.reactivex.Observable
-import java.util.Collections.emptyList
 
 /**
  *
@@ -30,15 +28,14 @@ internal class HorrocksWorkoutsViewModel private constructor(private val logger:
     }
 
     private fun resetTransient(input: Model): Model {
-        return input.toBuilder()
-                .showWorkout(Optional.empty())
-                .showError(Optional.empty())
-                .createWorkout(false)
-                .build()
+        return input.copy(
+                showWorkout = null,
+                showError = null,
+                createWorkout = false)
     }
 
     private fun initialState(): Model {
-        return Model.create(false, Optional.empty(), Optional.empty(), false, emptyList())
+        return Model(false, null, null, false, emptyList())
     }
 
     override fun load() {

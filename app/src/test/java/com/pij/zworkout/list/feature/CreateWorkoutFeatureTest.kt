@@ -1,6 +1,5 @@
 package com.pij.zworkout.list.feature
 
-import com.annimon.stream.Optional
 import com.pij.zworkout.list.Model
 import com.pij.zworkout.list.WorkoutInfo
 import junit.framework.TestCase.assertTrue
@@ -18,15 +17,15 @@ class CreateWorkoutFeatureTest {
     @Test
     fun `Adds the createWorkout flag`() {
         // given
-        val workout = WorkoutInfo.create("id", "name", Optional.of("detail"))
-        val current = Model.create(true, Optional.empty(), Optional.empty(), false, emptyList())
+        val workout = WorkoutInfo("id", "name", "detail")
+        val current = Model(true, null, null, false, emptyList())
         val sut = CreateWorkoutFeature()
 
         // when
         val next = sut.process(workout).reduce(current)
 
         // then
-        assertTrue(next.createWorkout())
+        assertTrue(next.createWorkout)
 
     }
 

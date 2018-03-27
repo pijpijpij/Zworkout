@@ -14,10 +14,6 @@ import com.pij.zworkout.list.Model
 class CreateWorkoutFeature : Interaction<Any, Model> {
 
     override fun process(event: Any): Reducer<Model> {
-        return Reducer { current ->
-            current.toBuilder()
-                    .createWorkout(true)
-                    .build()
-        }
+        return Reducer { it.copy(createWorkout = true) }
     }
 }

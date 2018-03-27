@@ -1,12 +1,10 @@
 package com.pij.zworkout.list.feature
 
-import com.annimon.stream.Optional
 import com.pij.zworkout.list.Model
 import com.pij.zworkout.list.WorkoutInfo
-import junit.framework.TestCase.assertTrue
-import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.equalTo
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 
 /**
@@ -20,30 +18,30 @@ class ShowDetailFeatureTest {
     @Test
     fun `Adds the showDetail flag`() {
         // given
-        val workout = WorkoutInfo.create("id", "name", Optional.of("detail"))
-        val current = Model.create(true, Optional.empty(), Optional.empty(), false, emptyList())
+        val workout = WorkoutInfo("id", "name", "detail")
+        val current = Model(true, null, null, false, emptyList())
         val sut = ShowDetailFeature()
 
         // when
         val next = sut.process(workout).reduce(current)
 
         // then
-        assertTrue(next.showWorkout().isPresent)
+        assertNotNull(next.showWorkout)
 
     }
 
     @Test
     fun `Adds the input workout as the showDetail flag`() {
         // given
-        val workout = WorkoutInfo.create("id", "name", Optional.of("detail"))
-        val current = Model.create(true, Optional.empty(), Optional.empty(), false, emptyList())
+        val workout = WorkoutInfo("id", "name", "detail")
+        val current = Model(true, null, null, false, emptyList())
         val sut = ShowDetailFeature()
 
         // when
         val next = sut.process(workout).reduce(current)
 
         // then
-        assertThat(next.showWorkout().get(), equalTo(workout))
+        assertEquals(workout, next.showWorkout)
 
     }
 }

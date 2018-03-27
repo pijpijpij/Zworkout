@@ -1,6 +1,5 @@
 package com.pij.zworkout.list.feature
 
-import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.Model
@@ -8,8 +7,6 @@ import com.pij.zworkout.list.WorkoutInfo
 import com.pij.zworkout.service.api.StorageService
 import com.pij.zworkout.service.api.WorkoutFile
 import io.reactivex.Observable
-import junit.framework.TestCase.assertEquals
-import junit.framework.TestCase.assertFalse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
 import org.mockito.Mockito.`when`
@@ -27,7 +24,7 @@ class StorageLoadingFeatureTest {
 
     private lateinit var storageServiceMock: StorageService
 
-    private val defaultState = Model.create(false, Optional.empty(), Optional.empty(), false, emptyList())
+    private val defaultState = Model(false, null, null, false, emptyList())
 
     private lateinit var sut: StorageLoadingFeature
     private lateinit var workoutFile: WorkoutFile
@@ -37,8 +34,8 @@ class StorageLoadingFeatureTest {
     fun setUp() {
         storageServiceMock = mock()
         `when`(storageServiceMock.workouts()).thenReturn(Observable.never())
-        workoutFile = WorkoutFile(URI.create("some/file"), "zip")
-        workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.empty())
+        workoutFile = WorkoutFile(URI("some/file"), "zip")
+        workoutInfo = WorkoutInfo("some/file", "zip", null)
         sut = StorageLoadingFeature(SysoutLogger(), storageServiceMock, "the default error message")
     }
 
@@ -47,24 +44,58 @@ class StorageLoadingFeatureTest {
         // given
 
         // when
-        val states = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
+        val states = sut.process(Any()).map { it.reduce(defaultState) }
+                .map { it.inProgress }
+                .test()
 
         // then
-        states.assertValue { state -> state.inProgress() }
+        states.assertValue(true)
     }
 
     @Test
-    fun `When store succeeds, sut emits Success`() {
+    fun `When store succeeds, sut emits not inProgress`() {
         // given
         `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
-        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
+        val states = sut.process(Any()).map { it.reduce(defaultState) }
+                .skip(1)
+                .map { it.inProgress }
+                .test()
 
         // then
-        val actual = observer.values()[1]
-        assertFalse(actual.inProgress())
-        assertThat(actual.workouts(), containsInAnyOrder(workoutInfo))
+        states.assertValue(false)
+    }
+
+    @Test
+    fun `When store succeeds, sut emits a list of workout`() {
+        // given
+        `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
+
+        // when
+        val states = sut.process(Any()).map { it.reduce(defaultState) }
+                .skip(1)
+                .map { it.workouts }
+                .test()
+
+        // then
+        states.assertValueCount(1)
+    }
+
+    @Test
+    fun `When store succeeds, sut emits a workoutInfo matching that workout store provided`() {
+        // given
+        `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
+
+        // when
+        val states = sut.process(Any()).map { it.reduce(defaultState) }
+                .skip(1)
+                .map { it.workouts }
+                .flatMapIterable { it }
+                .test()
+
+        // then
+        assertThat(states.values(), containsInAnyOrder(workoutInfo))
     }
 
     @Test
@@ -73,24 +104,54 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
-        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
+        val observer = sut.process(Any()).map { it.reduce(defaultState) }.test()
 
         // then
         observer.assertComplete()
     }
 
     @Test
-    fun `When store fails with a message, sut emits Failure with the exception message`() {
+    fun `When store fails with a message, sut emits one item`() {
         // given
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
-        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
+        val observer = sut.process(Any()).map { it.reduce(defaultState) }
+                .skip(1)
+                .test()
 
         // then
-        val actual = observer.values()[1]
-        assertFalse(actual.inProgress())
-        assertEquals(actual.showError().get(), "the error message")
+        observer.assertValueCount(1)
+    }
+
+    @Test
+    fun `When store fails, sut emits not in progress`() {
+        // given
+        `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
+
+        // when
+        val observer = sut.process(Any()).map { it.reduce(defaultState) }
+                .skip(1)
+                .map { it.inProgress }
+                .test()
+
+        // then
+        observer.assertValue(false)
+    }
+
+    @Test
+    fun `When store fails with a message, sut emits the exception message`() {
+        // given
+        `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
+
+        // when
+        val observer = sut.process(Any()).map { it.reduce(defaultState) }
+                .skip(1)
+                .map { it.showError }
+                .test()
+
+        // then
+        observer.assertValue("the error message")
     }
 
     @Test
@@ -99,12 +160,13 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException()))
 
         // when
-        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
+        val observer = sut.process(Any()).map { it.reduce(defaultState) }
+                .skip(1)
+                .map { it.showError }
+                .test()
 
         // then
-        val actual = observer.values()[1]
-        assertFalse(actual.inProgress())
-        assertEquals(actual.showError().get(), "the default error message")
+        observer.assertValue("the default error message")
     }
 
     @Test
@@ -113,7 +175,8 @@ class StorageLoadingFeatureTest {
         `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
-        val observer = sut.process(Any()).map({ result -> result.reduce(defaultState) }).test()
+        val observer = sut.process(Any()).map { it.reduce(defaultState) }
+                .test()
 
         // then
         observer.assertComplete()

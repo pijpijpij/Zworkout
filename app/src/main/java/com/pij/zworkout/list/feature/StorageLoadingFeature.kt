@@ -14,8 +14,6 @@
 
 package com.pij.zworkout.list.feature
 
-import com.annimon.stream.Optional
-import com.annimon.stream.Optional.of
 import com.pij.horrocks.AsyncInteraction
 import com.pij.horrocks.Reducer
 import com.pij.utils.Logger
@@ -35,24 +33,21 @@ import io.reactivex.rxkotlin.toObservable
 class StorageLoadingFeature(private val logger: Logger, private val storage: StorageService, private val defaultErrorMessage: String) : AsyncInteraction<Any, Model> {
 
     private fun updateSuccessState(current: Model, list: List<WorkoutInfo>): Model {
-        return current.toBuilder()
-                .workouts(list)
-                .inProgress(false)
-                .build()
+        return current.copy(
+                workouts = list,
+                inProgress = false)
     }
 
     private fun updateFailureState(current: Model, error: Throwable): Model {
         val actualMessage = error.message ?: defaultErrorMessage
-        return current.toBuilder()
-                .showError(of(actualMessage))
-                .inProgress(false)
-                .build()
+        return current.copy(
+                showError = actualMessage,
+                inProgress = false)
     }
 
     private fun updateStartState(current: Model): Model {
-        return current.toBuilder()
-                .inProgress(true)
-                .build()
+        return current.copy(
+                inProgress = true)
     }
 
     override fun process(trigger: Any): Observable<Reducer<Model>> {
@@ -65,12 +60,11 @@ class StorageLoadingFeature(private val logger: Logger, private val storage: Sto
     }
 
     private fun convert(file: WorkoutFile): WorkoutInfo {
-        return WorkoutInfo.builder()
-                .id(file.uri?.toString())
-                .name(file.name)
+        return WorkoutInfo(
+                id = file.uri.toString(),
+                name = file.name,
                 // TODO implement details
-                .details(Optional.empty())
-                .build()
+                details = null)
     }
 
 }

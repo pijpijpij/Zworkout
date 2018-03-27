@@ -1,6 +1,5 @@
 package com.pij.zworkout.workout
 
-import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.*
 import com.pij.utils.SysoutLogger
@@ -18,7 +17,7 @@ import kotlin.test.Test
  */
 class HorrocksWorkoutViewModelTest {
 
-    private val simpleModel = Model.create(true, Optional.empty(), false, "", false, "")
+    private val simpleModel = Model(true, null, false, "", false, "")
     private val simpleState = State(true, null, false, Workout.EMPTY, false, null)
 
     /** Provides {@link #simpleState} when called.
@@ -81,7 +80,7 @@ class HorrocksWorkoutViewModelTest {
         val observer = sut.model().test()
 
         // then
-        observer.assertValue(Model.create(false, Optional.empty(), false, "", false, ""))
+        observer.assertValue(Model(false, null, false, "", false, ""))
     }
 
     @Test

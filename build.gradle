@@ -123,8 +123,8 @@ ext {
     rulesVersion = '1.0.1'
     espressoVersion = '3.0.1'
 
-    streamVersion = '1.1.9'
-    autoValueVersion = '1.5.1'
+//    streamVersion = '1.1.9'
+//    autoValueVersion = '1.5.1'
     rxJava2Version = '2.1.12'
     rxAndroidVersion = '2.0.2'
     rxKotlinVersion = '2.2.0'

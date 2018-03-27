@@ -1,6 +1,5 @@
 package com.pij.zworkout.workout.feature
 
-import com.annimon.stream.Optional
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.utils.SysoutLogger
@@ -40,11 +39,11 @@ class LoadFeatureTest {
         workoutPersistenceMock = mock()
         `when`(workoutPersistenceMock.load(any())).thenReturn(Single.never())
         workoutFile = WorkoutFile(URI.create("some/file"), "zip")
-        workoutInfo = WorkoutInfo.create("some/file", "zip", Optional.empty())
+        workoutInfo = WorkoutInfo("some/file", "zip", null)
         sut = LoadFeature(SysoutLogger(), workoutPersistenceMock, "the default error message")
     }
 
-    private fun runSutOn(workoutId: String, state: State) = sut.process(workoutId).map { result -> result.reduce(state) }
+    private fun runSutOn(workoutId: String, state: State) = sut.process(workoutId).map { it.reduce(state) }
 
     @Test
     fun `Before store provides workout, sut emits in Progress`() {

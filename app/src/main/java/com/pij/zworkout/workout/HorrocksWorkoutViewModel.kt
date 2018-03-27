@@ -1,6 +1,5 @@
 package com.pij.zworkout.workout
 
-import com.annimon.stream.Optional
 import com.pij.horrocks.*
 import com.pij.utils.Logger
 import com.pij.zworkout.uc.Workout
@@ -22,7 +21,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                                                             private val save: ReducerCreator<Any, State>,
                                                             private val createWorkout: ReducerCreator<Any, State>
 ) : WorkoutViewModel {
-    private val modelStream: Observable<Model>
+    private val models: Observable<Model>
 
     init {
         val engineConfiguration = Configuration.builder<State, Model>()
@@ -31,7 +30,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                 .stateToModel { this.convert(it) }
                 .creators(listOf(name, description, loader, save, createWorkout))
                 .build()
-        modelStream = engine.runWith(engineConfiguration).share()
+        models = engine.runWith(engineConfiguration).share()
     }
 
     private fun resetTransient(input: State): State {
@@ -43,14 +42,13 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
     }
 
     private fun convert(state: State): Model {
-        return Model.builder()
-                .inProgress(state.inProgress)
-                .showSaved(state.showSaved)
-                .showError(Optional.ofNullable(state.showError))
-                .name(state.workout.name)
-                .nameIsReadOnly(state.nameIsReadOnly)
-                .description(state.workout.description)
-                .build()
+        return Model(
+                inProgress = state.inProgress,
+                showSaved = state.showSaved,
+                showError = state.showError,
+                name = state.workout.name,
+                nameIsReadOnly = state.nameIsReadOnly,
+                description = state.workout.description)
     }
 
     override fun load(itemId: String) {
@@ -62,7 +60,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
     }
 
     override fun model(): Observable<Model> {
-        return modelStream
+        return models
                 .doOnError { e -> logger.print(javaClass, e, "Terminal Damage!!!") }
                 .doOnComplete { logger.print(javaClass, "model() completed!!!") }
     }
