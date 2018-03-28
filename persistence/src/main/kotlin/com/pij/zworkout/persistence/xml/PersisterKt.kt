@@ -12,33 +12,27 @@
  *  See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.pij.zworkout.uc
+package com.pij.zworkout.persistence.xml
 
-import com.pij.zworkout.persistence.api.EmptyString
-import com.pij.zworkout.persistence.api.PersistableWorkout
 import com.pij.zworkout.persistence.api.SportType
+import org.simpleframework.xml.core.Persister
+import org.simpleframework.xml.transform.Matcher
+import org.simpleframework.xml.transform.Transform
+
+
+internal fun workoutPersister(): Persister {
+    val transform = SportTypeTransform()
+    val matcher = Matcher { type -> if (type == SportType::class.java) transform else null }
+    return Persister(matcher)
+}
+
 
 /**
- *
- * Created on 13/03/2018.
- *
  * @author Pierrejean
  */
+internal class SportTypeTransform : Transform<SportType> {
 
-internal class PersistableWorkoutConverter {
+    override fun write(value: SportType): String = value.name.toLowerCase()
 
-    fun convert(input: Workout): PersistableWorkout {
-        return PersistableWorkout(
-                name = EmptyString(input.name),
-                description = input.description,
-                sportType = SportType.BIKE
-        )
-    }
-
-    fun convert(input: PersistableWorkout): Workout {
-        return Workout(
-                name = input.name.value ?: "",
-                description = input.description ?: ""
-        )
-    }
+    override fun read(value: String): SportType = SportType.valueOf(value.toUpperCase())
 }
