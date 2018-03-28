@@ -14,9 +14,7 @@
 
 package com.pij.zworkout.persistence.api
 
-import org.simpleframework.xml.Element
-import org.simpleframework.xml.Root
-import org.simpleframework.xml.Text
+import org.simpleframework.xml.*
 
 /**
  *
@@ -29,7 +27,9 @@ data class PersistableWorkout(
 
         @field:Element var name: EmptyString = EmptyString(),
         @field:Element(required = false) var description: String? = null,
-        @field:Element(required = false) var sportType: SportType? = null)
+        @field:Element(required = false) var sportType: SportType? = null,
+        // TODO add Tags
+        @field:Element(name = "workout", required = false) var efforts: Efforts? = null)
 
 data class EmptyString(
 
@@ -39,3 +39,33 @@ data class EmptyString(
 enum class SportType {
     BIKE
 }
+
+data class Efforts(
+        @field:ElementListUnion(
+                ElementList(inline = true, entry = "SteadyState", type = SteadyState::class),
+                ElementList(inline = true, entry = "Ramp", type = Ramp::class),
+                ElementList(inline = true, entry = "CoolDown", type = CoolDown::class)
+        ) var efforts: List<Effort> = listOf()
+)
+
+sealed class Effort
+data class SteadyState(
+        @field:Attribute(name = "Duration") var duration: Int,
+        @field:Attribute(name = "Power") var power: Float,
+        @field:Attribute(name = "Cadence", required = false) var cadence: Int? = null
+) : Effort()
+
+data class Ramp(
+        @field:Attribute(name = "Duration") var duration: Int,
+        @field:Attribute(name = "PowerLow") var startPower: Float,
+        @field:Attribute(name = "PowerHigh") var endPower: Float,
+        @field:Attribute(name = "CadenceResting", required = false) var startCadence: Int? = null,
+        @field:Attribute(name = "Cadence", required = false) var endCadence: Int? = null
+) : Effort()
+
+data class CoolDown(
+        @field:Attribute(name = "Duration") var duration: Int,
+        @field:Attribute(name = "PowerLow") var startPower: Float,
+        @field:Attribute(name = "PowerHigh") var endPower: Float,
+        @field:Attribute(name = "Cadence", required = false) var endCadence: Int? = null
+) : Effort()
