@@ -104,7 +104,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
             return State(inProgress = false,
                     showError = null,
                     showSaved = false,
-                    workout = Workout.EMPTY,
+                    workout = Workout(),
                     file = null,
                     nameIsReadOnly = false)
         }

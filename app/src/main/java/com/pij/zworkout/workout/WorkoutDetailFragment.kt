@@ -104,7 +104,7 @@ class WorkoutDetailFragment : DaggerFragment() {
         toolbar_layout?.title = newValue
     }
 
-    private fun showInProgress(inProgress: Boolean) {
+    private fun showInProgress(@Suppress("UNUSED_PARAMETER") inProgress: Boolean) {
 //        empty.setText(if (inProgress) R.string.list_loading else R.string.list_empty)
     }
 

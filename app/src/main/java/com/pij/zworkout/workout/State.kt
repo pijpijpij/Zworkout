@@ -10,10 +10,10 @@ import java.io.File
  * @author Pierrejean
  */
 data class State(
-        val inProgress: Boolean,
-        val showError: String?,
-        val showSaved: Boolean,
-        val workout: Workout,
-        val nameIsReadOnly: Boolean,
-        val file: File?
+        val inProgress: Boolean = false,
+        val showError: String? = null,
+        val showSaved: Boolean = false,
+        val workout: Workout = Workout(),
+        val nameIsReadOnly: Boolean = false,
+        val file: File? = null
 )

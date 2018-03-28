@@ -6,10 +6,4 @@ package com.pij.zworkout.uc
  *
  * @author Pierrejean
  */
-data class Workout(val name: String, val description: String) {
-
-    companion object {
-
-        val EMPTY = Workout(name = "", description = "")
-    }
-}
+data class Workout(val name: String = "", val description: String = "")

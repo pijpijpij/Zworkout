@@ -8,10 +8,4 @@ import java.net.URI
  *
  * @author Pierrejean
  */
-data class WorkoutFile(val uri: URI?, val name: String) {
-    companion object {
-
-        var UNDEFINED = WorkoutFile(null, "")
-
-    }
-}
+data class WorkoutFile(val uri: URI? = null, val name: String = "")

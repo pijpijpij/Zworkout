@@ -23,7 +23,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists workout name`() {
         // given
-        val input = Workout.EMPTY.copy(name = "hello")
+        val input = Workout(name = "hello")
 
         // when
         val result = sut.convert(input)
@@ -35,7 +35,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists description`() {
         // given
-        val input = Workout.EMPTY.copy(description = "hello")
+        val input = Workout(description = "hello")
 
         // when
         val result = sut.convert(input)

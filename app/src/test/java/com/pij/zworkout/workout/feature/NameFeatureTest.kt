@@ -1,7 +1,7 @@
 package com.pij.zworkout.workout.feature
 
 import com.pij.zworkout.uc.Workout
-import com.pij.zworkout.workout.StateTestUtil
+import com.pij.zworkout.workout.State
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -17,8 +17,8 @@ class NameFeatureTest {
     @Test
     fun `Reducer puts new name in the workout`() {
         // given
-        val currentWorkout = Workout.EMPTY.copy(name = "the original")
-        val current = StateTestUtil.empty().copy(workout = currentWorkout)
+        val currentWorkout = Workout(name = "the original")
+        val current = State().copy(workout = currentWorkout)
         val sut = NameFeature()
 
         // when

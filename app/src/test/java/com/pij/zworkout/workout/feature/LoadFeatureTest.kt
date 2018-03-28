@@ -8,7 +8,6 @@ import com.pij.zworkout.service.api.WorkoutFile
 import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.State
-import com.pij.zworkout.workout.StateTestUtil
 import io.reactivex.Single
 import org.mockito.Mockito.`when`
 import java.io.File
@@ -26,8 +25,8 @@ class LoadFeatureTest {
 
     private lateinit var workoutPersistenceMock: WorkoutPersistenceUC
 
-    private val loadedWorkout = Workout.EMPTY.copy(name = "just loaded")
-    private val defaultState: State = StateTestUtil.empty().copy(workout = Workout.EMPTY)
+    private val loadedWorkout = Workout(name = "just loaded")
+    private val defaultState: State = State().copy(workout = Workout())
     private val defaultWorkoutId = "file:///workout/id"
 
     private lateinit var sut: LoadFeature

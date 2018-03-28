@@ -28,7 +28,7 @@ class SaveFeatureTest {
     private lateinit var storageMock: WorkoutPersistenceUC
     private lateinit var stateProviderMock: StateProvider<State>
 
-    private val defaultState = State(false, null, false, Workout.EMPTY, false, null)
+    private val defaultState = State(false, null, false, Workout(), false, null)
 
     private lateinit var sut: SaveFeature
     private lateinit var workoutFile: WorkoutFile
