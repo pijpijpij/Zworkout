@@ -98,9 +98,6 @@ dependencies {
     implementation "com.marcinmoskala.activitystarter:activitystarter:$activityStarterVersion"
     kapt "com.marcinmoskala.activitystarter:activitystarter-compiler:$activityStarterVersion"
 
-    // ButterKnife
-    implementation "com.jakewharton:butterknife:$butterknifeVersion"
-    kapt "com.jakewharton:butterknife-compiler:$butterknifeVersion"
     // Dagger dependencies
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"

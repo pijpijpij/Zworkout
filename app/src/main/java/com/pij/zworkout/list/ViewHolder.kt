@@ -2,10 +2,7 @@ package com.pij.zworkout.list
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.widget.TextView
-import butterknife.BindView
-import butterknife.ButterKnife
-import com.pij.zworkout.R
+import kotlinx.android.synthetic.main.workout_list_item.view.*
 
 /**
  *
@@ -15,18 +12,9 @@ import com.pij.zworkout.R
  */
 internal class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    @BindView(R.id.name)
-    lateinit var name: TextView
-    @BindView(R.id.content)
-    lateinit var content: TextView
-
-    init {
-        ButterKnife.bind(this, itemView)
-    }
-
     fun bind(item: WorkoutInfo, clickAction: (WorkoutInfo) -> Unit) {
-        name.text = item.name
-        content.text = item.details
+        itemView.name.text = item.name
+        itemView.content.text = item.details
         itemView.setOnClickListener { _ -> clickAction.invoke(item) }
     }
 }
