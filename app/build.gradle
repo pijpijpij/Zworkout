@@ -74,8 +74,12 @@ android {
 dependencies {
     implementation project(path: ':service-api')
     implementation project(path: ':services')
-    implementation project(path: ':persistence-api')
-    implementation project(path: ':persistence')
+    implementation(project(path: ':persistence-api')) {
+        exclude group: 'xpp3', module: 'xpp3'
+    }
+    implementation(project(path: ':persistence')) {
+        exclude group: 'xpp3', module: 'xpp3'
+    }
     implementation "com.github.pijpijpij:Horrocks:$horrockVersion"
     implementation "org.bitbucket.pijpijpij.android-utils:android-utils:$utilsVersion"
 
