@@ -72,7 +72,7 @@ class PersistableWorkoutTest {
     @RunWith(Parameterized::class)
     class ReadingValidXmlTests(private val xml: String) : BaseSerializationTest() {
 
-        @Ignore("Not coded yet")
+        @Ignore("Not implemented yet")
         @Test
         fun test() {
             // when
@@ -167,18 +167,18 @@ class PersistableWorkoutTest {
                         arrayOf("<workout_file><name/><sportType>bike</sportType></workout_file>",
                                 PersistableWorkout(sportType = SportType.BIKE)),
                         arrayOf("<workout_file><name/><workout/></workout_file>",
-                                PersistableWorkout(efforts = Efforts())),
+                                PersistableWorkout(efforts = PersistableEfforts())),
                         arrayOf("<workout_file><name/><workout>" +
                                 "<SteadyState Duration='120' Power='0.1'/>" +
                                 "</workout></workout_file>",
-                                PersistableWorkout(efforts = Efforts(listOf<Effort>(SteadyState(120, 0.1f))))),
+                                PersistableWorkout(efforts = PersistableEfforts(listOf<PersistableEffort>(PersistableSteadyState(120, 0.1f))))),
                         arrayOf("<workout_file><name/><workout>" +
                                 "<Ramp Duration='120' PowerLow='0.1' PowerHigh='0.3'/>" +
                                 "<SteadyState Duration='120' Power='0.1'/>" +
                                 "</workout></workout_file>",
-                                PersistableWorkout(efforts = Efforts(listOf(
-                                        Ramp(120, 0.1f, 0.3f),
-                                        SteadyState(120, 0.1f))
+                                PersistableWorkout(efforts = PersistableEfforts(listOf(
+                                        PersistableRamp(120, 0.1f, 0.3f),
+                                        PersistableSteadyState(120, 0.1f))
                                 )))
                 )
             }

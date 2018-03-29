@@ -29,7 +29,7 @@ data class PersistableWorkout(
         @field:Element(required = false) var description: String? = null,
         @field:Element(required = false) var sportType: SportType? = null,
         // TODO add Tags
-        @field:Element(name = "workout", required = false) var efforts: Efforts? = null)
+        @field:Element(name = "workout", required = false) var efforts: PersistableEfforts? = null)
 
 data class EmptyString(
 
@@ -40,32 +40,33 @@ enum class SportType {
     BIKE
 }
 
-data class Efforts(
+data class PersistableEfforts(
         @field:ElementListUnion(
-                ElementList(inline = true, entry = "SteadyState", type = SteadyState::class),
-                ElementList(inline = true, entry = "Ramp", type = Ramp::class),
-                ElementList(inline = true, entry = "CoolDown", type = CoolDown::class)
-        ) var efforts: List<Effort> = listOf()
+                ElementList(inline = true, entry = "SteadyState", type = PersistableSteadyState::class),
+                ElementList(inline = true, entry = "Ramp", type = PersistableRamp::class),
+                ElementList(inline = true, entry = "CoolDown", type = PersistableCoolDown::class)
+        ) var efforts: List<PersistableEffort> = listOf()
 )
 
-sealed class Effort
-data class SteadyState(
+sealed class PersistableEffort
+
+data class PersistableSteadyState(
         @field:Attribute(name = "Duration") var duration: Int,
         @field:Attribute(name = "Power") var power: Float,
         @field:Attribute(name = "Cadence", required = false) var cadence: Int? = null
-) : Effort()
+) : PersistableEffort()
 
-data class Ramp(
+data class PersistableRamp(
         @field:Attribute(name = "Duration") var duration: Int,
         @field:Attribute(name = "PowerLow") var startPower: Float,
         @field:Attribute(name = "PowerHigh") var endPower: Float,
         @field:Attribute(name = "CadenceResting", required = false) var startCadence: Int? = null,
         @field:Attribute(name = "Cadence", required = false) var endCadence: Int? = null
-) : Effort()
+) : PersistableEffort()
 
-data class CoolDown(
+data class PersistableCoolDown(
         @field:Attribute(name = "Duration") var duration: Int,
         @field:Attribute(name = "PowerLow") var startPower: Float,
         @field:Attribute(name = "PowerHigh") var endPower: Float,
         @field:Attribute(name = "Cadence", required = false) var endCadence: Int? = null
-) : Effort()
+) : PersistableEffort()
