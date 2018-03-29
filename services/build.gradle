@@ -46,7 +46,6 @@ android {
 dependencies {
     api project(path: ':service-api')
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-    implementation "com.android.support:appcompat-v7:$supportLibraryVersion"
     implementation "com.android.support:support-annotations:$supportLibraryVersion"
     implementation "org.bitbucket.pijpijpij.android-utils:utils:$utilsVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
@@ -54,9 +53,6 @@ dependencies {
 
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     implementation "com.google.dagger:dagger:$daggerVersion"
-    implementation "com.google.dagger:dagger-android:$daggerVersion"
-    implementation "com.google.dagger:dagger-android-support:$daggerVersion"
-    kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     // Dependencies for local unit tests
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
@@ -65,8 +61,4 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
     testImplementation "org.hamcrest:hamcrest-all:$hamcrestVersion"
-
-//    // Android Testing Support Library's runner and rules
-//    androidTestImplementation "com.android.support.test:runner:$runnerVersion"
-//    androidTestImplementation "com.android.support.test.espresso:espresso-core:$espressoVersion"
 }
