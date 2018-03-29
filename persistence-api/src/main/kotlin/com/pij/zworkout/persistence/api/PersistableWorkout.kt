@@ -22,14 +22,15 @@ import org.simpleframework.xml.*
  *
  * @author Pierrejean
  */
-@Root(name = "workout_file")
+@Root(name = "workout_file", strict = false)
 data class PersistableWorkout(
 
         @field:Element var name: EmptyString = EmptyString(),
         @field:Element(required = false) var description: String? = null,
         @field:Element(required = false) var sportType: SportType? = null,
         // TODO add Tags
-        @field:Element(name = "workout", required = false) var efforts: PersistableEfforts? = null)
+        @field:Element(name = "workout", required = false) var efforts: PersistableEfforts? = null
+)
 
 data class EmptyString(
 
@@ -40,33 +41,43 @@ enum class SportType {
     BIKE
 }
 
+/**
+ * Field is {@link #efforts} declared immutable, but it needs to be mutable for the XML library to do its thing.
+ */
+@Root(name = "workout", strict = false)
 data class PersistableEfforts(
         @field:ElementListUnion(
-                ElementList(inline = true, entry = "SteadyState", type = PersistableSteadyState::class),
-                ElementList(inline = true, entry = "Ramp", type = PersistableRamp::class),
-                ElementList(inline = true, entry = "CoolDown", type = PersistableCoolDown::class)
-        ) var efforts: List<PersistableEffort> = listOf()
+                ElementList(required = false, inline = true, type = PersistableSteadyState::class),
+                ElementList(required = false, inline = true, type = PersistableRamp::class),
+                ElementList(required = false, inline = true, type = PersistableCoolDown::class)
+        ) var efforts: List<PersistableEffort> = mutableListOf()
 )
 
+/**
+ * Artificial base class for all efforts.
+ */
 sealed class PersistableEffort
 
+@Root(name = "SteadyState", strict = false)
 data class PersistableSteadyState(
-        @field:Attribute(name = "Duration") var duration: Int,
-        @field:Attribute(name = "Power") var power: Float,
+        @field:Attribute(name = "Duration") var duration: Int = 0,
+        @field:Attribute(name = "Power") var power: Float = 0f,
         @field:Attribute(name = "Cadence", required = false) var cadence: Int? = null
 ) : PersistableEffort()
 
+@Root(name = "Ramp", strict = false)
 data class PersistableRamp(
-        @field:Attribute(name = "Duration") var duration: Int,
-        @field:Attribute(name = "PowerLow") var startPower: Float,
-        @field:Attribute(name = "PowerHigh") var endPower: Float,
+        @field:Attribute(name = "Duration") var duration: Int = 0,
+        @field:Attribute(name = "PowerLow") var startPower: Float = 0f,
+        @field:Attribute(name = "PowerHigh") var endPower: Float = 0f,
         @field:Attribute(name = "CadenceResting", required = false) var startCadence: Int? = null,
         @field:Attribute(name = "Cadence", required = false) var endCadence: Int? = null
 ) : PersistableEffort()
 
+@Root(name = "Cooldown", strict = false)
 data class PersistableCoolDown(
-        @field:Attribute(name = "Duration") var duration: Int,
-        @field:Attribute(name = "PowerLow") var startPower: Float,
-        @field:Attribute(name = "PowerHigh") var endPower: Float,
+        @field:Attribute(name = "Duration") var duration: Int = 0,
+        @field:Attribute(name = "PowerLow") var startPower: Float = 0f,
+        @field:Attribute(name = "PowerHigh") var endPower: Float = 0f,
         @field:Attribute(name = "Cadence", required = false) var endCadence: Int? = null
 ) : PersistableEffort()

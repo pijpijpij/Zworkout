@@ -24,7 +24,10 @@ import org.simpleframework.xml.core.ValueRequiredException
 import org.xmlunit.builder.DiffBuilder
 import java.io.StringWriter
 import kotlin.reflect.KClass
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 
 
 /**
@@ -72,7 +75,6 @@ class PersistableWorkoutTest {
     @RunWith(Parameterized::class)
     class ReadingValidXmlTests(private val xml: String) : BaseSerializationTest() {
 
-        @Ignore("Not implemented yet")
         @Test
         fun test() {
             // when
@@ -90,7 +92,18 @@ class PersistableWorkoutTest {
                         arrayOf<Any>("<workout_file><name/><description> </description></workout_file>"),
                         arrayOf<Any>("<workout_file><name/><sportType/></workout_file>"),
                         arrayOf<Any>("<workout_file><name/><sportType>bike</sportType></workout_file>"),
-                        arrayOf<Any>("<workout_file><name/><sportType/><workout/></workout_file>")
+                        arrayOf<Any>("<workout_file><name/><sportType/><workout/></workout_file>"),
+                        arrayOf<Any>("<workout_file><name/><tags/><workout/></workout_file>"),
+                        arrayOf<Any>("<workout_file><name/><workout><SteadyState Duration='120' Power='0.1'/></workout></workout_file>"),
+                        arrayOf<Any>("<workout_file><name/><workout>" +
+                                "<Ramp Duration='120' PowerLow='0.1' PowerHigh='0.3'/>" +
+                                "<SteadyState Duration='120' Power='0.1'/>" +
+                                "</workout></workout_file>"),
+                        arrayOf<Any>("<workout_file><name/><workout>" +
+                                "<Cooldown Duration='600' PowerLow='0.66' PowerHigh='0.4'/>" +
+                                "<Ramp Duration='120' PowerLow='0.1' PowerHigh='0.3'/>" +
+                                "<SteadyState Duration='120' Power='0.1'/>" +
+                                "</workout></workout_file>")
                 )
             }
         }
@@ -114,25 +127,25 @@ class PersistableWorkoutTest {
         @Test
         fun `Reading a non-blank name loads it`() {
             // given
-            val xml = "<workout_file><name>asdf</name></workout_file>"
+            val xml = "<workout_file><name>hello!</name></workout_file>"
 
             // when
             val workout = serialize(xml)
 
             // then
-            assertEquals("asdf", workout.name.value)
+            assertEquals("hello!", workout.name.value)
         }
 
         @Test
         fun `Reading a missing sportType name loads it`() {
             // given
-            val xml = "<workout_file><name>asdf</name></workout_file>"
+            val xml = "<workout_file><name>hello!</name></workout_file>"
 
             // when
             val workout = serialize(xml)
 
             // then
-            assertEquals("asdf", workout.name.value)
+            assertEquals("hello!", workout.name.value)
         }
     }
 
