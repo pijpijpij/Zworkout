@@ -11,8 +11,8 @@ import com.pij.zworkout.workout.WorkoutDetailActivity
 import com.pij.zworkout.workout.WorkoutDetailFragment
 import dagger.android.support.DaggerAppCompatActivity
 import io.reactivex.disposables.CompositeDisposable
-import kotlinx.android.synthetic.main.activity_workout_list.*
-import kotlinx.android.synthetic.main.workout_list.*
+import kotlinx.android.synthetic.main.activity_workouts.*
+import kotlinx.android.synthetic.main.workouts.*
 import javax.inject.Inject
 
 /**
@@ -48,7 +48,7 @@ class WorkoutsActivity : DaggerAppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_workout_list)
+        setContentView(R.layout.activity_workouts)
 
         toolbar.title = title
         setSupportActionBar(toolbar)

@@ -2,7 +2,7 @@ package com.pij.zworkout.list
 
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import kotlinx.android.synthetic.main.workout_list_item.view.*
+import kotlinx.android.synthetic.main.workouts_item.view.*
 
 /**
  *
@@ -15,6 +15,6 @@ internal class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     fun bind(item: WorkoutInfo, clickAction: (WorkoutInfo) -> Unit) {
         itemView.name.text = item.name
         itemView.content.text = item.details
-        itemView.setOnClickListener { _ -> clickAction.invoke(item) }
+        itemView.setOnClickListener { _ -> clickAction(item) }
     }
 }

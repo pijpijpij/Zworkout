@@ -12,7 +12,7 @@ import com.pij.zworkout.list.WorkoutsActivity
 import dagger.android.support.DaggerFragment
 import io.reactivex.disposables.CompositeDisposable
 import kotlinx.android.synthetic.main.activity_workout_detail.*
-import kotlinx.android.synthetic.main.workout_detail.*
+import kotlinx.android.synthetic.main.fragment_workout.*
 import javax.inject.Inject
 
 /**
@@ -29,17 +29,15 @@ class WorkoutDetailFragment : DaggerFragment() {
      */
     @Arg(optional = true)
     var itemId: String? = null
-    //    @BindView(R.id.workout_detail)
-//    internal var workoutDetail: View? = null
-//    @BindView(R.id.name)
-//    internal var name: TextView? = null
-//    @BindView(R.id.description)
-//    internal var description: TextView? = null
+
     @Inject
     internal lateinit var viewModel: WorkoutViewModel
 
+    @Inject
+    internal lateinit var adapter: EffortsAdapter
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.workout_detail, container, false)
+        return inflater.inflate(R.layout.fragment_workout, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

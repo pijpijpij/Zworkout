@@ -25,7 +25,7 @@ internal class Adapter(private val clickAction: (WorkoutInfo) -> Unit) : Recycle
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.workout_list_item, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.workouts_item, parent, false)
         return ViewHolder(view)
     }
 
