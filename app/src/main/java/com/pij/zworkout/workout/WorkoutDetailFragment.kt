@@ -1,12 +1,27 @@
+/*
+ * Copyright (c) 2018, Chiswick Forest
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.pij.zworkout.workout
 
 import activitystarter.ActivityStarter
 import activitystarter.Arg
 import android.os.Bundle
 import android.support.design.widget.Snackbar
-import android.support.v4.util.ObjectsCompat
 import android.view.*
-import com.pij.utils.TextWatcherAdapter
+import com.pij.TextWatcherAdapter
+import com.pij.updateEnabled
+import com.pij.updateText
 import com.pij.zworkout.R
 import com.pij.zworkout.list.WorkoutsActivity
 import dagger.android.support.DaggerFragment
@@ -46,14 +61,9 @@ class WorkoutDetailFragment : DaggerFragment() {
 
         name.addTextChangedListener(TextWatcherAdapter { viewModel.name(it) })
         description.addTextChangedListener(TextWatcherAdapter { viewModel.description(it) })
+        list.adapter = adapter
 
-        subscriptions.addAll(
-                viewModel.model().filter { it.showError != null }.subscribe { showError(it.showError!!) },
-                viewModel.model().map { it.inProgress }.distinctUntilChanged().subscribe { showInProgress(it) },
-                viewModel.model().map { it.name }.distinctUntilChanged().subscribe { displayName(it) },
-                viewModel.model().map { it.nameIsReadOnly }.distinctUntilChanged().subscribe { disableName(it) },
-                viewModel.model().map { it.description }.distinctUntilChanged().subscribe { displayDescription(it) }
-        )
+        subscriptions.add(viewModel.model().subscribe { display(it) })
 
         if (savedInstanceState == null) {
             if (itemId == null) {
@@ -64,50 +74,38 @@ class WorkoutDetailFragment : DaggerFragment() {
         }
     }
 
+    private fun display(model: Model) {
+        if (model.showError != null) {
+            Snackbar.make(workout_detail, model.showError, Snackbar.LENGTH_LONG).show()
+        }
+        // empty.setText(if (model.inProgress) R.string.list_loading else R.string.list_empty)
+        name.updateText(model.name)
+        toolbar_layout?.title = model.name
+        name.updateEnabled(!model.nameIsReadOnly)
+        description.updateText(model.description)
+        list.visibility = if (model.efforts.isEmpty()) View.INVISIBLE else View.VISIBLE
+        empty.visibility = if (model.efforts.isEmpty()) View.VISIBLE else View.INVISIBLE
+        adapter.setItems(model.efforts)
+    }
+
     override fun onDestroyView() {
         subscriptions.clear()
         super.onDestroyView()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater!!.inflate(R.menu.workout_menu, menu)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.workout_menu, menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle item selection
-        return when (item!!.itemId) {
+        return when (item.itemId) {
             R.id.menu_save -> {
                 viewModel.save()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
-    }
-
-    private fun displayDescription(newValue: String) {
-        if (!ObjectsCompat.equals(description.text.toString(), newValue)) {
-            description.setText(newValue)
-        }
-    }
-
-    private fun disableName(readOnly: Boolean) {
-        name!!.isEnabled = !readOnly
-    }
-
-    private fun displayName(newValue: String) {
-        if (!ObjectsCompat.equals(name.text.toString(), newValue)) {
-            name.setText(newValue)
-        }
-        // TODO put that in a different place in the lifecycle
-        toolbar_layout?.title = newValue
-    }
-
-    private fun showInProgress(@Suppress("UNUSED_PARAMETER") inProgress: Boolean) {
-//        empty.setText(if (inProgress) R.string.list_loading else R.string.list_empty)
-    }
-
-    private fun showError(message: String) {
-        Snackbar.make(workout_detail, message, Snackbar.LENGTH_LONG).show()
     }
 
     companion object {
