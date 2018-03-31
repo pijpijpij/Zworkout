@@ -12,30 +12,24 @@
  *  See the License for the specific language governing permissions and limitations under the License.
  */
 
-package com.pij.zworkout.workout
+package com.pij.zworkout.workout.feature
 
-import io.reactivex.Observable
+import com.pij.horrocks.Interaction
+import com.pij.horrocks.Reducer
+import com.pij.zworkout.uc.SteadyState
+import com.pij.zworkout.workout.State
 
 /**
- *
- * Created on 01/03/2018.
- *
  * @author Pierrejean
  */
 
-internal interface WorkoutViewModel {
+class AddEffortFeature : Interaction<Any, State> {
 
-    fun model(): Observable<Model>
+    override fun process(event: Any): Reducer<State> {
+        val element = SteadyState(5, 1f)
+        return Reducer { current ->
+            current.copy(workout = current.workout.copy(efforts = current.workout.efforts + element))
+        }
+    }
 
-    fun load(itemId: String)
-
-    fun createWorkout()
-
-    fun name(newValue: String)
-
-    fun description(newValue: String)
-
-    fun save()
-
-    fun addEffort()
 }

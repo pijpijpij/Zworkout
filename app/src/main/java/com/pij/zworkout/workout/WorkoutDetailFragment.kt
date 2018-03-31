@@ -104,6 +104,10 @@ class WorkoutDetailFragment : DaggerFragment() {
                 viewModel.save()
                 true
             }
+            R.id.menu_add -> {
+                viewModel.addEffort()
+                true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

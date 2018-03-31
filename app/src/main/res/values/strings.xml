@@ -26,6 +26,7 @@
     <string name="detail_empty">No efforts in this workout.</string>
     <string name="workout_save_error_message">Unable to save this workout</string>
     <string name="workout_menu_save">Save</string>
+    <string name="workout_menu_add">New Effort</string>
     <string name="workout_efforts_item_steady_state_name">Steady state</string>
     <string name="workout_efforts_item_steady_state_duration">%d s</string>
     <string name="workout_efforts_item_steady_state_duration_hint">Sec.</string>

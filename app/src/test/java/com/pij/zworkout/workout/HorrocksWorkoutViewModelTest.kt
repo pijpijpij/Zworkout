@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2018, Chiswick Forest
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.pij.zworkout.workout
 
 import com.nhaarman.mockitokotlin2.mock
@@ -32,6 +46,7 @@ class HorrocksWorkoutViewModelTest {
     private lateinit var nameFeatureMock: Interaction<String, State>
     private lateinit var descriptionFeatureMock: Interaction<String, State>
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
+    private lateinit var addEffortFeatureMock: Interaction<Any, State>
 
 
     @BeforeTest
@@ -41,12 +56,14 @@ class HorrocksWorkoutViewModelTest {
         nameFeatureMock = mock()
         descriptionFeatureMock = mock()
         saveFeatureMock = mock()
+        addEffortFeatureMock = mock()
         sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
                 MemoryStorage(HorrocksWorkoutViewModel.initialState()),
                 nameFeatureMock,
                 descriptionFeatureMock,
                 loadingFeatureMock,
                 saveFeatureMock,
+                addEffortFeatureMock,
                 createWorkoutFeatureMock)
     }
 
@@ -207,6 +224,31 @@ class HorrocksWorkoutViewModelTest {
 
         // when
         sut.save()
+
+        // then
+        observer.assertValue(simpleModel)
+    }
+
+    @Test
+    fun `addEffort() triggers save of the model`() {
+        // given
+        sut.model().test()
+
+        // when
+        sut.addEffort()
+
+        // then
+        verify(addEffortFeatureMock).process(any())
+    }
+
+    @Test
+    fun `model() returns model provided by addEffortFeature on addEffort()`() {
+        // given
+        `when`(addEffortFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
+        val observer = sut.model().skip(1).test()
+
+        // when
+        sut.addEffort()
 
         // then
         observer.assertValue(simpleModel)

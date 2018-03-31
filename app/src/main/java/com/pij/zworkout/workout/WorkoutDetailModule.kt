@@ -54,6 +54,7 @@ class WorkoutDetailModule {
                 DescriptionFeature(),
                 loadingFeature,
                 saveFeature,
+                AddEffortFeature(),
                 createWorkoutFeature
         )
     }
