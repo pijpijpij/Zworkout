@@ -64,7 +64,6 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     fun setItems(items: List<Effort>) {
         val oldValues = values
         values = items.toList()
-//        notifyDataSetChanged()
         val diff = DiffUtil.calculateDiff(PlaceDiffCallback(oldValues, items))
         diff.dispatchUpdatesTo(this)
     }

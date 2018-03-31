@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2018, Chiswick Forest
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.pij.zworkout.list
 
 import android.content.Context
@@ -63,6 +77,10 @@ class WorkoutsActivity : DaggerAppCompatActivity() {
                 viewModel.model().filter { it.showWorkout != null }.subscribe { showWorkout(it.showWorkout!!) },
                 viewModel.model().filter { it.createWorkout }.subscribe { _ -> showWorkout(null) }
         )
+
+        if (savedInstanceState == null) {
+            viewModel.load()
+        }
     }
 
     private fun showWorkout(workout: WorkoutInfo?) {
@@ -95,11 +113,6 @@ class WorkoutsActivity : DaggerAppCompatActivity() {
     override fun onDestroy() {
         subscriptions.clear()
         super.onDestroy()
-    }
-
-    override fun onStart() {
-        super.onStart()
-        viewModel.load()
     }
 
     companion object {

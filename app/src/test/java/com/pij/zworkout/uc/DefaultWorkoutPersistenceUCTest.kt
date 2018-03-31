@@ -1,3 +1,17 @@
+/*
+ * Copyright (c) 2018, Chiswick Forest
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.pij.zworkout.uc
 
 import com.nhaarman.mockitokotlin2.any
@@ -9,12 +23,12 @@ import com.pij.zworkout.persistence.api.WorkoutSerializerService
 import com.pij.zworkout.service.api.StorageService
 import com.pij.zworkout.service.api.WorkoutFile
 import io.reactivex.Completable
-import io.reactivex.Observable
 import io.reactivex.Single
 import org.mockito.Mockito.`when`
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.io.OutputStream
 import java.net.URI
 import kotlin.test.BeforeTest
 import kotlin.test.Test
@@ -41,7 +55,7 @@ class DefaultWorkoutPersistenceUCTest {
         storageMock = mock()
         serializerMock = mock()
         converterMock = mock()
-        `when`(storageMock.workouts()).thenReturn(Observable.never())
+        `when`(storageMock.workouts()).thenReturn(Single.never())
         `when`(converterMock.convert(any<Workout>())).thenReturn(PersistableWorkoutTestUtil.empty())
         `when`(storageMock.create(any())).thenReturn(Single.never())
         `when`(storageMock.openForWrite(any())).thenReturn(Single.never())
@@ -74,7 +88,7 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `workouts() emits 2 items when storage service emits 2 items`() {
         // given
-        `when`(storageMock.workouts()).thenReturn(Observable.just(listOf(create("file1"), create("file2"))))
+        `when`(storageMock.workouts()).thenReturn(Single.just(listOf(create("file1"), create("file2"))))
 
         //when
         val list = sut.workouts().test()
@@ -86,7 +100,7 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `workouts() emits 2 items emitted by storage service`() {
         // given
-        `when`(storageMock.workouts()).thenReturn(Observable.just(listOf(create("file1"), create("file2"))))
+        `when`(storageMock.workouts()).thenReturn(Single.just(listOf(create("file1"), create("file2"))))
 
         //when
         val items = sut.workouts().flatMapIterable { it }
@@ -99,7 +113,7 @@ class DefaultWorkoutPersistenceUCTest {
     @Test
     fun `workouts() fails when storage service fails`() {
         // given
-        `when`(storageMock.workouts()).thenReturn(Observable.error(IllegalStateException()))
+        `when`(storageMock.workouts()).thenReturn(Single.error(IllegalStateException()))
 
         //when
         val list = sut.workouts().test()
@@ -215,6 +229,40 @@ class DefaultWorkoutPersistenceUCTest {
 
         // then
         verify(storageMock).openForWrite(dummyFile)
+    }
+
+    @Test
+    fun `save() triggers workouts() to emit again`() {
+        // given
+        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just<OutputStream>(ByteArrayOutputStream()))
+        `when`(serializerMock.write(any(), any())).thenReturn(Completable.complete())
+        `when`(storageMock.workouts()).thenReturn(Single.just(listOf(create("file1"))))
+        val workout = Workout()
+        val workouts = sut.workouts().skip(1).test()
+
+        // when
+        sut.save(workout, dummyFile).test()
+
+        // then
+        workouts.assertValueCount(1)
+    }
+
+
+    @Test
+    fun `save() triggers workouts() to emit the updated list`() {
+        // given
+        `when`(storageMock.openForWrite(dummyFile)).thenReturn(Single.just<OutputStream>(ByteArrayOutputStream()))
+        `when`(serializerMock.write(any(), any())).thenReturn(Completable.complete())
+        `when`(storageMock.workouts()).thenReturn(Single.just(listOf(create("file1"))),
+                Single.just(listOf(create("file1"), create("file2"))))
+        val workout = Workout()
+        val workouts = sut.workouts().skip(1).flatMapIterable { it }.test()
+
+        // when
+        sut.save(workout, dummyFile).test()
+
+        // then
+        workouts.assertValues(create("file1"), create("file2"))
     }
 
 

@@ -1,11 +1,25 @@
+/*
+ * Copyright (c) 2018, Chiswick Forest
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.pij.zworkout.list.feature
 
 import com.nhaarman.mockitokotlin2.mock
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.list.Model
 import com.pij.zworkout.list.WorkoutInfo
-import com.pij.zworkout.service.api.StorageService
 import com.pij.zworkout.service.api.WorkoutFile
+import com.pij.zworkout.uc.WorkoutPersistenceUC
 import io.reactivex.Observable
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsInAnyOrder
@@ -22,7 +36,7 @@ import kotlin.test.Test
  */
 class StorageLoadingFeatureTest {
 
-    private lateinit var storageServiceMock: StorageService
+    private lateinit var persistenceMock: WorkoutPersistenceUC
 
     private val defaultState = Model(false, null, null, false, emptyList())
 
@@ -32,11 +46,11 @@ class StorageLoadingFeatureTest {
 
     @BeforeTest
     fun setUp() {
-        storageServiceMock = mock()
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.never())
+        persistenceMock = mock()
+        `when`(persistenceMock.workouts()).thenReturn(Observable.never())
         workoutFile = WorkoutFile(URI("some/file"), "zip")
         workoutInfo = WorkoutInfo("some/file", "zip", null)
-        sut = StorageLoadingFeature(SysoutLogger(), storageServiceMock, "the default error message")
+        sut = StorageLoadingFeature(SysoutLogger(), persistenceMock, "the default error message")
     }
 
     @Test
@@ -55,7 +69,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store succeeds, sut emits not inProgress`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
         val states = sut.process(Any()).map { it.reduce(defaultState) }
@@ -70,7 +84,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store succeeds, sut emits a list of workout`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
         val states = sut.process(Any()).map { it.reduce(defaultState) }
@@ -85,7 +99,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store succeeds, sut emits a workoutInfo matching that workout store provided`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
         val states = sut.process(Any()).map { it.reduce(defaultState) }
@@ -101,7 +115,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store succeeds, sut completes`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.just(listOf(workoutFile)))
 
         // when
         val observer = sut.process(Any()).map { it.reduce(defaultState) }.test()
@@ -113,7 +127,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store fails with a message, sut emits one item`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
         val observer = sut.process(Any()).map { it.reduce(defaultState) }
@@ -127,7 +141,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store fails, sut emits not in progress`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
         val observer = sut.process(Any()).map { it.reduce(defaultState) }
@@ -142,7 +156,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store fails with a message, sut emits the exception message`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
         val observer = sut.process(Any()).map { it.reduce(defaultState) }
@@ -157,7 +171,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store fails with an empty message, sut emits Failure with the default message`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException()))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.error(IllegalAccessException()))
 
         // when
         val observer = sut.process(Any()).map { it.reduce(defaultState) }
@@ -172,7 +186,7 @@ class StorageLoadingFeatureTest {
     @Test
     fun `When store fails, sut completes`() {
         // given
-        `when`(storageServiceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
+        `when`(persistenceMock.workouts()).thenReturn(Observable.error(IllegalAccessException("the error message")))
 
         // when
         val observer = sut.process(Any()).map { it.reduce(defaultState) }
