@@ -23,10 +23,21 @@
     <!--Detail screen-->
     <string name="detail_name_hint">Workout name</string>
     <string name="detail_description_hint">Details about the workout</string>
+    <string name="detail_empty">No efforts in this workout.</string>
     <string name="workout_save_error_message">Unable to save this workout</string>
     <string name="workout_menu_save">Save</string>
     <string name="workout_efforts_item_steady_state_name">Steady state</string>
     <string name="workout_efforts_item_steady_state_duration">%d s</string>
-    <string name="detail_empty">No efforts in this workout.</string>
+    <string name="workout_efforts_item_steady_state_duration_hint">Sec.</string>
+    <string name="workout_efforts_item_steady_state_power_hint">Power</string>
+    <string name="workout_efforts_item_steady_state_cadence_hint">rpm</string>
+    <string name="workout_efforts_item_ramp_up_name">Ramp Up</string>
+    <string name="workout_efforts_item_ramp_up_duration_hint">Sec.</string>
+    <string name="workout_efforts_item_ramp_up_start_power_hint">Start</string>
+    <string name="workout_efforts_item_ramp_up_end_power_hint">End</string>
+    <string name="workout_efforts_item_ramp_down_name">Ramp Down</string>
+    <string name="workout_efforts_item_ramp_down_duration_hint">Sec.</string>
+    <string name="workout_efforts_item_ramp_down_start_power_hint">Start</string>
+    <string name="workout_efforts_item_ramp_down_end_power_hint">End</string>
 
 </resources>

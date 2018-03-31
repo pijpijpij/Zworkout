@@ -33,12 +33,10 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     private val steadyStateLayout: Int = R.layout.efforts_item_steady_state
 
     override fun getItemViewType(position: Int): Int {
-        val item = values[position]
-        when (item) {
+        return when (values[position]) {
             is SteadyState -> R.layout.efforts_item_steady_state
             else -> throw UnsupportedOperationException("Not coded yet")
         }
-        return super.getItemViewType(position)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -66,6 +64,7 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     fun setItems(items: List<Effort>) {
         val oldValues = values
         values = items.toList()
+//        notifyDataSetChanged()
         val diff = DiffUtil.calculateDiff(PlaceDiffCallback(oldValues, items))
         diff.dispatchUpdatesTo(this)
     }
@@ -95,7 +94,9 @@ private class SteadyStateViewHolder(view: View) : RecyclerView.ViewHolder(view) 
 
     fun setItem(item: SteadyState) {
         itemView.apply {
-            duration.text = resources.getString(R.string.workout_efforts_item_steady_state_duration, item.duration)
+            duration.setText(item.duration.toString())
+            power.setText(item.power.toString())
+            cadence.setText(item.cadence?.toString())
         }
     }
 

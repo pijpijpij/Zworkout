@@ -14,8 +14,9 @@
 
 package com.pij.zworkout.uc
 
-import com.pij.zworkout.persistence.api.PersistableWorkout
-import com.pij.zworkout.persistence.api.SportType
+import com.pij.zworkout.persistence.api.*
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -87,9 +88,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `loads null description as empty`() {
         // given
-        val input = PersistableWorkout()
-        input.name.value = ""
-        input.description = null
+        val input = PersistableWorkout(EmptyString(""))
 
         // when
         val result = sut.convert(input)
@@ -101,14 +100,25 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `loads description`() {
         // given
-        val input = PersistableWorkout()
-        input.name.value = ""
-        input.description = "hello!"
+        val input = PersistableWorkout(EmptyString(""), "hello!")
 
         // when
         val result = sut.convert(input)
 
         // then
         assertEquals("hello!", result.description)
+    }
+
+    @Test
+    fun `loads steady state effort`() {
+        // given
+        val effort = PersistableSteadyState(120, 0.90f, 97)
+        val input = PersistableWorkout(EmptyString(""), "hello!", efforts = PersistableEfforts(listOf(effort)))
+
+        // when
+        val result = sut.convert(input)
+
+        // then
+        assertThat(result.efforts, contains<Effort>(SteadyState(120, 0.9f, 97)))
     }
 }

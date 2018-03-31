@@ -1,7 +1,22 @@
+/*
+ * Copyright (c) 2018, Chiswick Forest
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *         http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and limitations under the License.
+ */
+
 package com.pij.zworkout.workout
 
 import com.pij.horrocks.*
 import com.pij.utils.Logger
+import com.pij.zworkout.R.id.duration
 import com.pij.zworkout.uc.Workout
 import io.reactivex.Observable
 
@@ -42,13 +57,26 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
     }
 
     private fun convert(state: State): Model {
-        return Model(
-                inProgress = state.inProgress,
-                showSaved = state.showSaved,
-                showError = state.showError,
-                name = state.workout.name,
-                nameIsReadOnly = state.nameIsReadOnly,
-                description = state.workout.description)
+        return with(state) {
+            Model(
+                    inProgress = inProgress,
+                    showSaved = showSaved,
+                    showError = showError,
+                    name = workout.name,
+                    nameIsReadOnly = nameIsReadOnly,
+                    description = workout.description,
+                    efforts = workout.efforts.map { convert(it) }
+            )
+        }
+    }
+
+    private fun convert(state: com.pij.zworkout.uc.Effort): Effort {
+        return with(state) {
+            when (state) {
+                is com.pij.zworkout.uc.SteadyState -> SteadyState(duration = duration, power = PowerRange.Z1)
+                else -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+        }
     }
 
     override fun load(itemId: String) {

@@ -14,9 +14,7 @@
 
 package com.pij.zworkout.uc
 
-import com.pij.zworkout.persistence.api.EmptyString
-import com.pij.zworkout.persistence.api.PersistableWorkout
-import com.pij.zworkout.persistence.api.SportType
+import com.pij.zworkout.persistence.api.*
 
 /**
  *
@@ -36,9 +34,21 @@ internal class PersistableWorkoutConverter {
     }
 
     fun convert(input: PersistableWorkout): Workout {
-        return Workout(
-                name = input.name.value ?: "",
-                description = input.description ?: ""
-        )
+        return with(input) {
+            Workout(
+                    name = name.value ?: "",
+                    description = description ?: "",
+                    efforts = efforts?.efforts?.map { convert(it) } ?: listOf()
+            )
+        }
     }
+
+    private fun convert(input: PersistableEffort): Effort {
+        return when (input) {
+            is PersistableSteadyState -> SteadyState(duration = input.duration, power = input.power, cadence = input.cadence)
+            else -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+    }
+
+
 }

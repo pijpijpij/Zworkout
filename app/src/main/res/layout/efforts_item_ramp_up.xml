@@ -12,46 +12,44 @@
   ~  See the License for the specific language governing permissions and limitations under the License.
   -->
 
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
 
+    <!--TODO finish this-->
     <TextView
-        android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="@dimen/text_margin"
-        android:text="@string/workout_efforts_item_steady_state_name" />
+        android:layout_margin="@dimen/text_margin"
+        android:text="@string/workout_efforts_item_ramp_up_name"
+        android:textAppearance="?attr/textAppearanceListItem" />
 
     <EditText
         android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/workout_efforts_item_steady_state_duration_hint"
-        android:inputType="number"
+        android:layout_margin="@dimen/text_margin"
+        android:hint="@string/workout_efforts_item_ramp_up_duration_hint"
         android:minEms="3"
-        app:layout_constraintBaseline_toBaselineOf="@id/name"
-        app:layout_constraintStart_toEndOf="@id/name" />
+        android:textAppearance="?attr/textAppearanceListItem" />
 
     <EditText
-        android:id="@+id/power"
+        android:id="@+id/startPower"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/workout_efforts_item_steady_state_power_hint"
-        android:inputType="number"
+        android:layout_margin="@dimen/text_margin"
+        android:hint="@string/workout_efforts_item_ramp_up_start_power_hint"
         android:minEms="3"
-        app:layout_constraintBaseline_toBaselineOf="@id/duration"
-        app:layout_constraintStart_toEndOf="@id/duration" />
+        android:textAppearance="?attr/textAppearanceListItem" />
 
     <EditText
-        android:id="@+id/cadence"
+        android:id="@+id/endPower"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/workout_efforts_item_steady_state_cadence_hint"
-        android:inputType="number"
+        android:layout_margin="@dimen/text_margin"
+        android:hint="@string/workout_efforts_item_ramp_up_end_power_hint"
         android:minEms="3"
-        app:layout_constraintStart_toStartOf="@id/power"
-        app:layout_constraintTop_toBottomOf="@id/power" />
+        android:textAppearance="?attr/textAppearanceListItem" />
 
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
