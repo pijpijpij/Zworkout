@@ -29,8 +29,16 @@ internal class PersistableWorkoutConverter {
         return PersistableWorkout(
                 name = EmptyString(input.name),
                 description = input.description,
-                sportType = SportType.BIKE
+                sportType = SportType.BIKE,
+                efforts = PersistableEfforts(input.efforts.map { convert(it) })
         )
+    }
+
+    private fun convert(input: Effort): PersistableEffort {
+        return when (input) {
+            is SteadyState -> PersistableSteadyState(input.duration, input.power, input.cadence)
+            else -> TODO("not implemented conversion of $input")
+        }
     }
 
     fun convert(input: PersistableWorkout): Workout {

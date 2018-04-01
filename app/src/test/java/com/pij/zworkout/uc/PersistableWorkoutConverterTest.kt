@@ -17,6 +17,7 @@ package com.pij.zworkout.uc
 import com.pij.zworkout.persistence.api.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.hasSize
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -70,6 +71,30 @@ class PersistableWorkoutConverterTest {
 
         // then
         assertEquals(SportType.BIKE, result.sportType)
+    }
+
+    @Test
+    fun `persists efforts when some are in workout`() {
+        // given
+        val input = Workout(efforts = listOf<Effort>(SteadyState(120, 1f)))
+
+        // when
+        val result = sut.convert(input)
+
+        // then
+        assertThat(result.efforts?.efforts, hasSize(1))
+    }
+
+    @Test
+    fun `persists efforts passed in`() {
+        // given
+        val input = Workout(efforts = listOf<Effort>(SteadyState(120, 1f)))
+
+        // when
+        val result = sut.convert(input)
+
+        // then
+        assertThat(result.efforts?.efforts, contains<PersistableEffort>(PersistableSteadyState(120, 1f)))
     }
 
     @Test
