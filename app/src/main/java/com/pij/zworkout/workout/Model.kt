@@ -44,8 +44,8 @@ data class SteadyState(
 
 data class Ramp(
         val duration: Int,
-        val startPower: Float,
-        val endPower: Float,
+        val startPower: PowerRange,
+        val endPower: PowerRange,
         val startCadence: Int? = null,
         val endCadence: Int? = null
 ) : Effort()

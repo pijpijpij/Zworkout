@@ -18,6 +18,7 @@ import com.nhaarman.mockitokotlin2.mock
 import com.pij.horrocks.*
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.uc.Workout
+import com.pij.zworkout.workout.feature.InsertEffortFeature.Companion.END_OF_LIST
 import io.reactivex.Observable
 import org.mockito.Mockito.*
 import kotlin.test.BeforeTest
@@ -46,7 +47,7 @@ class HorrocksWorkoutViewModelTest {
     private lateinit var nameFeatureMock: Interaction<String, State>
     private lateinit var descriptionFeatureMock: Interaction<String, State>
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
-    private lateinit var addEffortFeatureMock: Interaction<Any, State>
+    private lateinit var insertEffortFeatureMock: Interaction<Pair<Effort, Int>, State>
 
 
     @BeforeTest
@@ -56,14 +57,14 @@ class HorrocksWorkoutViewModelTest {
         nameFeatureMock = mock()
         descriptionFeatureMock = mock()
         saveFeatureMock = mock()
-        addEffortFeatureMock = mock()
+        insertEffortFeatureMock = mock()
         sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
                 MemoryStorage(HorrocksWorkoutViewModel.initialState()),
                 nameFeatureMock,
                 descriptionFeatureMock,
                 loadingFeatureMock,
                 saveFeatureMock,
-                addEffortFeatureMock,
+                insertEffortFeatureMock,
                 createWorkoutFeatureMock)
     }
 
@@ -230,7 +231,7 @@ class HorrocksWorkoutViewModelTest {
     }
 
     @Test
-    fun `addEffort() triggers save of the model`() {
+    fun `addEffort() triggers insertion of an effort in the model`() {
         // given
         sut.model().test()
 
@@ -238,13 +239,25 @@ class HorrocksWorkoutViewModelTest {
         sut.addEffort()
 
         // then
-        verify(addEffortFeatureMock).process(any())
+        verify(insertEffortFeatureMock).process(any())
     }
 
     @Test
-    fun `model() returns model provided by addEffortFeature on addEffort()`() {
+    fun `addEffort() triggers insertion of SteadyState 120-Z1 in the model`() {
         // given
-        `when`(addEffortFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
+        sut.model().test()
+
+        // when
+        sut.addEffort()
+
+        // then
+        verify(insertEffortFeatureMock).process(Pair(SteadyState(120, PowerRange.Z1), END_OF_LIST))
+    }
+
+    @Test
+    fun `model() returns model provided by insertEffortFeature on addEffort()`() {
+        // given
+        `when`(insertEffortFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
         val observer = sut.model().skip(1).test()
 
         // when

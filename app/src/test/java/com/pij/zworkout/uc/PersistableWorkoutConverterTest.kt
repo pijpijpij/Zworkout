@@ -18,6 +18,8 @@ import com.pij.zworkout.persistence.api.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.hasSize
+import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -86,7 +88,7 @@ class PersistableWorkoutConverterTest {
     }
 
     @Test
-    fun `persists efforts passed in`() {
+    fun `persists steady state effort passed in`() {
         // given
         val input = Workout(efforts = listOf<Effort>(SteadyState(120, 1f)))
 
@@ -95,6 +97,34 @@ class PersistableWorkoutConverterTest {
 
         // then
         assertThat(result.efforts?.efforts, contains<PersistableEffort>(PersistableSteadyState(120, 1f)))
+    }
+
+    @Test
+    fun `persists ramp up effort passed in as Ramp`() {
+        // given
+        val ramp = Ramp(120, 1f, 2f)
+        assumeTrue(ramp.up)
+        val input = Workout(efforts = listOf<Effort>(ramp))
+
+        // when
+        val result = sut.convert(input)
+
+        // then
+        assertThat(result.efforts?.efforts, contains<PersistableEffort>(PersistableRamp(120, 1f, 2f)))
+    }
+
+    @Test
+    fun `persists ramp down effort passed in as CoolDown`() {
+        // given
+        val ramp = Ramp(120, 2f, 1f)
+        assumeFalse(ramp.up)
+        val input = Workout(efforts = listOf<Effort>(ramp))
+
+        // when
+        val result = sut.convert(input)
+
+        // then
+        assertThat(result.efforts?.efforts, contains<PersistableEffort>(PersistableCoolDown(120, 2f, 1f)))
     }
 
     @Test

@@ -37,6 +37,11 @@ internal class PersistableWorkoutConverter {
     private fun convert(input: Effort): PersistableEffort {
         return when (input) {
             is SteadyState -> PersistableSteadyState(input.duration, input.power, input.cadence)
+            is Ramp -> {
+                if (input.up)
+                    PersistableRamp(input.duration, input.startPower, input.endPower, input.startCadence, input.endCadence)
+                else PersistableCoolDown(input.duration, input.startPower, input.endPower, input.startCadence, input.endCadence)
+            }
             else -> TODO("not implemented conversion of $input")
         }
     }

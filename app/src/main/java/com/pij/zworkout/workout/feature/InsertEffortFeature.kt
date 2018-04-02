@@ -16,20 +16,33 @@ package com.pij.zworkout.workout.feature
 
 import com.pij.horrocks.Interaction
 import com.pij.horrocks.Reducer
-import com.pij.zworkout.uc.SteadyState
+import com.pij.zworkout.workout.Effort
+import com.pij.zworkout.workout.ModelConverter
 import com.pij.zworkout.workout.State
 
 /**
  * @author Pierrejean
  */
 
-class AddEffortFeature : Interaction<Any, State> {
+internal class InsertEffortFeature(private val converter: ModelConverter) : Interaction<Pair<Effort, Int>, State> {
 
-    override fun process(event: Any): Reducer<State> {
-        val element = SteadyState(5, 1f)
-        return Reducer { current ->
-            current.copy(workout = current.workout.copy(efforts = current.workout.efforts + element))
-        }
+    companion object {
+        const val END_OF_LIST = -1
     }
 
+    override fun process(event: Pair<Effort, Int>): Reducer<State> {
+        return Reducer { current ->
+            val (effort, position) = event
+            val element = converter.convert(effort)
+            val source = current.workout.efforts
+            val augmented = if (position == END_OF_LIST) {
+                source + element
+            } else {
+                val mutableList = source.toMutableList()
+                mutableList.add(position, element)
+                mutableList.toList()
+            }
+            current.copy(workout = current.workout.copy(efforts = augmented))
+        }
+    }
 }

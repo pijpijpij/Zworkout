@@ -46,7 +46,9 @@ class WorkoutDetailModule {
                                           storage: Storage<State>,
                                           loadingFeature: LoadFeature,
                                           saveFeature: SaveFeature,
-                                          createWorkoutFeature: CreateWorkoutFeature): WorkoutViewModel {
+                                          insertEffortFeature: InsertEffortFeature,
+                                          createWorkoutFeature: CreateWorkoutFeature
+    ): WorkoutViewModel {
         return HorrocksWorkoutViewModel.create(logger,
                 DefaultEngine(logger),
                 storage,
@@ -54,7 +56,7 @@ class WorkoutDetailModule {
                 DescriptionFeature(),
                 loadingFeature,
                 saveFeature,
-                AddEffortFeature(),
+                insertEffortFeature,
                 createWorkoutFeature
         )
     }
@@ -82,6 +84,11 @@ class WorkoutDetailModule {
     internal fun provideSaveFeature(logger: Logger, storage: WorkoutPersistenceUC, stateProvider: Storage<State>, resources: Resources): SaveFeature {
         val defaultErrorMessage = resources.getString(R.string.workout_save_error_message)
         return SaveFeature(logger, storage, StateProvider { stateProvider.load() }, defaultErrorMessage)
+    }
+
+    @Provides
+    internal fun provideInsertEffortFeature(): InsertEffortFeature {
+        return InsertEffortFeature(ModelConverter())
     }
 
 }

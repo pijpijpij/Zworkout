@@ -17,6 +17,7 @@ package com.pij.zworkout.workout
 import com.pij.horrocks.*
 import com.pij.utils.Logger
 import com.pij.zworkout.uc.Workout
+import com.pij.zworkout.workout.feature.InsertEffortFeature
 import io.reactivex.Observable
 
 /**
@@ -33,7 +34,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                                                             private val description: ReducerCreator<String, State>,
                                                             private val loader: ReducerCreator<String, State>,
                                                             private val save: ReducerCreator<Any, State>,
-                                                            private val addEffort: ReducerCreator<Any, State>,
+                                                            private val insertEffort: ReducerCreator<Pair<Effort, Int>, State>,
                                                             private val createWorkout: ReducerCreator<Any, State>
 ) : WorkoutViewModel {
 
@@ -44,7 +45,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                 .store(storage)
                 .transientResetter { this.resetTransient(it) }
                 .stateToModel { this.convert(it) }
-                .creators(listOf(name, description, loader, save, addEffort, createWorkout))
+                .creators(listOf(name, description, loader, save, insertEffort, createWorkout))
                 .build()
         models = engine.runWith(engineConfiguration).share()
     }
@@ -107,7 +108,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
     }
 
     override fun addEffort() {
-        addEffort.trigger(Any())
+        insertEffort.trigger(Pair(SteadyState(120, PowerRange.Z1), InsertEffortFeature.END_OF_LIST))
     }
 
     companion object {
@@ -122,7 +123,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                    descriptionFeature: Interaction<String, State>,
                    loadingFeature: AsyncInteraction<String, State>,
                    saveFeature: AsyncInteraction<Any, State>,
-                   addEffortFeature: Interaction<Any, State>,
+                   insertEffortFeature: Interaction<Pair<Effort, Int>, State>,
                    createWorkoutFeature: Interaction<Any, State>
         ): HorrocksWorkoutViewModel {
             return HorrocksWorkoutViewModel(logger, engine, storage,
@@ -130,7 +131,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                     SingleReducerCreator(descriptionFeature, logger),
                     MultipleReducerCreator(loadingFeature, logger),
                     MultipleReducerCreator(saveFeature, logger),
-                    SingleReducerCreator(addEffortFeature, logger),
+                    SingleReducerCreator(insertEffortFeature, logger),
                     SingleReducerCreator(createWorkoutFeature, logger)
             )
         }

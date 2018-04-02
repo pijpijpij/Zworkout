@@ -79,5 +79,7 @@ data class PersistableCoolDown(
         @field:Attribute(name = "Duration") var duration: Int = 0,
         @field:Attribute(name = "PowerLow") var startPower: Float = 0f,
         @field:Attribute(name = "PowerHigh") var endPower: Float = 0f,
-        @field:Attribute(name = "Cadence", required = false) var endCadence: Int? = null
+        @field:Attribute(name = "Cadence", required = false) var startCadence: Int? = null,
+        // TODO check 'cadence resting' exists and is the cadence at the end of the effort
+        @field:Attribute(name = "CadenceResting", required = false) var endCadence: Int? = null
 ) : PersistableEffort()
