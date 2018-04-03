@@ -47,7 +47,7 @@ class HorrocksWorkoutViewModelTest {
     private lateinit var nameFeatureMock: Interaction<String, State>
     private lateinit var descriptionFeatureMock: Interaction<String, State>
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
-    private lateinit var insertEffortFeatureMock: Interaction<Pair<Effort, Int>, State>
+    private lateinit var insertEffortFeatureMock: Interaction<Pair<ModelEffort, Int>, State>
 
 
     @BeforeTest
@@ -251,7 +251,7 @@ class HorrocksWorkoutViewModelTest {
         sut.addEffort()
 
         // then
-        verify(insertEffortFeatureMock).process(Pair(SteadyState(120, PowerRange.Z1), END_OF_LIST))
+        verify(insertEffortFeatureMock).process(Pair(ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1)), END_OF_LIST))
     }
 
     @Test

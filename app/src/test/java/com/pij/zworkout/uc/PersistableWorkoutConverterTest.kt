@@ -78,7 +78,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists efforts when some are in workout`() {
         // given
-        val input = Workout(efforts = listOf<Effort>(SteadyState(120, 1f)))
+        val input = Workout(efforts = listOf<Effort>(SteadyState(120, RelativePower(1f))))
 
         // when
         val result = sut.convert(input)
@@ -90,7 +90,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists steady state effort passed in`() {
         // given
-        val input = Workout(efforts = listOf<Effort>(SteadyState(120, 1f)))
+        val input = Workout(efforts = listOf<Effort>(SteadyState(120, RelativePower(1f))))
 
         // when
         val result = sut.convert(input)
@@ -102,7 +102,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists ramp up effort passed in as Ramp`() {
         // given
-        val ramp = Ramp(120, 1f, 2f)
+        val ramp = Ramp(120, RelativePower(1f), RelativePower(2f))
         assumeTrue(ramp.up)
         val input = Workout(efforts = listOf<Effort>(ramp))
 
@@ -116,7 +116,7 @@ class PersistableWorkoutConverterTest {
     @Test
     fun `persists ramp down effort passed in as CoolDown`() {
         // given
-        val ramp = Ramp(120, 2f, 1f)
+        val ramp = Ramp(120, RelativePower(2f), RelativePower(1f))
         assumeFalse(ramp.up)
         val input = Workout(efforts = listOf<Effort>(ramp))
 
@@ -174,6 +174,6 @@ class PersistableWorkoutConverterTest {
         val result = sut.convert(input)
 
         // then
-        assertThat(result.efforts, contains<Effort>(SteadyState(120, 0.9f, 97)))
+        assertThat(result.efforts, contains<Effort>(SteadyState(120, RelativePower(0.9f), 97)))
     }
 }

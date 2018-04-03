@@ -35,14 +35,15 @@ internal class PersistableWorkoutConverter {
     }
 
     private fun convert(input: Effort): PersistableEffort {
-        return when (input) {
-            is SteadyState -> PersistableSteadyState(input.duration, input.power, input.cadence)
-            is Ramp -> {
-                if (input.up)
-                    PersistableRamp(input.duration, input.startPower, input.endPower, input.startCadence, input.endCadence)
-                else PersistableCoolDown(input.duration, input.startPower, input.endPower, input.startCadence, input.endCadence)
+        return with(input) {
+            when (this) {
+                is SteadyState -> PersistableSteadyState(duration, power.relative, cadence)
+                is Ramp -> {
+                    if (up)
+                        PersistableRamp(duration, startPower.relative, endPower.relative, startCadence, endCadence)
+                    else PersistableCoolDown(duration, startPower.relative, endPower.relative, startCadence, endCadence)
+                }
             }
-            else -> TODO("not implemented conversion of $input")
         }
     }
 
@@ -57,9 +58,13 @@ internal class PersistableWorkoutConverter {
     }
 
     private fun convert(input: PersistableEffort): Effort {
-        return when (input) {
-            is PersistableSteadyState -> SteadyState(duration = input.duration, power = input.power, cadence = input.cadence)
-            else -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return with(input) {
+            when (this) {
+                is PersistableSteadyState -> SteadyState(duration, RelativePower(power), cadence)
+                is PersistableRamp -> Ramp(duration, RelativePower(startPower), RelativePower(endPower), startCadence, endCadence)
+                is PersistableCoolDown -> Ramp(duration, RelativePower(startPower), RelativePower(endPower), startCadence, endCadence)
+                else -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
         }
     }
 

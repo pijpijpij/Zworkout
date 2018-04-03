@@ -16,6 +16,8 @@ package com.pij.zworkout.workout
 
 import com.pij.horrocks.*
 import com.pij.utils.Logger
+import com.pij.zworkout.uc.Effort
+import com.pij.zworkout.uc.SteadyState
 import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.workout.feature.InsertEffortFeature
 import io.reactivex.Observable
@@ -34,7 +36,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                                                             private val description: ReducerCreator<String, State>,
                                                             private val loader: ReducerCreator<String, State>,
                                                             private val save: ReducerCreator<Any, State>,
-                                                            private val insertEffort: ReducerCreator<Pair<Effort, Int>, State>,
+                                                            private val insertEffort: ReducerCreator<Pair<ModelEffort, Int>, State>,
                                                             private val createWorkout: ReducerCreator<Any, State>
 ) : WorkoutViewModel {
 
@@ -72,10 +74,10 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
         }
     }
 
-    private fun convert(state: com.pij.zworkout.uc.Effort): Effort {
+    private fun convert(state: Effort): ModelEffort {
         return with(state) {
             when (this) {
-                is com.pij.zworkout.uc.SteadyState -> SteadyState(duration = duration, power = PowerRange.Z1)
+                is SteadyState -> ModelSteadyState(duration = duration, power = ModelRangedPower(ModelPowerRange.Z1))
                 else -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         }
@@ -108,7 +110,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
     }
 
     override fun addEffort() {
-        insertEffort.trigger(Pair(SteadyState(120, PowerRange.Z1), InsertEffortFeature.END_OF_LIST))
+        insertEffort.trigger(Pair(ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1)), InsertEffortFeature.END_OF_LIST))
     }
 
     companion object {
@@ -123,7 +125,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                    descriptionFeature: Interaction<String, State>,
                    loadingFeature: AsyncInteraction<String, State>,
                    saveFeature: AsyncInteraction<Any, State>,
-                   insertEffortFeature: Interaction<Pair<Effort, Int>, State>,
+                   insertEffortFeature: Interaction<Pair<ModelEffort, Int>, State>,
                    createWorkoutFeature: Interaction<Any, State>
         ): HorrocksWorkoutViewModel {
             return HorrocksWorkoutViewModel(logger, engine, storage,

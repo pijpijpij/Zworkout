@@ -16,13 +16,8 @@ package com.pij.zworkout.workout.feature
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import com.pij.zworkout.uc.Effort
-import com.pij.zworkout.uc.Ramp
-import com.pij.zworkout.uc.SteadyState
-import com.pij.zworkout.uc.Workout
-import com.pij.zworkout.workout.ModelConverter
-import com.pij.zworkout.workout.PowerRange
-import com.pij.zworkout.workout.State
+import com.pij.zworkout.uc.*
+import com.pij.zworkout.workout.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.junit.Before
@@ -39,8 +34,14 @@ class InsertEffortFeatureTest {
     private lateinit var sut: InsertEffortFeature
     private lateinit var converterMock: ModelConverter
 
+    private lateinit var effort: ModelEffort
+
+    private lateinit var converted: Effort
+
     @Before
     fun setUp() {
+        effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1), 90)
+        converted = SteadyState(1, RelativePower(1f), 1)
         converterMock = mock()
         sut = InsertEffortFeature(converterMock)
     }
@@ -48,9 +49,7 @@ class InsertEffortFeatureTest {
     @Test
     fun `Adds a Steady state to an empty list of efforts`() {
         // given
-        val effort = com.pij.zworkout.workout.SteadyState(120, PowerRange.Z1, 90)
         val current = State()
-        val converted = SteadyState(1, 1f, 1)
         whenever(converterMock.convert(effort)).thenReturn(converted)
 
         // when
@@ -63,39 +62,35 @@ class InsertEffortFeatureTest {
     @Test
     fun `Appends a Steady state to a non-empty list of efforts`() {
         // given
-        val effort = com.pij.zworkout.workout.SteadyState(120, PowerRange.Z1, 90)
-        val current = State(workout = Workout(efforts = listOf<Effort>(SteadyState(120, 0.1f))))
-        val converted = SteadyState(1, 1f, 1)
+        val current = State(workout = Workout(efforts = listOf<Effort>(SteadyState(120, RelativePower(0.1f)))))
         whenever(converterMock.convert(effort)).thenReturn(converted)
 
         // when
         val next = sut.process(Pair(effort, InsertEffortFeature.END_OF_LIST)).reduce(current)
 
         // then
-        assertThat(next.workout.efforts, contains<Effort>(SteadyState(120, 0.1f), converted))
+        assertThat(next.workout.efforts, contains<Effort>(SteadyState(120, RelativePower(0.1f)), converted))
     }
 
     @Test
     fun `Inserts a Steady state in a non-empty list of efforts`() {
         // given
-        val effort = com.pij.zworkout.workout.SteadyState(120, PowerRange.Z1, 90)
-        val current = State(workout = Workout(efforts = listOf<Effort>(SteadyState(120, 0.1f))))
-        val converted = SteadyState(1, 1f, 1)
+        val current = State(workout = Workout(efforts = listOf<Effort>(SteadyState(120, RelativePower(0.1f)))))
         whenever(converterMock.convert(effort)).thenReturn(converted)
 
         // when
         val next = sut.process(Pair(effort, 0)).reduce(current)
 
         // then
-        assertThat(next.workout.efforts, contains<Effort>(converted, SteadyState(120, 0.1f)))
+        assertThat(next.workout.efforts, contains<Effort>(converted, SteadyState(120, RelativePower(0.1f))))
     }
 
     @Test
     fun `Adds a Ramp to an empty list of efforts`() {
         // given
-        val effort = com.pij.zworkout.workout.Ramp(120, PowerRange.Z1, PowerRange.Z2, 90, 100)
+        val effort = ModelRamp(120, ModelRangedPower(ModelPowerRange.Z1), ModelRangedPower(ModelPowerRange.Z2), 90, 100)
         val current = State()
-        val converted = Ramp(1, 1f, 2f, 5, 10)
+        val converted = Ramp(1, RelativePower(1f), RelativePower(2f), 5, 10)
         whenever(converterMock.convert(effort)).thenReturn(converted)
 
         // when

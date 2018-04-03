@@ -28,13 +28,13 @@ import java.util.Collections.emptyList
  */
 internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var values: List<Effort> = emptyList()
+    private var values: List<ModelEffort> = emptyList()
 
     private val steadyStateLayout: Int = R.layout.efforts_item_steady_state
 
     override fun getItemViewType(position: Int): Int {
         return when (values[position]) {
-            is SteadyState -> R.layout.efforts_item_steady_state
+            is ModelSteadyState -> R.layout.efforts_item_steady_state
             else -> throw UnsupportedOperationException("Not coded yet")
         }
     }
@@ -49,7 +49,7 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is SteadyStateViewHolder -> holder.setItem(values[position] as SteadyState)
+            is SteadyStateViewHolder -> holder.setItem(values[position] as ModelSteadyState)
             else -> throw UnsupportedOperationException("Not coded yet")
         }
     }
@@ -61,14 +61,14 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     /**
      * Animates the insertions/ addition of items.
      */
-    fun setItems(items: List<Effort>) {
+    fun setItems(items: List<ModelEffort>) {
         val oldValues = values
         values = items.toList()
         val diff = DiffUtil.calculateDiff(PlaceDiffCallback(oldValues, items))
         diff.dispatchUpdatesTo(this)
     }
 
-    private class PlaceDiffCallback(private val oldValues: List<Effort>, private val newValues: List<Effort>) : DiffUtil.Callback() {
+    private class PlaceDiffCallback(private val oldValues: List<ModelEffort>, private val newValues: List<ModelEffort>) : DiffUtil.Callback() {
 
         override fun getOldListSize() = oldValues.size
 
@@ -91,7 +91,7 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
 
 private class SteadyStateViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    fun setItem(item: SteadyState) {
+    fun setItem(item: ModelSteadyState) {
         itemView.apply {
             duration.setText(item.duration.toString())
             power.setText(item.power.toString())

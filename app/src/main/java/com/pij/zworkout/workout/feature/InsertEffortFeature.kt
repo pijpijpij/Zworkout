@@ -16,21 +16,21 @@ package com.pij.zworkout.workout.feature
 
 import com.pij.horrocks.Interaction
 import com.pij.horrocks.Reducer
-import com.pij.zworkout.workout.Effort
 import com.pij.zworkout.workout.ModelConverter
+import com.pij.zworkout.workout.ModelEffort
 import com.pij.zworkout.workout.State
 
 /**
  * @author Pierrejean
  */
 
-internal class InsertEffortFeature(private val converter: ModelConverter) : Interaction<Pair<Effort, Int>, State> {
+internal class InsertEffortFeature(private val converter: ModelConverter) : Interaction<Pair<ModelEffort, Int>, State> {
 
     companion object {
         const val END_OF_LIST = -1
     }
 
-    override fun process(event: Pair<Effort, Int>): Reducer<State> {
+    override fun process(event: Pair<ModelEffort, Int>): Reducer<State> {
         return Reducer { current ->
             val (effort, position) = event
             val element = converter.convert(effort)

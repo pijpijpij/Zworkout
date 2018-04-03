@@ -14,28 +14,48 @@
 
 package com.pij.zworkout.workout
 
+import com.pij.zworkout.uc.*
+import com.pij.zworkout.uc.PowerRange.Range
+
 /**
  * <p>Created on 01/04/2018.</p>
  * @author Pierrejean
  */
 internal class ModelConverter {
 
-    fun convert(model: Effort): com.pij.zworkout.uc.Effort = model.toState()
+    fun convert(model: ModelEffort): Effort = model.toState()
 
-}
-
-private fun Effort.toState(): com.pij.zworkout.uc.Effort {
-    return when (this) {
-        is Ramp -> toState()
-        is SteadyState -> toState()
-        else -> TODO("Effort not supported $this")
+    private fun ModelEffort.toState(): Effort {
+        return when (this) {
+            is ModelSteadyState -> toState()
+            is ModelRamp -> toState()
+        }
     }
+
+    private fun ModelSteadyState.toState(): SteadyState =
+            SteadyState(duration, power.toState(), cadence)
+
+    private fun ModelRamp.toState(): Ramp =
+            Ramp(duration, startPower.toState(), endPower.toState(), startCadence, endCadence)
+
+    private fun ModelPower.toState(): Power {
+        return when (this) {
+            is ModelRelativePower -> RelativePower(fraction)
+            is ModelRangedPower -> PowerRange(range.toState())
+        }
+    }
+
+    private fun ModelPowerRange.toState(): PowerRange.Range {
+        return when (this) {
+            ModelPowerRange.Z1 -> Range.Z1
+            ModelPowerRange.Z2 -> Range.Z2
+            ModelPowerRange.Z3 -> Range.Z3
+            ModelPowerRange.Z4 -> Range.Z4
+            ModelPowerRange.Z5 -> Range.Z5
+            ModelPowerRange.Z6 -> Range.Z6
+
+            ModelPowerRange.SweetSpot -> Range.SweetSpot
+        }
+    }
+
 }
-
-private fun Ramp.toState(): com.pij.zworkout.uc.Ramp =
-        com.pij.zworkout.uc.Ramp(duration, startPower.toState(), endPower.toState(), startCadence, endCadence)
-
-private fun SteadyState.toState(): com.pij.zworkout.uc.SteadyState =
-        com.pij.zworkout.uc.SteadyState(duration, power.toState(), cadence)
-
-private fun PowerRange.toState(): Float = 1.0f

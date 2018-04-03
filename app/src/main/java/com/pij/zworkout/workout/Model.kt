@@ -27,26 +27,48 @@ data class Model(
         val name: String,
         val nameIsReadOnly: Boolean,
         val description: String,
-        val efforts: List<Effort> = listOf()
+        val efforts: List<ModelEffort> = listOf()
 )
 
-enum class PowerRange {
+enum class ModelPowerRange {
     Z1, Z2, Z3, SweetSpot, Z4, Z5, Z6
 }
 
-sealed class Effort
+sealed class ModelEffort
 
-data class SteadyState(
+data class ModelSteadyState(
         val duration: Int,
-        val power: PowerRange,
+        val power: ModelPower,
         val cadence: Int? = null
-) : Effort()
+) : ModelEffort()
 
-data class Ramp(
+data class ModelRamp(
         val duration: Int,
-        val startPower: PowerRange,
-        val endPower: PowerRange,
+        val startPower: ModelPower,
+        val endPower: ModelPower,
         val startCadence: Int? = null,
         val endCadence: Int? = null
-) : Effort()
+) : ModelEffort()
+
+sealed class ModelPower {
+    abstract fun toRange(): ModelRangedPower
+    abstract fun toRelative(): ModelRelativePower
+}
+
+data class ModelRelativePower(val fraction: Float) : ModelPower() {
+    override fun toRelative() = this
+
+    override fun toRange(): ModelRangedPower {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+}
+
+data class ModelRangedPower(val range: ModelPowerRange) : ModelPower() {
+
+    override fun toRelative(): ModelRelativePower {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun toRange() = this
+}
 

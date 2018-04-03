@@ -29,17 +29,46 @@ data class Workout(
 sealed class Effort
 data class SteadyState(
         val duration: Int,
-        val power: Float,
+        val power: Power,
         val cadence: Int? = null
 ) : Effort()
 
 data class Ramp(
         val duration: Int,
-        val startPower: Float,
-        val endPower: Float,
+        val startPower: Power,
+        val endPower: Power,
         val startCadence: Int? = null,
         val endCadence: Int? = null
 ) : Effort() {
     val up = startPower <= endPower
 }
 
+sealed class Power(val relative: Float) {
+    operator fun compareTo(rhs: Power): Int = relative.compareTo(rhs.relative)
+}
+
+data class RelativePower(private val fraction: Float) : Power(fraction)
+
+data class PowerRange(private val range: Range) : Power(range.middle) {
+    companion object {
+        private const val topZ1 = 0.55f
+        private const val topZ2 = 0.75f
+        private const val topZ3 = 0.90f
+        private const val topZ4 = 1.05f
+        private const val topZ5 = 1.20f
+    }
+
+    enum class Range(range: ClosedFloatingPointRange<Float>) {
+        Z1(0f.rangeTo(topZ1)),
+        Z2(topZ1.rangeTo(topZ2)),
+        Z3(topZ2.rangeTo(topZ3)),
+        SweetSpot(topZ3.rangeTo(topZ3)),
+        Z4(topZ3.rangeTo(topZ4)),
+        Z5(topZ4.rangeTo(topZ5)),
+        Z6(topZ5.rangeTo(Float.MAX_VALUE));
+
+        val middle = (range.endInclusive + range.start) / 2
+
+    }
+
+}
