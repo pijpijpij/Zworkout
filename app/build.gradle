@@ -80,6 +80,8 @@ dependencies {
     implementation(project(path: ':persistence')) {
         exclude group: 'xpp3', module: 'xpp3'
     }
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation "androidx.core:core-ktx:$androidKtxVersion"
     implementation "com.github.pijpijpij:Horrocks:$horrockVersion"
     implementation "org.bitbucket.pijpijpij.android-utils:android-utils:$utilsVersion"
 
@@ -102,7 +104,6 @@ dependencies {
     kapt "com.google.dagger:dagger-android-processor:$daggerVersion"
 
     // Dependencies for local unit tests
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
 //    testImplementation "org.mockito:mockito-core:$mockitoVersion"
     testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:$mockitoKotlinVersion"
