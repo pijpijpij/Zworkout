@@ -19,6 +19,7 @@ import activitystarter.Arg
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.*
+import androidx.core.view.isVisible
 import com.pij.TextWatcherAdapter
 import com.pij.updateEnabled
 import com.pij.updateText
@@ -83,8 +84,8 @@ class WorkoutDetailFragment : DaggerFragment() {
         toolbar_layout?.title = model.name
         name.updateEnabled(!model.nameIsReadOnly)
         description.updateText(model.description)
-        list.visibility = if (model.efforts.isEmpty()) View.INVISIBLE else View.VISIBLE
-        empty.visibility = if (model.efforts.isEmpty()) View.VISIBLE else View.INVISIBLE
+        list.isVisible = model.efforts.isNotEmpty()
+        empty.isVisible = model.efforts.isEmpty()
         adapter.setItems(model.efforts)
     }
 

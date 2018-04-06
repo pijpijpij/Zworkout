@@ -19,6 +19,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
+import androidx.core.view.isVisible
 import com.pij.utils.Logger
 import com.pij.zworkout.R
 import com.pij.zworkout.workout.WorkoutDetailActivity
@@ -102,8 +103,8 @@ class WorkoutsActivity : DaggerAppCompatActivity() {
 
     private fun showItems(items: List<WorkoutInfo>) {
         adapter.setItems(items)
-        list.visibility = if (items.isEmpty()) View.GONE else View.VISIBLE
-        empty.visibility = if (items.isEmpty()) View.VISIBLE else View.GONE
+        list.isVisible = items.isNotEmpty()
+        empty.isVisible = items.isEmpty()
     }
 
     private fun showInProgress(inProgress: Boolean) {
