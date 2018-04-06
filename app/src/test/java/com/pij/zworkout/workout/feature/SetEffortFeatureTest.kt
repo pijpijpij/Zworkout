@@ -16,85 +16,61 @@ package com.pij.zworkout.workout.feature
 
 import com.nhaarman.mockitokotlin2.mock
 import com.nhaarman.mockitokotlin2.whenever
-import com.pij.zworkout.uc.*
+import com.pij.utils.SysoutLogger
+import com.pij.zworkout.uc.Effort
+import com.pij.zworkout.uc.RelativePower
+import com.pij.zworkout.uc.SteadyState
+import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.workout.*
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.junit.Before
 import org.junit.Test
+import kotlin.test.assertNotNull
 
 /**
- *
- * Created on 31/03/2018.
- *
  * @author Pierrejean
  */
-class InsertEffortFeatureTest {
+class SetEffortFeatureTest {
 
-    private lateinit var sut: InsertEffortFeature
+    private lateinit var sut: SetEffortFeature
     private lateinit var converterMock: (ModelEffort) -> Effort
 
     private lateinit var effort: ModelEffort
 
     private lateinit var converted: Effort
 
+    private fun runSutOn(effort: ModelEffort, position: Int, state: State) = sut.process(Pair(effort, position)).reduce(state)
+
     @Before
     fun setUp() {
         effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1), 90)
         converted = SteadyState(1, RelativePower(1f), 1)
         converterMock = mock()
-        sut = InsertEffortFeature(converterMock)
+        sut = SetEffortFeature(SysoutLogger(), converterMock)
     }
 
     @Test
-    fun `Adds a Steady state to an empty list of efforts`() {
+    fun `Setting a Steady state to an empty list of efforts emits failure`() {
         // given
         val current = State()
         whenever(converterMock.invoke(effort)).thenReturn(converted)
 
         // when
-        val next = sut.process(Pair(effort, InsertEffortFeature.END_OF_LIST)).reduce(current)
+        val next = runSutOn(effort, 0, current)
 
         // then
-        assertThat(next.workout.efforts, contains<Effort>(converted))
+        assertNotNull(next.showError)
     }
 
     @Test
-    fun `Appends a Steady state to a non-empty list of efforts`() {
+    fun `Sets a Steady state in a non-empty list of efforts`() {
         // given
         val current = State(workout = Workout(efforts = listOf<Effort>(SteadyState(120, RelativePower(0.1f)))))
         whenever(converterMock.invoke(effort)).thenReturn(converted)
 
         // when
-        val next = sut.process(Pair(effort, InsertEffortFeature.END_OF_LIST)).reduce(current)
-
-        // then
-        assertThat(next.workout.efforts, contains<Effort>(SteadyState(120, RelativePower(0.1f)), converted))
-    }
-
-    @Test
-    fun `Inserts a Steady state in a non-empty list of efforts`() {
-        // given
-        val current = State(workout = Workout(efforts = listOf<Effort>(SteadyState(120, RelativePower(0.1f)))))
-        whenever(converterMock.invoke(effort)).thenReturn(converted)
-
-        // when
-        val next = sut.process(Pair(effort, 0)).reduce(current)
-
-        // then
-        assertThat(next.workout.efforts, contains<Effort>(converted, SteadyState(120, RelativePower(0.1f))))
-    }
-
-    @Test
-    fun `Adds a Ramp to an empty list of efforts`() {
-        // given
-        val effort = ModelRamp(120, ModelRangedPower(ModelPowerRange.Z1), ModelRangedPower(ModelPowerRange.Z2), 90, 100)
-        val current = State()
-        val converted = Ramp(1, RelativePower(1f), RelativePower(2f), 5, 10)
-        whenever(converterMock.invoke(effort)).thenReturn(converted)
-
-        // when
-        val next = sut.process(Pair(effort, InsertEffortFeature.END_OF_LIST)).reduce(current)
+        val next = runSutOn(effort, 0, current)
 
         // then
         assertThat(next.workout.efforts, contains<Effort>(converted))

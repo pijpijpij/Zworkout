@@ -16,8 +16,6 @@ package com.pij.zworkout.workout
 
 import com.pij.horrocks.*
 import com.pij.utils.Logger
-import com.pij.zworkout.uc.Effort
-import com.pij.zworkout.uc.SteadyState
 import com.pij.zworkout.uc.Workout
 import com.pij.zworkout.workout.feature.InsertEffortFeature
 import io.reactivex.Observable
@@ -32,11 +30,13 @@ import io.reactivex.Observable
 internal class HorrocksWorkoutViewModel private constructor(private val logger: Logger,
                                                             engine: Engine<State, Model>,
                                                             storage: Storage<State>,
+                                                            private val converter: StateConverter<State, Model>,
                                                             private val name: ReducerCreator<String, State>,
                                                             private val description: ReducerCreator<String, State>,
                                                             private val loader: ReducerCreator<String, State>,
                                                             private val save: ReducerCreator<Any, State>,
                                                             private val insertEffort: ReducerCreator<Pair<ModelEffort, Int>, State>,
+                                                            private val setEffort: ReducerCreator<Pair<ModelEffort, Int>, State>,
                                                             private val createWorkout: ReducerCreator<Any, State>
 ) : WorkoutViewModel {
 
@@ -45,9 +45,9 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
     init {
         val engineConfiguration = Configuration.builder<State, Model>()
                 .store(storage)
-                .transientResetter { this.resetTransient(it) }
-                .stateToModel { this.convert(it) }
-                .creators(listOf(name, description, loader, save, insertEffort, createWorkout))
+                .transientResetter { resetTransient(it) }
+                .stateToModel { converter.convert(it) }
+                .creators(listOf(name, description, loader, save, insertEffort, setEffort, createWorkout))
                 .build()
         models = engine.runWith(engineConfiguration).share()
     }
@@ -58,29 +58,6 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                 showSaved = false
                 // TODO code that
         )
-    }
-
-    private fun convert(state: State): Model {
-        return with(state) {
-            Model(
-                    inProgress = inProgress,
-                    showSaved = showSaved,
-                    showError = showError,
-                    name = workout.name,
-                    nameIsReadOnly = nameIsReadOnly,
-                    description = workout.description,
-                    efforts = workout.efforts.map { convert(it) }
-            )
-        }
-    }
-
-    private fun convert(state: Effort): ModelEffort {
-        return with(state) {
-            when (this) {
-                is SteadyState -> ModelSteadyState(duration = duration, power = ModelRangedPower(ModelPowerRange.Z1))
-                else -> TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
-        }
     }
 
     override fun load(itemId: String) {
@@ -113,6 +90,10 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
         insertEffort.trigger(Pair(ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1)), InsertEffortFeature.END_OF_LIST))
     }
 
+    override fun setEffort(effort: ModelEffort, position: Int) {
+        setEffort.trigger(Pair(effort, position))
+    }
+
     companion object {
 
         /**
@@ -121,19 +102,23 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
         fun create(logger: Logger,
                    engine: Engine<State, Model>,
                    storage: Storage<State>,
+                   converter: StateConverter<State, Model>,
                    nameFeature: Interaction<String, State>,
                    descriptionFeature: Interaction<String, State>,
                    loadingFeature: AsyncInteraction<String, State>,
                    saveFeature: AsyncInteraction<Any, State>,
                    insertEffortFeature: Interaction<Pair<ModelEffort, Int>, State>,
+                   setEffortFeature: Interaction<Pair<ModelEffort, Int>, State>,
                    createWorkoutFeature: Interaction<Any, State>
         ): HorrocksWorkoutViewModel {
             return HorrocksWorkoutViewModel(logger, engine, storage,
+                    converter,
                     SingleReducerCreator(nameFeature, logger),
                     SingleReducerCreator(descriptionFeature, logger),
                     MultipleReducerCreator(loadingFeature, logger),
                     MultipleReducerCreator(saveFeature, logger),
                     SingleReducerCreator(insertEffortFeature, logger),
+                    SingleReducerCreator(setEffortFeature, logger),
                     SingleReducerCreator(createWorkoutFeature, logger)
             )
         }

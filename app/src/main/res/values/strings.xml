@@ -41,4 +41,6 @@
     <string name="workout_efforts_item_ramp_down_start_power_hint">Start</string>
     <string name="workout_efforts_item_ramp_down_end_power_hint">End</string>
 
+    <string name="workout_effort_power_completion_hint">A fraction of FTP or a zone (e.g. Z1)</string>
+
 </resources>

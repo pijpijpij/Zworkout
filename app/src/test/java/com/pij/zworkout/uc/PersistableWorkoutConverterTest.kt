@@ -176,4 +176,30 @@ class PersistableWorkoutConverterTest {
         // then
         assertThat(result.efforts, contains<Effort>(SteadyState(120, RelativePower(0.9f), 97)))
     }
+
+    @Test
+    fun `loads ramp effort as ramp up`() {
+        // given
+        val effort = PersistableRamp(120, 0.90f, 1f, 97, 79)
+        val input = PersistableWorkout(EmptyString(""), "hello!", efforts = PersistableEfforts(listOf(effort)))
+
+        // when
+        val result = sut.convert(input)
+
+        // then
+        assertThat(result.efforts, contains<Effort>(Ramp(120, RelativePower(0.9f), RelativePower(1f), 97, 79)))
+    }
+
+    @Test
+    fun `loads cool down effort as ramp down`() {
+        // given
+        val effort = PersistableCoolDown(120, 1f, 0.1f, 97, 79)
+        val input = PersistableWorkout(EmptyString(""), "hello!", efforts = PersistableEfforts(listOf(effort)))
+
+        // when
+        val result = sut.convert(input)
+
+        // then
+        assertThat(result.efforts, contains<Effort>(Ramp(120, RelativePower(1f), RelativePower(0.1f), 97, 79)))
+    }
 }

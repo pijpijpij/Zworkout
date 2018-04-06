@@ -15,6 +15,7 @@
 package com.pij.zworkout.workout
 
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import com.pij.horrocks.*
 import com.pij.utils.SysoutLogger
 import com.pij.zworkout.uc.Workout
@@ -48,6 +49,7 @@ class HorrocksWorkoutViewModelTest {
     private lateinit var descriptionFeatureMock: Interaction<String, State>
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
     private lateinit var insertEffortFeatureMock: Interaction<Pair<ModelEffort, Int>, State>
+    private lateinit var setEffortFeatureMock: Interaction<Pair<ModelEffort, Int>, State>
 
 
     @BeforeTest
@@ -58,13 +60,16 @@ class HorrocksWorkoutViewModelTest {
         descriptionFeatureMock = mock()
         saveFeatureMock = mock()
         insertEffortFeatureMock = mock()
+        setEffortFeatureMock = mock()
         sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
                 MemoryStorage(HorrocksWorkoutViewModel.initialState()),
+                WorkoutStateConverter(StateEffortConverter()),
                 nameFeatureMock,
                 descriptionFeatureMock,
                 loadingFeatureMock,
                 saveFeatureMock,
                 insertEffortFeatureMock,
+                setEffortFeatureMock,
                 createWorkoutFeatureMock)
     }
 
@@ -262,6 +267,33 @@ class HorrocksWorkoutViewModelTest {
 
         // when
         sut.addEffort()
+
+        // then
+        observer.assertValue(simpleModel)
+    }
+
+    @Test
+    fun `setEffort() triggers the set feature`() {
+        // given
+        val effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1))
+        sut.model().test()
+
+        // when
+        sut.setEffort(effort, 23)
+
+        // then
+        verify(setEffortFeatureMock).process(any<Pair<ModelEffort, Int>>())
+    }
+
+    @Test
+    fun `model() returns model emitted by SetEffortFeature on setEffort()`() {
+        // given
+        val effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1))
+        whenever(setEffortFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
+        val observer = sut.model().skip(1).test()
+
+        // when
+        sut.setEffort(effort, 23)
 
         // then
         observer.assertValue(simpleModel)

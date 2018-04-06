@@ -16,10 +16,7 @@ package com.pij.zworkout.workout
 
 
 import android.content.res.Resources
-import com.pij.horrocks.DefaultEngine
-import com.pij.horrocks.MemoryStorage
-import com.pij.horrocks.StateProvider
-import com.pij.horrocks.Storage
+import com.pij.horrocks.*
 import com.pij.utils.Logger
 import com.pij.zworkout.FragmentScoped
 import com.pij.zworkout.R
@@ -27,6 +24,7 @@ import com.pij.zworkout.uc.WorkoutPersistenceUC
 import com.pij.zworkout.workout.feature.*
 import dagger.Module
 import dagger.Provides
+import dagger.Reusable
 import javax.inject.Provider
 
 /**
@@ -36,27 +34,37 @@ import javax.inject.Provider
 class WorkoutDetailModule {
 
     @Provides
-    internal fun provideEffortsAdapter(): EffortsAdapter {
-        return EffortsAdapter()
+    internal fun provideEffortsAdapter(viewModel: WorkoutViewModel): EffortsAdapter {
+        return EffortsAdapter { effort, position -> viewModel.setEffort(effort, position) }
+    }
+
+    @Reusable
+    @Provides
+    internal fun provideWorkoutStateConverter(): StateConverter<State, Model> {
+        return WorkoutStateConverter(StateEffortConverter())
     }
 
     @FragmentScoped
     @Provides
     internal fun provideHorrocksViewModel(logger: Logger,
                                           storage: Storage<State>,
+                                          converter: StateConverter<State, Model>,
                                           loadingFeature: LoadFeature,
                                           saveFeature: SaveFeature,
                                           insertEffortFeature: InsertEffortFeature,
+                                          setEffortFeature: SetEffortFeature,
                                           createWorkoutFeature: CreateWorkoutFeature
     ): WorkoutViewModel {
         return HorrocksWorkoutViewModel.create(logger,
                 DefaultEngine(logger),
                 storage,
+                converter,
                 NameFeature(),
                 DescriptionFeature(),
                 loadingFeature,
                 saveFeature,
                 insertEffortFeature,
+                setEffortFeature,
                 createWorkoutFeature
         )
     }
@@ -87,8 +95,17 @@ class WorkoutDetailModule {
     }
 
     @Provides
-    internal fun provideInsertEffortFeature(): InsertEffortFeature {
-        return InsertEffortFeature(ModelConverter())
+    internal fun provideInsertEffortFeature(converter: ModelEffortConverter): InsertEffortFeature {
+        return InsertEffortFeature(converter)
     }
+
+    @Provides
+    internal fun provideSetEffortFeature(logger: Logger, converter: ModelEffortConverter): SetEffortFeature {
+        return SetEffortFeature(logger, converter)
+    }
+
+    @Reusable
+    @Provides
+    internal fun provideModelEffortConverter(): ModelEffortConverter = ModelEffortConverter()
 
 }

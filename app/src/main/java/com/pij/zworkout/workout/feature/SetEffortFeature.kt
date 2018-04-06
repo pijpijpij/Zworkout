@@ -14,9 +14,10 @@
 
 package com.pij.zworkout.workout.feature
 
-import com.pij.add
 import com.pij.horrocks.Interaction
 import com.pij.horrocks.Reducer
+import com.pij.set
+import com.pij.utils.Logger
 import com.pij.zworkout.uc.Effort
 import com.pij.zworkout.workout.ModelEffort
 import com.pij.zworkout.workout.State
@@ -25,23 +26,23 @@ import com.pij.zworkout.workout.State
  * @author Pierrejean
  */
 
-internal class InsertEffortFeature(private val converter: (ModelEffort) -> Effort) : Interaction<Pair<ModelEffort, Int>, State> {
-
-    companion object {
-        const val END_OF_LIST = -1
-    }
+internal class SetEffortFeature(
+        private val logger: Logger,
+        private val converter: (ModelEffort) -> Effort
+) : Interaction<Pair<ModelEffort, Int>, State> {
 
     override fun process(event: Pair<ModelEffort, Int>): Reducer<State> {
-        val (effort, position) = event
-        val element = converter(effort)
+        val (modelEffort, position) = event
+        val newEffort = converter(modelEffort)
         return Reducer { current ->
             val source = current.workout.efforts
-            val augmented = if (position == END_OF_LIST) {
-                source + element
-            } else {
-                source.add(position, element)
+            try {
+                val changed = source.set(position, newEffort)
+                current.copy(workout = current.workout.copy(efforts = changed))
+            } catch (e: IndexOutOfBoundsException) {
+                logger.print(javaClass, e, "Could not replace effort at position $position with $modelEffort")
+                current.copy(showError = e.message)
             }
-            current.copy(workout = current.workout.copy(efforts = augmented))
         }
     }
 }

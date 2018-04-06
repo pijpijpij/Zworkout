@@ -19,6 +19,10 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import com.pij.TextWatcherAdapter
+import com.pij.set
+import com.pij.updateText
 import com.pij.zworkout.R
 import kotlinx.android.synthetic.main.efforts_item_steady_state.view.*
 import java.util.Collections.emptyList
@@ -26,7 +30,7 @@ import java.util.Collections.emptyList
 /**
  * @author Pierrejean
  */
-internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+internal class EffortsAdapter(private val change: (ModelEffort, Int) -> Unit) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var values: List<ModelEffort> = emptyList()
 
@@ -42,9 +46,14 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(viewType, parent, false)
         when (viewType) {
-            steadyStateLayout -> return SteadyStateViewHolder(view)
+            steadyStateLayout -> return SteadyStateViewHolder(view, this::storeAndForward)
             else -> throw UnsupportedOperationException("Not coded yet")
         }
+    }
+
+    private fun storeAndForward(effort: ModelEffort, position: Int) {
+        values = values.set(position, effort)
+        change.invoke(effort, position)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -75,9 +84,7 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
         override fun getNewListSize() = newValues.size
 
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldItem = oldValues[oldItemPosition]
-            val newItem = newValues[newItemPosition]
-            return oldItem == newItem
+            return oldItemPosition == newItemPosition
         }
 
         override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
@@ -89,14 +96,65 @@ internal class EffortsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() 
     }
 }
 
-private class SteadyStateViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+private class SteadyStateViewHolder(view: View, private val clickAction: (ModelEffort, Int) -> Unit) : RecyclerView.ViewHolder(view) {
+
+    private lateinit var item: ModelSteadyState
+
+    init {
+        with(itemView) {
+            power.setAdapter(ArrayAdapter<String>(itemView.context,
+                    // TODO get that data from the model
+                    android.R.layout.simple_dropdown_item_1line, ModelPowerRange.values().map { it.name }))
+
+            duration.addTextChangedListener(TextWatcherAdapter {
+                item = item.copy(duration = it.toDuration())
+                clickAction(item, adapterPosition)
+            })
+            power.addTextChangedListener(TextWatcherAdapter {
+                item = item.copy(power = it.toPower())
+                clickAction(item, adapterPosition)
+            })
+            cadence.addTextChangedListener(TextWatcherAdapter {
+                item = item.copy(cadence = it.toCadence())
+                clickAction(item, adapterPosition)
+            })
+        }
+    }
+
+    protected fun String.toDuration() = toInt()
+
+    protected fun String.toCadence() = toInt()
+
+    protected fun String.toPower(): ModelPower {
+        return try {
+            val range = ModelPowerRange.valueOf(this)
+            ModelRangedPower(range)
+        } catch (e: IllegalArgumentException) {
+            try {
+                val fraction = toFloat()
+                ModelRelativePower(fraction)
+            } catch (e: NumberFormatException) {
+                e.printStackTrace()
+                ModelRangedPower(ModelPowerRange.Z1)
+            }
+        }
+    }
 
     fun setItem(item: ModelSteadyState) {
+        this.item = item
         itemView.apply {
-            duration.setText(item.duration.toString())
-            power.setText(item.power.toString())
-            cadence.setText(item.cadence?.toString())
+            duration.updateText(item.duration.toString())
+            power.updateText(item.power.toHumanReadable())
+            cadence.updateText(item.cadence?.toString())
+        }
+    }
+
+    private fun ModelPower.toHumanReadable(): String {
+        return when (this) {
+            is ModelRelativePower -> fraction.toString()
+            is ModelRangedPower -> range.name
         }
     }
 
 }
+

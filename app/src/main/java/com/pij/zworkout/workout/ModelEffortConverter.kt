@@ -21,9 +21,9 @@ import com.pij.zworkout.uc.PowerRange.Range
  * <p>Created on 01/04/2018.</p>
  * @author Pierrejean
  */
-internal class ModelConverter {
+internal class ModelEffortConverter : (ModelEffort) -> Effort {
 
-    fun convert(model: ModelEffort): Effort = model.toState()
+    override fun invoke(model: ModelEffort): Effort = model.toState()
 
     private fun ModelEffort.toState(): Effort {
         return when (this) {

@@ -14,7 +14,9 @@
 
 package com.pij.zworkout.workout
 
-import io.reactivex.Observable
+import com.pij.horrocks.StateConverter
+import com.pij.zworkout.uc.Effort
+
 
 /**
  *
@@ -23,21 +25,20 @@ import io.reactivex.Observable
  * @author Pierrejean
  */
 
-internal interface WorkoutViewModel {
+internal class WorkoutStateConverter(private val converter: (Effort) -> ModelEffort) : StateConverter<State, Model> {
 
-    fun model(): Observable<Model>
+    override fun convert(state: State): Model {
+        return with(state) {
+            Model(
+                    inProgress = inProgress,
+                    showSaved = showSaved,
+                    showError = showError,
+                    name = workout.name,
+                    nameIsReadOnly = nameIsReadOnly,
+                    description = workout.description,
+                    efforts = workout.efforts.map { converter.invoke(it) }
+            )
+        }
+    }
 
-    fun load(itemId: String)
-
-    fun createWorkout()
-
-    fun name(newValue: String)
-
-    fun description(newValue: String)
-
-    fun save()
-
-    fun addEffort()
-
-    fun setEffort(effort: ModelEffort, position: Int)
 }

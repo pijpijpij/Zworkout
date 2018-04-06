@@ -34,12 +34,15 @@
         app:layout_constraintBaseline_toBaselineOf="@id/name"
         app:layout_constraintStart_toEndOf="@id/name" />
 
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/power"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:completionHint="@string/workout_effort_power_completion_hint"
+        android:completionThreshold="1"
+        android:dropDownWidth="match_parent"
         android:hint="@string/workout_efforts_item_steady_state_power_hint"
-        android:inputType="number"
+        android:inputType="textAutoComplete"
         android:minEms="3"
         app:layout_constraintBaseline_toBaselineOf="@id/duration"
         app:layout_constraintStart_toEndOf="@id/duration" />

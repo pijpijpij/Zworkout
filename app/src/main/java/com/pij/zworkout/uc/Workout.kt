@@ -49,7 +49,7 @@ sealed class Power(val relative: Float) {
 
 data class RelativePower(private val fraction: Float) : Power(fraction)
 
-data class PowerRange(private val range: Range) : Power(range.middle) {
+data class PowerRange(val range: Range) : Power(range.middle) {
     companion object {
         private const val topZ1 = 0.55f
         private const val topZ2 = 0.75f
