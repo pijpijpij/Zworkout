@@ -14,6 +14,7 @@
 
 package com.pij
 
+import android.support.annotation.StringRes
 import android.support.v4.util.ObjectsCompat
 import android.text.Editable
 import android.text.TextWatcher
@@ -36,7 +37,7 @@ class TextWatcherAdapter(private val afterTextChange: (String) -> Unit) : TextWa
 }
 
 /**
- * Only applies the new text if it is different from the current test.
+ * Only applies the new text if it is different from the current text.
  */
 fun TextView.updateText(newValue: String?) {
     if (!ObjectsCompat.equals(this.text.toString(), newValue)) {
@@ -45,7 +46,14 @@ fun TextView.updateText(newValue: String?) {
 }
 
 /**
- * Only applies the new enabled if it is different from the current test.
+ * Only applies the new text if it is different from the current text.
+ */
+fun TextView.updateText(@StringRes newValue: Int) {
+    updateText(resources.getString(newValue))
+}
+
+/**
+ * Only applies the new enabled if it is different from the current text.
  */
 fun View.updateEnabled(newValue: Boolean) {
     if (this.isEnabled != newValue) {
