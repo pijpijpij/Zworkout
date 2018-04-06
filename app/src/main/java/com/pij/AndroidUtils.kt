@@ -38,7 +38,7 @@ class TextWatcherAdapter(private val afterTextChange: (String) -> Unit) : TextWa
 /**
  * Only applies the new text if it is different from the current test.
  */
-fun TextView.updateText(newValue: String) {
+fun TextView.updateText(newValue: String?) {
     if (!ObjectsCompat.equals(this.text.toString(), newValue)) {
         this.text = newValue
     }
