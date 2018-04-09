@@ -24,7 +24,7 @@ import android.widget.TextView
 /** Just a utility class.
  *
  */
-class TextWatcherAdapter(private val afterTextChange: (String) -> Unit) : TextWatcher {
+class TextWatcherAdapter(private val onTextChange: (String) -> Unit) : TextWatcher {
     override fun afterTextChanged(editable: Editable) {
     }
 
@@ -32,7 +32,7 @@ class TextWatcherAdapter(private val afterTextChange: (String) -> Unit) : TextWa
     }
 
     override fun onTextChanged(newValue: CharSequence?, start: Int, before: Int, count: Int) {
-        afterTextChange(newValue.toString())
+        onTextChange(newValue?.toString() ?: "")
     }
 }
 
