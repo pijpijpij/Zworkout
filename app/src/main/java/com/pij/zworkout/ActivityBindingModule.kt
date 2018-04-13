@@ -13,11 +13,11 @@ import dagger.android.ContributesAndroidInjector
 internal abstract class ActivityBindingModule {
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = arrayOf(WorkoutsModule::class))
+    @ContributesAndroidInjector(modules = [(WorkoutsModule::class)])
     internal abstract fun workoutsActivity(): WorkoutsActivity
 
     @FragmentScoped
-    @ContributesAndroidInjector(modules = arrayOf(WorkoutDetailModule::class))
+    @ContributesAndroidInjector(modules = [(WorkoutDetailModule::class)])
     internal abstract fun workoutDetailFragment(): WorkoutDetailFragment
 
     @ActivityScoped

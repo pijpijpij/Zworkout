@@ -53,6 +53,15 @@ fun TextView.updateText(@StringRes newValue: Int) {
 }
 
 /**
+ * Only applies the new text if it is different from the current text.
+ */
+fun TextView.updateError(newValue: String?) {
+    if (error != newValue) {
+        error = newValue
+    }
+}
+
+/**
  * Only applies the new enabled if it is different from the current text.
  */
 fun View.updateEnabled(newValue: Boolean) {

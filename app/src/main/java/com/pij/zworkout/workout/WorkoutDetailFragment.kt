@@ -20,6 +20,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.*
 import androidx.core.view.isVisible
+import androidx.core.widget.toast
 import com.pij.TextWatcherAdapter
 import com.pij.updateEnabled
 import com.pij.updateText
@@ -64,7 +65,7 @@ class WorkoutDetailFragment : DaggerFragment() {
         description.addTextChangedListener(TextWatcherAdapter { viewModel.description(it) })
         list.adapter = adapter
 
-        subscriptions.add(viewModel.model().subscribe { display(it) })
+        subscriptions.add(viewModel.model().subscribe({ display(it) }, { it.printStackTrace(); activity?.toast("bad call!")?.show() }))
 
         if (savedInstanceState == null) {
             if (itemId == null) {
@@ -79,7 +80,8 @@ class WorkoutDetailFragment : DaggerFragment() {
         if (model.showError != null) {
             Snackbar.make(workout_detail, model.showError, Snackbar.LENGTH_LONG).show()
         }
-        // empty.setText(if (model.inProgress) R.string.list_loading else R.string.list_empty)
+
+        empty.setText(if (model.inProgress) R.string.detail_loading else R.string.detail_empty)
         name.updateText(model.name)
         toolbar_layout?.title = model.name
         name.updateEnabled(!model.nameIsReadOnly)

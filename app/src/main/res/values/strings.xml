@@ -23,6 +23,7 @@
     <!--Detail screen-->
     <string name="detail_name_hint">Workout name</string>
     <string name="detail_description_hint">Details about the workout</string>
+    <string name="detail_loading">Loading efforts…</string>
     <string name="detail_empty">No efforts in this workout.</string>
     <string name="workout_save_error_message">Unable to save this workout</string>
     <string name="workout_menu_save">Save</string>
