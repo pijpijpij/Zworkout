@@ -1,0 +1,8 @@
+<workout_file>
+   <description>tfhfg.  kggg</description>
+   <name>With Steady</name>
+   <sportType>bike</sportType>
+   <workout>
+        <SteadyState Duration="120" Power="0.55" Cadence="95"/>
+   </workout>
+</workout_file>
