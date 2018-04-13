@@ -50,6 +50,7 @@ class HorrocksWorkoutViewModelTest {
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
     private lateinit var insertEffortFeatureMock: Interaction<Pair<ModelEffort, Int>, State>
     private lateinit var setEffortFeatureMock: Interaction<Pair<ModelEffort, Int>, State>
+    private lateinit var editEffortPropertyFeatureMock: Interaction<EffortPropertyEvent, State>
 
 
     @BeforeTest
@@ -61,6 +62,7 @@ class HorrocksWorkoutViewModelTest {
         saveFeatureMock = mock()
         insertEffortFeatureMock = mock()
         setEffortFeatureMock = mock()
+        editEffortPropertyFeatureMock = mock()
         sut = HorrocksWorkoutViewModel.create(SysoutLogger(), DefaultEngine<State, Model>(SysoutLogger()),
                 MemoryStorage(HorrocksWorkoutViewModel.initialState()),
                 WorkoutStateConverter(StateEffortConverter()),
@@ -70,6 +72,7 @@ class HorrocksWorkoutViewModelTest {
                 saveFeatureMock,
                 insertEffortFeatureMock,
                 setEffortFeatureMock,
+                editEffortPropertyFeatureMock,
                 createWorkoutFeatureMock)
     }
 
@@ -256,7 +259,7 @@ class HorrocksWorkoutViewModelTest {
         sut.addEffort()
 
         // then
-        verify(insertEffortFeatureMock).process(Pair(ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1)), END_OF_LIST))
+        verify(insertEffortFeatureMock).process(Pair(ModelSteadyState(120, "Z1"), END_OF_LIST))
     }
 
     @Test
@@ -275,7 +278,7 @@ class HorrocksWorkoutViewModelTest {
     @Test
     fun `setEffort() triggers the set feature`() {
         // given
-        val effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1))
+        val effort = ModelSteadyState(120, "Z1")
         sut.model().test()
 
         // when
@@ -288,12 +291,39 @@ class HorrocksWorkoutViewModelTest {
     @Test
     fun `model() returns model emitted by SetEffortFeature on setEffort()`() {
         // given
-        val effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1))
+        val effort = ModelSteadyState(120, "Z1")
         whenever(setEffortFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
         val observer = sut.model().skip(1).test()
 
         // when
         sut.setEffort(effort, 23)
+
+        // then
+        observer.assertValue(simpleModel)
+    }
+
+    @Test
+    fun `editEffortProperty() triggers the edit effort property feature`() {
+        // given
+        val effort = SteadyStatePowerEvent(123, "Z1")
+        sut.model().test()
+
+        // when
+        sut.editEffortProperty(effort)
+
+        // then
+        verify(editEffortPropertyFeatureMock).process(any<EffortPropertyEvent>())
+    }
+
+    @Test
+    fun `model() returns model emitted by EditEffortPropertyFeature on setEffort()`() {
+        // given
+        val effort = SteadyStatePowerEvent(123, "Z1")
+        whenever(editEffortPropertyFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
+        val observer = sut.model().skip(1).test()
+
+        // when
+        sut.editEffortProperty(effort)
 
         // then
         observer.assertValue(simpleModel)

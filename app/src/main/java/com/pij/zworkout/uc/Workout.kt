@@ -43,13 +43,28 @@ data class Ramp(
     val up = startPower <= endPower
 }
 
-sealed class Power(val relative: Float) {
+sealed class Power(open val relative: Float, open val input: String) {
     operator fun compareTo(rhs: Power): Int = relative.compareTo(rhs.relative)
 }
 
-data class RelativePower(private val fraction: Float) : Power(fraction)
+data class BadPower(
+        override val input: String,
+        val inputError: String
+) : Power(0f, input)
 
-data class PowerRange(val range: Range) : Power(range.middle) {
+data class RelativePower(
+        override val relative: Float,
+        override val input: String
+) : Power(relative, input) {
+    constructor(relative: Float) : this(relative, relative.toString())
+}
+
+data class PowerRange(
+        val range: Range,
+        override val relative: Float = range.middle,
+        override val input: String
+) : Power(relative, input) {
+
     companion object {
         private const val topZ1 = 0.55f
         private const val topZ2 = 0.75f

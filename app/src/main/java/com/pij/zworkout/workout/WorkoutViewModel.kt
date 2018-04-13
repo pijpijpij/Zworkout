@@ -40,4 +40,8 @@ internal interface WorkoutViewModel {
     fun addEffort()
 
     fun setEffort(effort: ModelEffort, position: Int)
+
+    fun editEffortProperty(description: EffortPropertyEvent)
+
+    fun changeEffortProperty(description: EffortPropertyEvent)
 }

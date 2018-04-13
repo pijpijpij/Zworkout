@@ -15,7 +15,6 @@
 package com.pij.zworkout.workout
 
 import com.pij.zworkout.uc.*
-import com.pij.zworkout.uc.PowerRange.Range
 
 /**
  * <p>Created on 01/04/2018.</p>
@@ -23,39 +22,52 @@ import com.pij.zworkout.uc.PowerRange.Range
  */
 internal class ModelEffortConverter : (ModelEffort) -> Effort {
 
-    override fun invoke(model: ModelEffort): Effort = model.toState()
+    override fun invoke(model: ModelEffort): Effort =
+            when (model) {
+                is ModelSteadyState -> model.toState()
+//                is ModelRamp -> model.toState()
+                else -> TODO("Not implemented yet")
+            }
 
-    private fun ModelEffort.toState(): Effort {
-        return when (this) {
-            is ModelSteadyState -> toState()
-            is ModelRamp -> toState()
+    private fun ModelSteadyState.toState(): SteadyState {
+        return SteadyState(duration, power.toPower(), cadence)
+    }
+
+    private fun String.toPower(): Power {
+        return try {
+            val range = PowerRange.Range.valueOf(this)
+            PowerRange(range, input = this)
+        } catch (e: IllegalArgumentException) {
+            try {
+                val fraction = toFloat()
+                RelativePower(fraction, this)
+            } catch (e: NumberFormatException) {
+                BadPower(this, e.message ?: "unexpected value")
+            }
         }
     }
 
-    private fun ModelSteadyState.toState(): SteadyState =
-            SteadyState(duration, power.toState(), cadence)
-
-    private fun ModelRamp.toState(): Ramp =
-            Ramp(duration, startPower.toState(), endPower.toState(), startCadence, endCadence)
-
-    private fun ModelPower.toState(): Power {
-        return when (this) {
-            is ModelRelativePower -> RelativePower(fraction)
-            is ModelRangedPower -> PowerRange(range.toState())
-        }
-    }
-
-    private fun ModelPowerRange.toState(): PowerRange.Range {
-        return when (this) {
-            ModelPowerRange.Z1 -> Range.Z1
-            ModelPowerRange.Z2 -> Range.Z2
-            ModelPowerRange.Z3 -> Range.Z3
-            ModelPowerRange.Z4 -> Range.Z4
-            ModelPowerRange.Z5 -> Range.Z5
-            ModelPowerRange.Z6 -> Range.Z6
-
-            ModelPowerRange.SweetSpot -> Range.SweetSpot
-        }
-    }
+//    private fun ModelRamp.toState(): Ramp =
+//            Ramp(duration, startPower.toState(), endPower.toState(), startCadence, endCadence)
+//
+//    private fun String.toStatePower(): Power {
+//        return when (this) {
+//            is ModelRelativePower -> RelativePower(fraction)
+//            is ModelRangedPower -> PowerRange(range.toState())
+//            is ModelBadPower -> RelativePower(0f, input = text, inputError = "Not a valid power")
+//        }
+//    }
+//
+//    private fun ModelPowerRange.toState(): PowerRange.Range = when (this) {
+//        ModelPowerRange.Z1 -> Range.Z1
+//        ModelPowerRange.Z2 -> Range.Z2
+//        ModelPowerRange.Z3 -> Range.Z3
+//        ModelPowerRange.Z4 -> Range.Z4
+//        ModelPowerRange.Z5 -> Range.Z5
+//        ModelPowerRange.Z6 -> Range.Z6
+//
+//        ModelPowerRange.SweetSpot -> Range.SweetSpot
+//    }
 
 }
+

@@ -35,7 +35,10 @@ class WorkoutDetailModule {
 
     @Provides
     internal fun provideEffortsAdapter(viewModel: WorkoutViewModel): EffortsAdapter {
-        return EffortsAdapter { effort, position -> viewModel.setEffort(effort, position) }
+        return EffortsAdapter(
+                applyChange = viewModel::setEffort,
+                propertyEditor = viewModel::editEffortProperty
+        )
     }
 
     @Reusable
@@ -53,6 +56,7 @@ class WorkoutDetailModule {
                                           saveFeature: SaveFeature,
                                           insertEffortFeature: InsertEffortFeature,
                                           setEffortFeature: SetEffortFeature,
+                                          editEffortPropertyFeature: EditEffortPropertyFeature,
                                           createWorkoutFeature: CreateWorkoutFeature
     ): WorkoutViewModel {
         return HorrocksWorkoutViewModel.create(logger,
@@ -65,6 +69,7 @@ class WorkoutDetailModule {
                 saveFeature,
                 insertEffortFeature,
                 setEffortFeature,
+                editEffortPropertyFeature,
                 createWorkoutFeature
         )
     }
@@ -102,6 +107,11 @@ class WorkoutDetailModule {
     @Provides
     internal fun provideSetEffortFeature(logger: Logger, converter: ModelEffortConverter): SetEffortFeature {
         return SetEffortFeature(logger, converter)
+    }
+
+    @Provides
+    internal fun provideEditEffortPropertyFeature(logger: Logger): EditEffortPropertyFeature {
+        return EditEffortPropertyFeature(logger)
     }
 
     @Reusable

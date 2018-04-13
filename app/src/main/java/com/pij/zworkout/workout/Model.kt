@@ -38,7 +38,8 @@ sealed class ModelEffort
 
 data class ModelSteadyState(
         val duration: Int,
-        val power: ModelPower,
+        val power: String,
+        val powerError: String? = null,
         val cadence: Int? = null
 ) : ModelEffort()
 
@@ -50,25 +51,9 @@ data class ModelRamp(
         val endCadence: Int? = null
 ) : ModelEffort()
 
-sealed class ModelPower {
-    abstract fun toRange(): ModelRangedPower
-    abstract fun toRelative(): ModelRelativePower
-}
-
-data class ModelRelativePower(val fraction: Float) : ModelPower() {
-    override fun toRelative() = this
-
-    override fun toRange(): ModelRangedPower {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-}
-
-data class ModelRangedPower(val range: ModelPowerRange) : ModelPower() {
-
-    override fun toRelative(): ModelRelativePower {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    override fun toRange() = this
-}
+sealed class ModelPower
+// TEMP DEBUG
+//data class ModelBadPower(val text: String) : ModelPower()
+//data class ModelRelativePower(val fraction: Float) : ModelPower()
+data class ModelRangedPower(val range: ModelPowerRange) : ModelPower()
 

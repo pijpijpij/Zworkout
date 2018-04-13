@@ -21,7 +21,9 @@ import com.pij.zworkout.uc.Effort
 import com.pij.zworkout.uc.RelativePower
 import com.pij.zworkout.uc.SteadyState
 import com.pij.zworkout.uc.Workout
-import com.pij.zworkout.workout.*
+import com.pij.zworkout.workout.ModelEffort
+import com.pij.zworkout.workout.ModelSteadyState
+import com.pij.zworkout.workout.State
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.junit.Before
@@ -44,7 +46,7 @@ class SetEffortFeatureTest {
 
     @Before
     fun setUp() {
-        effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1), 90)
+        effort = ModelSteadyState(120, "Z1", null, 90)
         converted = SteadyState(1, RelativePower(1f), 1)
         converterMock = mock()
         sut = SetEffortFeature(SysoutLogger(), converterMock)

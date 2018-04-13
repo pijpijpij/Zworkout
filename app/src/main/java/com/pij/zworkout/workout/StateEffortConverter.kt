@@ -14,8 +14,10 @@
 
 package com.pij.zworkout.workout
 
-import com.pij.zworkout.uc.*
-import com.pij.zworkout.uc.PowerRange.Range
+import com.pij.zworkout.uc.BadPower
+import com.pij.zworkout.uc.Effort
+import com.pij.zworkout.uc.Power
+import com.pij.zworkout.uc.SteadyState
 
 /**
  * <p>Created on 01/04/2018.</p>
@@ -23,39 +25,34 @@ import com.pij.zworkout.uc.PowerRange.Range
  */
 internal class StateEffortConverter : (Effort) -> ModelEffort {
 
-    override fun invoke(model: Effort): ModelEffort = model.toState()
+    override fun invoke(model: Effort): ModelEffort = model.toModel()
 
-    private fun Effort.toState(): ModelEffort {
+    private fun Effort.toModel(): ModelEffort {
         return when (this) {
-            is SteadyState -> toState()
-            is Ramp -> toState()
+            is SteadyState -> ModelSteadyState(duration, power.toModel(), power.toError(), cadence)
+//            is Ramp -> ModelRamp(duration, startPower.toModel(), endPower.toModel(), startCadence, endCadence)
+            else -> TODO("Not implemented yet")
         }
     }
 
-    private fun SteadyState.toState(): ModelSteadyState =
-            ModelSteadyState(duration, power.toState(), cadence)
+    private fun Power.toModel(): String = input
 
-    private fun Ramp.toState(): ModelRamp =
-            ModelRamp(duration, startPower.toState(), endPower.toState(), startCadence, endCadence)
-
-    private fun Power.toState(): ModelPower {
-        return when (this) {
-            is RelativePower -> ModelRelativePower(relative)
-            is PowerRange -> ModelRangedPower(range.toState())
-        }
+    private fun Power.toError(): String? = when {
+        this is BadPower -> inputError
+        else -> null
     }
 
-    private fun Range.toState(): ModelPowerRange {
-        return when (this) {
-            Range.Z1 -> ModelPowerRange.Z1
-            Range.Z2 -> ModelPowerRange.Z2
-            Range.Z3 -> ModelPowerRange.Z3
-            Range.Z4 -> ModelPowerRange.Z4
-            Range.Z5 -> ModelPowerRange.Z5
-            Range.Z6 -> ModelPowerRange.Z6
-
-            Range.SweetSpot -> ModelPowerRange.SweetSpot
-        }
-    }
+//    private fun Range.toModel(): ModelPowerRange {
+//        return when (this) {
+//            Range.Z1 -> ModelPowerRange.Z1
+//            Range.Z2 -> ModelPowerRange.Z2
+//            Range.Z3 -> ModelPowerRange.Z3
+//            Range.Z4 -> ModelPowerRange.Z4
+//            Range.Z5 -> ModelPowerRange.Z5
+//            Range.Z6 -> ModelPowerRange.Z6
+//
+//            Range.SweetSpot -> ModelPowerRange.SweetSpot
+//        }
+//    }
 
 }

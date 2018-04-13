@@ -40,7 +40,7 @@ class InsertEffortFeatureTest {
 
     @Before
     fun setUp() {
-        effort = ModelSteadyState(120, ModelRangedPower(ModelPowerRange.Z1), 90)
+        effort = ModelSteadyState(120, "Z1", null, 90)
         converted = SteadyState(1, RelativePower(1f), 1)
         converterMock = mock()
         sut = InsertEffortFeature(converterMock)
