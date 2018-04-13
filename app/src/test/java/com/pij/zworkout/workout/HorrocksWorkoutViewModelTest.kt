@@ -33,8 +33,8 @@ import kotlin.test.Test
  */
 class HorrocksWorkoutViewModelTest {
 
-    private val simpleModel = Model(true, null, false, "", false, "")
-    private val simpleState = State(true, null, false, Workout(), false, null)
+    private val simpleModel = Model(true, null, false, null, "", false, "")
+    private val simpleState = State(true, null, null, false, Workout(), false, null)
 
     /** Provides {@link #simpleState} when called.
      */
@@ -50,7 +50,7 @@ class HorrocksWorkoutViewModelTest {
     private lateinit var saveFeatureMock: AsyncInteraction<Any, State>
     private lateinit var insertEffortFeatureMock: Interaction<Pair<ModelEffort, Int>, State>
     private lateinit var setEffortFeatureMock: Interaction<Pair<ModelEffort, Int>, State>
-    private lateinit var editEffortPropertyFeatureMock: Interaction<EffortPropertyEvent, State>
+    private lateinit var editEffortPropertyFeatureMock: Interaction<EffortProperty, State>
 
 
     @BeforeTest
@@ -106,7 +106,7 @@ class HorrocksWorkoutViewModelTest {
         val observer = sut.model().test()
 
         // then
-        observer.assertValue(Model(false, null, false, "", false, ""))
+        observer.assertValue(Model(false, null, false, null, "", false, ""))
     }
 
     @Test
@@ -305,20 +305,20 @@ class HorrocksWorkoutViewModelTest {
     @Test
     fun `editEffortProperty() triggers the edit effort property feature`() {
         // given
-        val effort = SteadyStatePowerEvent(123, "Z1")
+        val effort = SteadyStatePowerProperty(123, "Z1")
         sut.model().test()
 
         // when
         sut.editEffortProperty(effort)
 
         // then
-        verify(editEffortPropertyFeatureMock).process(any<EffortPropertyEvent>())
+        verify(editEffortPropertyFeatureMock).process(any<EffortProperty>())
     }
 
     @Test
     fun `model() returns model emitted by EditEffortPropertyFeature on setEffort()`() {
         // given
-        val effort = SteadyStatePowerEvent(123, "Z1")
+        val effort = SteadyStatePowerProperty(123, "Z1")
         whenever(editEffortPropertyFeatureMock.process(any())).thenReturn(Reducer { _ -> simpleState })
         val observer = sut.model().skip(1).test()
 
@@ -327,6 +327,24 @@ class HorrocksWorkoutViewModelTest {
 
         // then
         observer.assertValue(simpleModel)
+    }
+
+    @Test
+    fun `Resets the transient flag between calls`() {
+        // given
+        val change = SteadyStatePowerProperty(123, "Z1")
+        whenever(editEffortPropertyFeatureMock.process(any())).thenReturn(
+                Reducer { _ -> simpleState.copy(editEffortProperty = change) },
+                Reducer { it }
+        )
+        val observer = sut.model().skip(2).test()
+
+        // when
+        sut.editEffortProperty(change)
+        sut.editEffortProperty(change)
+
+        // then
+        observer.assertValue { it.editEffortProperty == null }
     }
 
 }

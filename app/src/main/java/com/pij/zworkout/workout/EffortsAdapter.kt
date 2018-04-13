@@ -29,7 +29,7 @@ import kotlinx.android.synthetic.main.efforts_item_steady_state.view.*
  */
 internal class EffortsAdapter(
         private val applyChange: (ModelEffort, Int) -> Unit,
-        private val propertyEditor: (EffortPropertyEvent) -> Unit
+        private val propertyEditor: (EffortProperty) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var values = listOf<ModelEffort>()
@@ -95,13 +95,13 @@ internal class EffortsAdapter(
 
 private class SteadyStateViewHolder(
         view: View,
-        private val editor: (EffortPropertyEvent) -> Unit
+        private val editor: (EffortProperty) -> Unit
 ) : RecyclerView.ViewHolder(view) {
 
     init {
         println("PJC creating ViewHolder ${hashCode()} for view ${itemView.hashCode()}")
         with(itemView) {
-            power.setOnClickListener { editor(SteadyStatePowerEvent(adapterPosition, power.text.toString())) }
+            power.setOnClickListener { editor(SteadyStatePowerProperty(adapterPosition, power.text.toString())) }
         }
     }
 

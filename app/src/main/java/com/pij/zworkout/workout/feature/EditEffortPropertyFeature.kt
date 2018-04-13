@@ -17,9 +17,8 @@ package com.pij.zworkout.workout.feature
 import com.pij.horrocks.Interaction
 import com.pij.horrocks.Reducer
 import com.pij.utils.Logger
-import com.pij.zworkout.workout.EffortPropertyEvent
+import com.pij.zworkout.workout.EffortProperty
 import com.pij.zworkout.workout.State
-import com.pij.zworkout.workout.SteadyStatePowerEvent
 
 /**
  * @author Pierrejean
@@ -27,14 +26,17 @@ import com.pij.zworkout.workout.SteadyStatePowerEvent
 
 internal class EditEffortPropertyFeature(
         private val logger: Logger
-) : Interaction<EffortPropertyEvent, State> {
+) : Interaction<EffortProperty, State> {
 
-    override fun process(event: EffortPropertyEvent): Reducer<State> {
+    override fun process(event: EffortProperty): Reducer<State> {
         return Reducer { current ->
-            when (event) {
-                is SteadyStatePowerEvent -> println("PJC asked to edit '$event.power' at ${event.index}")
+            if (event.index in 0..current.workout.efforts.lastIndex) {
+                current.copy(editEffortProperty = event)
+            } else {
+                val message = "Index ${event.index} out of range"
+                logger.print(javaClass, message)
+                current.copy(showError = message)
             }
-            current
         }
     }
 }

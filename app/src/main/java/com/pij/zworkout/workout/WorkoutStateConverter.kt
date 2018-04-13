@@ -34,6 +34,7 @@ internal class WorkoutStateConverter(private val converter: (Effort) -> ModelEff
                     showSaved = showSaved,
                     showError = showError,
                     name = workout.name,
+                    editEffortProperty = editEffortProperty,
                     nameIsReadOnly = nameIsReadOnly,
                     description = workout.description,
                     efforts = workout.efforts.map { converter.invoke(it) }

@@ -77,8 +77,16 @@ class WorkoutDetailFragment : DaggerFragment() {
     }
 
     private fun display(model: Model) {
-        if (model.showError != null) {
-            Snackbar.make(workout_detail, model.showError, Snackbar.LENGTH_LONG).show()
+        model.showError?.run {
+            Snackbar.make(workout_detail, this, Snackbar.LENGTH_LONG).show()
+        }
+        val propertyValue = model.editEffortProperty
+        propertyValue?.run {
+            val message = when (this) {
+                is SteadyStatePowerProperty -> "PJC asked to edit '$power' at $index"
+                else -> "Unsupported property: $this"
+            }
+            Snackbar.make(workout_detail, message, Snackbar.LENGTH_LONG).show()
         }
 
         empty.setText(if (model.inProgress) R.string.detail_loading else R.string.detail_empty)
