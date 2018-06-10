@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Zworkouts.iml" filepath="$PROJECT_DIR$/Zworkouts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Zworkout.iml" filepath="$PROJECT_DIR$/Zworkout.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/persistence/persistence.iml" filepath="$PROJECT_DIR$/persistence/persistence.iml" />
       <module fileurl="file://$PROJECT_DIR$/persistence-api/persistence-api.iml" filepath="$PROJECT_DIR$/persistence-api/persistence-api.iml" />
