@@ -19,6 +19,27 @@ package com.pij.zworkout.workout
  * @author Pierrejean
  */
 
-sealed class EffortPropertyEvent(open val index: Int)
+sealed class EffortProperty(open val index: Int)
 
-data class SteadyStatePowerEvent(override val index: Int, val power: String) : EffortPropertyEvent(index)
+// Raw values
+sealed class IntEffortProperty(override val index: Int, open val value: Int) : EffortProperty(index)
+
+sealed class StringEffortProperty(override val index: Int, open val value: String) : EffortProperty(index)
+
+// Type values
+sealed class DurationProperty(override val index: Int, open val duration: Int) : IntEffortProperty(index, duration)
+
+sealed class PowerProperty(override val index: Int, override val value: String) : StringEffortProperty(index, value)
+sealed class CadenceProperty(override val index: Int, open val cadence: Int) : IntEffortProperty(index, cadence)
+
+// Functional values
+data class SteadyStateDurationValue(override val index: Int, override val duration: Int) : DurationProperty(index, duration)
+
+data class SteadyStatePowerProperty(override val index: Int, val power: String) : PowerProperty(index, power)
+data class SteadyStateCadenceValue(override val index: Int, override val cadence: Int) : CadenceProperty(index, cadence)
+
+data class RampDurationValue(override val index: Int, override val duration: Int) : DurationProperty(index, duration)
+data class RampStartPowerProperty(override val index: Int, val power: String) : PowerProperty(index, power)
+data class RampEndPowerProperty(override val index: Int, val power: String) : PowerProperty(index, power)
+data class RampStartCadenceValue(override val index: Int, override val cadence: Int) : CadenceProperty(index, cadence)
+data class RampEndCadenceValue(override val index: Int, override val cadence: Int) : CadenceProperty(index, cadence)

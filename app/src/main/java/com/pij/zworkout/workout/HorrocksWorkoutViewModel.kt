@@ -37,7 +37,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                                                             private val save: ReducerCreator<Any, State>,
                                                             private val insertEffort: ReducerCreator<Pair<ModelEffort, Int>, State>,
                                                             private val setEffort: ReducerCreator<Pair<ModelEffort, Int>, State>,
-                                                            private val editEffortProperty: ReducerCreator<EffortPropertyEvent, State>,
+                                                            private val editEffortProperty: ReducerCreator<EffortProperty, State>,
                                                             private val createWorkout: ReducerCreator<Any, State>
 ) : WorkoutViewModel {
     private val models: Observable<Model>
@@ -55,7 +55,8 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
     private fun resetTransient(input: State): State {
         return input.copy(
                 showError = null,
-                showSaved = false
+                showSaved = false,
+                editEffortProperty = null
                 // TODO code that
         )
     }
@@ -94,11 +95,11 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
         setEffort.trigger(Pair(effort, position))
     }
 
-    override fun editEffortProperty(description: EffortPropertyEvent) {
+    override fun editEffortProperty(description: EffortProperty) {
         editEffortProperty.trigger(description)
     }
 
-    override fun changeEffortProperty(description: EffortPropertyEvent) {
+    override fun changeEffortProperty(description: EffortProperty) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
@@ -117,7 +118,7 @@ internal class HorrocksWorkoutViewModel private constructor(private val logger: 
                    saveFeature: AsyncInteraction<Any, State>,
                    insertEffortFeature: Interaction<Pair<ModelEffort, Int>, State>,
                    setEffortFeature: Interaction<Pair<ModelEffort, Int>, State>,
-                   editEffortPropertyFeature: Interaction<EffortPropertyEvent, State>,
+                   editEffortPropertyFeature: Interaction<EffortProperty, State>,
                    createWorkoutFeature: Interaction<Any, State>
         ): HorrocksWorkoutViewModel {
             return HorrocksWorkoutViewModel(logger, engine, storage,

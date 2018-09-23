@@ -24,6 +24,7 @@ data class Model(
         val inProgress: Boolean,
         val showError: String?,
         val showSaved: Boolean,
+        val editEffortProperty: EffortProperty?,
         val name: String,
         val nameIsReadOnly: Boolean,
         val description: String,
