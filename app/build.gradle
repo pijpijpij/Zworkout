@@ -43,16 +43,18 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            useProguard true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
         }
     }
 
     // Always show the result of non-passed unit tests.
-    testOptions.unitTests.all {
-        testLogging {
-            events 'skipped', 'failed', 'standardOut', 'standardError'
+    testOptions {
+        unitTests.all {
+            testLogging {
+                events 'skipped', 'failed', 'standardOut', 'standardError'
+            }
+            animationsDisabled = true
         }
     }
 
@@ -131,6 +133,6 @@ dependencies {
     androidTestImplementation "com.android.support:recyclerview-v7:$supportLibraryVersion"
     androidTestImplementation "com.android.support:appcompat-v7:$supportLibraryVersion"
     androidTestImplementation "com.android.support:design:$supportLibraryVersion"
-    androidTestImplementation "com.google.code.findbugs:jsr305:3.0.1"
+    androidTestImplementation "com.google.code.findbugs:jsr305:3.0.2"
 
 }
